@@ -1,0 +1,40 @@
+{
+  "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "defaultBase": "main",
+  "namedInputs": {
+    "default": ["{projectRoot}/**/*"],
+    "nixFiles": [
+      "{projectRoot}/flake.nix",
+      "{projectRoot}/flake.lock",
+      "{projectRoot}/hosts/**/*.nix",
+      "{projectRoot}/home-manager/**/*.nix",
+      "{projectRoot}/modules/**/*.nix",
+      "{projectRoot}/overlays/**/*.nix"
+    ]
+  },
+  "targetDefaults": {
+    "build": {
+      "cache": true,
+      "inputs": ["nixFiles", "^nixFiles"]
+    },
+    "check": {
+      "cache": true,
+      "inputs": ["nixFiles"]
+    },
+    "format": {
+      "cache": true,
+      "inputs": ["nixFiles"]
+    }
+  },
+  "tasksRunnerOptions": {
+    "default": {
+      "runner": "nx/tasks-runners/default",
+      "options": {
+        "cacheableOperations": ["build", "check", "format"]
+      }
+    }
+  },
+  "cli": {
+    "analytics": false
+  }
+}

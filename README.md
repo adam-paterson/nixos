@@ -663,6 +663,51 @@ These scripts are used internally by Just commands but can be run directly:
 
 ## Troubleshooting
 
+### Task Runners
+
+#### "command not found: just"
+
+**Solution**: Install Just first:
+```bash
+# On macOS with Homebrew
+brew install just
+
+# Or with Nix
+nix profile install nixpkgs#just
+```
+
+#### "command not found: nx"
+
+**Solution**: Install Nx globally:
+```bash
+npm install -g nx
+
+# Or run without installing
+npx nx <command>
+```
+
+#### "Configuration 'HOSTNAME' not found in flake"
+
+**Solution**: Your hostname doesn't match any configuration. Either:
+
+1. Create a new host configuration matching your hostname:
+   ```bash
+   hostname -s  # Check your hostname
+   ```
+
+2. Or explicitly specify a host:
+   ```bash
+   just build example-darwin
+   ```
+
+3. Or create a local override (`.justfile.local`):
+   ```bash
+   # .justfile.local
+   export NIXOS_CONFIG := "example-darwin"
+   ```
+
+### NixOS/Nix Issues
+
 ### "undefined variable 'inputs'"
 
 **Solution**: Ensure `specialArgs = { inherit inputs; }` is in your `flake.nix`.
@@ -688,6 +733,9 @@ See: `.agents/skills/nixos-best-practices/rules/troubleshooting.md`
 ```bash
 # Check flake syntax
 nix flake check
+
+# Or with Just
+just check
 
 # Build with trace for detailed errors
 sudo nixos-rebuild build --flake .#hostname --show-trace

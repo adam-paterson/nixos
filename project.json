@@ -1,0 +1,133 @@
+{
+  "name": "nixos-darwin-config",
+  "$schema": "node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": ".",
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "./scripts/detect-config.sh ${HOSTNAME:-$(hostname -s)} build",
+        "cwd": "{projectRoot}"
+      },
+      "configurations": {
+        "example-nixos": {
+          "command": "nix build .#nixosConfigurations.example-nixos.config.system.build.toplevel"
+        },
+        "example-darwin": {
+          "command": "nix build .#darwinConfigurations.example-darwin.config.system.build.toplevel"
+        }
+      }
+    },
+    "switch": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "./scripts/detect-config.sh ${HOSTNAME:-$(hostname -s)} switch",
+        "cwd": "{projectRoot}"
+      },
+      "dependsOn": ["check"],
+      "configurations": {
+        "example-nixos": {
+          "command": "sudo nixos-rebuild switch --flake .#example-nixos"
+        },
+        "example-darwin": {
+          "command": "darwin-rebuild switch --flake .#example-darwin"
+        }
+      }
+    },
+    "check": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "nix flake check",
+        "cwd": "{projectRoot}"
+      },
+      "cache": true
+    },
+    "update": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "nix flake update",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "update-input": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "nix flake lock --update-input {args.input}",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "format": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "nix fmt",
+        "cwd": "{projectRoot}"
+      },
+      "cache": true
+    },
+    "clean": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "nix-collect-garbage --delete-older-than 7d",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "clean-all": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "nix-collect-garbage -d",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "show": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "echo '📋 Flake Metadata:'",
+          "nix flake metadata",
+          "echo ''",
+          "echo '📦 Available Configurations:'",
+          "nix flake show"
+        ],
+        "cwd": "{projectRoot}",
+        "parallel": false
+      }
+    },
+    "search": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "nix search nixpkgs {args.query}",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "generations": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "./scripts/show-generations.sh",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "diff": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "./scripts/diff-config.sh ${HOSTNAME:-$(hostname -s)}",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "secret": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "agenix -e secrets/{args.name}.age",
+        "cwd": "{projectRoot}"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "./scripts/test-build.sh ${HOSTNAME:-$(hostname -s)}",
+        "cwd": "{projectRoot}"
+      },
+      "dependsOn": ["check"]
+    }
+  }
+}
