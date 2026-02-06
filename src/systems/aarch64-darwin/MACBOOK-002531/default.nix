@@ -1,7 +1,12 @@
-# MacBook Configuration
+# MacBook System Configuration
 { config, lib, pkgs, ... }:
 
 {
+  imports = [
+    ../../../modules/base.nix  # Common packages for all systems
+  ];
+
+  # Host identification
   networking.hostName = "MACBOOK-002531";
   networking.computerName = "MACBOOK-002531";
   networking.localHostName = "MACBOOK-002531";
@@ -10,15 +15,13 @@
   nix.enable = false;
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
 
-  # System packages
-  environment.systemPackages = with pkgs; [
-    vim
-    git
-    curl
-  ];
-
-  # Primary user (must match actual username)
+  # Primary user
   system.primaryUser = "adampaterson";
+
+  # MacBook-specific packages (add only macOS-specific stuff here)
+  environment.systemPackages = with pkgs; [
+    # Add MacBook-only packages here
+  ];
 
   # macOS system defaults
   system.defaults = {
@@ -31,5 +34,5 @@
   security.pam.services.sudo_local.touchIdAuth = true;
 
   # State version
-  system.stateVersion = "24.05";
+  system.stateVersion = 4;
 }

@@ -19,7 +19,7 @@
   }
 
   # Time zone
-  time.timeZone = "Europe/Berlin";
+  time.timeZone = "Europe/London";
 
   # User account
   users.users.adam = {
