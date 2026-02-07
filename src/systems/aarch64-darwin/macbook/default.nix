@@ -13,5 +13,10 @@
     initialKeyRepeat = 15;
   };
 
-  system.stateVersion = 4;
+  local.tailscale = {
+    enable = true;
+    installApp = true;
+  };
+
+  system.stateVersion = "26.05";
 }

@@ -97,6 +97,61 @@ local.opencode = {
 
 Note: at the currently pinned upstream revision, OpenCode desktop package eval is broken on `aarch64-darwin`; the module falls back to CLI-only and emits a warning when `installDesktop = true`.
 
+## OpenClaw
+
+`src/modules/home/common/openclaw/default.nix` wraps `openclaw/nix-openclaw` for both hosts and follows the same config pattern as OpenCode:
+
+```nix
+local.openclaw = {
+  enable = true;
+  manageConfig = true;
+  settings = { ... };      # used when settingsFile = null
+  settingsFile = ../../../config/openclaw/shared.json;  # JSON source of truth
+  installApp = true;       # macOS only
+};
+```
+
+Behavior:
+
+- `settingsFile` takes precedence over `settings`.
+- JSON is parsed and applied to `programs.openclaw.config`.
+- Shared baseline lives at `src/config/openclaw/shared.json`.
+
+Export live config back to JSON for committing:
+
+```bash
+openclaw-export-config
+# or explicit target:
+openclaw-export-config /path/to/shared.json
+```
+
+## Cloudflared (aurora)
+
+`src/modules/nixos/cloudflared/default.nix` adds a host-level wrapper around `services.cloudflared`.
+
+Aurora wiring lives in:
+
+- `src/systems/x86_64-linux/aurora/default.nix`
+
+Example enablement:
+
+```nix
+local.cloudflared = {
+  enable = true;
+  tunnelId = "<tunnel-uuid>";
+  credentialsFile = "/var/lib/cloudflared/<tunnel-uuid>.json";
+  ingress = {
+    "app.example.com" = "http://127.0.0.1:3000";
+  };
+  defaultService = "http_status:404";
+};
+```
+
+Notes:
+
+- Keep credentials JSON out of git.
+- Place credentials on host (for example `/var/lib/cloudflared/<tunnel-uuid>.json`) with root-readable permissions.
+
 ## Commands
 
 ### Inspect outputs
@@ -142,7 +197,32 @@ home-manager switch --flake .#adam@aurora
 ## Automation
 
 - GitHub Actions CI is defined in `.github/workflows/nix-ci.yml`.
+- GitHub Actions deploy is defined in `.github/workflows/deploy-aurora.yml`.
 - Pre-commit checks are defined in `lefthook.yml`.
+
+### Safe Auto-Deploy Setup (aurora)
+
+`deploy-aurora.yml` deploys on:
+
+- `workflow_dispatch` (manual)
+- pushes to `main` when Nix files change
+
+To keep this safe, configure a protected GitHub Environment named `aurora-production` with required reviewers.
+
+Required repository secrets:
+
+- `AURORA_SSH_USER`: remote SSH user (for example `adam`)
+- `AURORA_HOST`: remote host (public IP, Tailscale IP, or MagicDNS name)
+- `AURORA_SSH_PRIVATE_KEY`: private key used by CI for SSH
+- `AURORA_KNOWN_HOSTS`: pinned host key line(s), for example from:
+  `ssh-keyscan -H <host>`
+
+The deploy workflow enforces:
+
+- serialized deployments (`concurrency`)
+- host key checking (`StrictHostKeyChecking=yes`)
+- single explicit identity (`IdentitiesOnly=yes`)
+- SSH preflight before switch
 
 Set up lefthook locally once:
 

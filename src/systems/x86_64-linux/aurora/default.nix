@@ -11,13 +11,27 @@
 
   time.timeZone = "UTC";
 
+  local.tailscale = {
+    enable = true;
+    openFirewall = true;
+  };
+
+  local.cloudflared = {
+    enable = true;
+    tunnelId = "01c993a2-1474-4c30-b93b-ca3958cf0728";
+    credentialsFile = "/var/lib/cloudflared/01c993a2-1474-4c30-b93b-ca3958cf0728.json";
+    ingress = {
+      "app.example.com" = "http://127.0.0.1:3000";
+    };
+  };
+
   users.users.adam = {
     isNormalUser = true;
     extraGroups = ["wheel" "networkmanager"];
     openssh.authorizedKeys.keys = [
-      "ssh-ed25519 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGnvDtrxaduGQBC/YkKm4QcEvS8Tbn+h8pPLDi5d6wch"
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGnvDtrxaduGQBC/YkKm4QcEvS8Tbn+h8pPLDi5d6wch"
     ];
   };
 
-  system.stateVersion = "24.11";
+  system.stateVersion = "26.05";
 }
