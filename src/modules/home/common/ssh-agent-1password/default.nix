@@ -1,13 +1,15 @@
-{ config, lib, pkgs, ... }:
-let
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}: let
   cfg = config.local.onePasswordSSH;
   defaultSocket =
-    if pkgs.stdenv.isDarwin then
-      "${config.home.homeDirectory}/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
-    else
-      "${config.home.homeDirectory}/.1password/agent.sock";
-in
-{
+    if pkgs.stdenv.isDarwin
+    then "${config.home.homeDirectory}/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
+    else "${config.home.homeDirectory}/.1password/agent.sock";
+in {
   options.local.onePasswordSSH = {
     enable = lib.mkEnableOption "1Password SSH agent integration";
 
@@ -23,7 +25,8 @@ in
       enable = true;
       enableDefaultConfig = false;
       matchBlocks."*" = {
-        identityAgent = cfg.socketPath;
+        # SSH config needs quotes when paths contain spaces (common on macOS for 1Password).
+        identityAgent = "\"${cfg.socketPath}\"";
       };
     };
 

@@ -1,7 +1,6 @@
-{ ... }:
-{
+{...}: {
   imports = [
-    ./hardware-configuration.nix
+    ./hardware
   ];
 
   networking = {
@@ -14,10 +13,9 @@
 
   users.users.adam = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "networkmanager" ];
+    extraGroups = ["wheel" "networkmanager"];
     openssh.authorizedKeys.keys = [
-      # Replace with your real public key before first deploy.
-      "ssh-ed25519 REPLACE_ME"
+      "ssh-ed25519 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGnvDtrxaduGQBC/YkKm4QcEvS8Tbn+h8pPLDi5d6wch"
     ];
   };
 

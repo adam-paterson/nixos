@@ -1,5 +1,4 @@
-{ lib, ... }:
-{
+{lib, ...}: {
   networking.hostName = lib.mkForce "MACBOOK-002531";
   networking.computerName = lib.mkForce "MACBOOK-002531";
   networking.localHostName = lib.mkForce "MACBOOK-002531";

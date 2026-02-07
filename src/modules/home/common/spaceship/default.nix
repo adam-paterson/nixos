@@ -1,8 +1,11 @@
-{ config, lib, pkgs, ... }:
-let
-  cfg = config.local.prompts.spaceship;
-in
 {
+  config,
+  lib,
+  pkgs,
+  ...
+}: let
+  cfg = config.local.prompts.spaceship;
+in {
   options.local.prompts.spaceship = {
     enable = lib.mkOption {
       type = lib.types.bool;
@@ -35,8 +38,16 @@ in
       ];
 
       initContent = lib.mkAfter ''
-        SPACESHIP_PROMPT_ADD_NEWLINE=${if cfg.addNewline then "true" else "false"}
-        SPACESHIP_PROMPT_SEPARATE_LINE=${if cfg.separateLine then "true" else "false"}
+        SPACESHIP_PROMPT_ADD_NEWLINE=${
+          if cfg.addNewline
+          then "true"
+          else "false"
+        }
+        SPACESHIP_PROMPT_SEPARATE_LINE=${
+          if cfg.separateLine
+          then "true"
+          else "false"
+        }
 
         autoload -U promptinit
         promptinit

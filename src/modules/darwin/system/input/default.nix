@@ -1,8 +1,10 @@
-{ config, lib, ... }:
-let
-  cfg = config.local.darwin.input;
-in
 {
+  config,
+  lib,
+  ...
+}: let
+  cfg = config.local.darwin.input;
+in {
   options.local.darwin.input = {
     enable = lib.mkOption {
       type = lib.types.bool;
@@ -57,7 +59,7 @@ in
         CustomUserPreferences = {
           NSGlobalDomain = {
             AppleLocale = "en_GB";
-            AppleLanguages = [ "en-GB" ];
+            AppleLanguages = ["en-GB"];
           };
 
           "com.apple.HIToolbox" = {

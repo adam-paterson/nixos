@@ -1,5 +1,4 @@
-{ lib, ... }:
-let
+{lib, ...}: let
   sharedAliases = {
     ".." = "cd ..";
     "..." = "cd ../..";
@@ -10,8 +9,7 @@ let
     gst = "git status -sb";
     glog = "git log --oneline --graph";
   };
-in
-{
+in {
   programs.bash = {
     enable = lib.mkDefault true;
     enableCompletion = true;

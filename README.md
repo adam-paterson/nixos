@@ -19,15 +19,19 @@ src/
 ├── modules/
 │   ├── base.nix
 │   ├── darwin/
-│   │   └── base/default.nix
+│   │   ├── base/default.nix
+│   │   └── system/
+│   │       ├── default.nix
+│   │       └── input/default.nix
 │   ├── home/
 │   │   └── common/
 │   │       ├── default.nix
-│   │       ├── git.nix
-│   │       ├── packages.nix
-│   │       ├── shell.nix
-│   │       ├── spaceship.nix
-│   │       └── ssh-agent-1password.nix
+│   │       ├── git/default.nix
+│   │       ├── opencode/default.nix
+│   │       ├── packages/default.nix
+│   │       ├── shell/default.nix
+│   │       ├── spaceship/default.nix
+│   │       └── ssh-agent-1password/default.nix
 │   └── nixos/
 │       ├── base/default.nix
 │       └── server/default.nix
@@ -63,7 +67,7 @@ local.onePasswordSSH.enable = true;
 
 ## Spaceship Prompt
 
-`src/modules/home/common/spaceship.nix` configures Spaceship for Zsh and is enabled by default.
+`src/modules/home/common/spaceship/default.nix` configures Spaceship for Zsh and is enabled by default.
 
 Optional per-home overrides:
 
@@ -75,12 +79,43 @@ local.prompts.spaceship = {
 };
 ```
 
+## OpenCode
+
+`src/modules/home/common/opencode/default.nix` manages OpenCode CLI on both hosts and can manage `~/.config/opencode/opencode.json`.
+
+Per-home options:
+
+```nix
+local.opencode = {
+  enable = true;
+  manageConfig = true;
+  settings = { ... };      # rendered to JSON
+  settingsFile = null;     # optional path to existing JSON file
+  installDesktop = false;  # macOS desktop package
+};
+```
+
+Note: at the currently pinned upstream revision, OpenCode desktop package eval is broken on `aarch64-darwin`; the module falls back to CLI-only and emits a warning when `installDesktop = true`.
+
 ## Commands
 
 ### Inspect outputs
 
 ```bash
 nix flake show
+```
+
+### Developer Workflow
+
+```bash
+# List available tasks
+just --list
+
+# Auto-format + auto-fix lints
+just fix
+
+# Full local CI pass
+just ci
 ```
 
 ### macOS (build + switch)
@@ -102,6 +137,17 @@ sudo nixos-rebuild switch --flake .#aurora
 ```bash
 home-manager switch --flake .#adampaterson@macbook
 home-manager switch --flake .#adam@aurora
+```
+
+## Automation
+
+- GitHub Actions CI is defined in `.github/workflows/nix-ci.yml`.
+- Pre-commit checks are defined in `lefthook.yml`.
+
+Set up lefthook locally once:
+
+```bash
+nix run nixpkgs#lefthook -- install
 ```
 
 ## Important Notes

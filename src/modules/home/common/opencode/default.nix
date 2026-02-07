@@ -1,13 +1,24 @@
-{ config, lib, pkgs, inputs, ... }:
-let
+{
+  config,
+  lib,
+  pkgs,
+  inputs,
+  ...
+}: let
   cfg = config.local.opencode;
   system = pkgs.stdenv.hostPlatform.system;
-  opencodeDesktop =
+  desktopEval =
     if inputs ? opencode
+    then builtins.tryEval inputs.opencode.packages.${system}.desktop.drvPath
+    else {
+      success = false;
+      value = null;
+    };
+  opencodeDesktop =
+    if desktopEval.success
     then inputs.opencode.packages.${system}.desktop
     else null;
-in
-{
+in {
   options.local.opencode = {
     enable = lib.mkEnableOption "OpenCode CLI";
 
@@ -47,7 +58,7 @@ in
 
   config = lib.mkIf cfg.enable {
     home.packages =
-      [ pkgs.opencode ]
+      [pkgs.opencode]
       ++ lib.optional (cfg.installDesktop && opencodeDesktop != null) opencodeDesktop;
 
     xdg.enable = true;
@@ -57,11 +68,9 @@ in
       text = lib.mkIf (cfg.settingsFile == null) (builtins.toJSON cfg.settings);
     };
 
-    assertions = [
-      {
-        assertion = !(cfg.installDesktop && opencodeDesktop == null);
-        message = "local.opencode.installDesktop=true requires `inputs.opencode` with a `desktop` package for the current system.";
-      }
-    ];
+    warnings = lib.optional (cfg.installDesktop && opencodeDesktop == null) ''
+      local.opencode.installDesktop=true, but the upstream OpenCode desktop package is currently unavailable for ${system}.
+      Falling back to CLI-only install.
+    '';
   };
 }

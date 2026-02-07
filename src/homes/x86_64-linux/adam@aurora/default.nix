@@ -1,5 +1,4 @@
-{ pkgs, ... }:
-{
+{pkgs, ...}: {
   home.username = "adam";
   home.homeDirectory = "/home/adam";
   home.stateVersion = "24.11";

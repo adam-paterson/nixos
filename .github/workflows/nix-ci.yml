@@ -1,0 +1,39 @@
+name: Nix CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  lint-check-eval:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+
+      - name: Enable Nix cache
+        uses: DeterminateSystems/magic-nix-cache-action@v7
+
+      - name: Install just
+        run: nix profile install nixpkgs#just
+
+      - name: Format check
+        run: just fmt-check
+
+      - name: Lint
+        run: just lint
+
+      - name: Flake checks
+        run: just check
+
+      - name: Evaluate configurations
+        run: just eval
