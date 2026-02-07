@@ -1,13 +1,14 @@
 { pkgs, ... }:
 {
-  home.username = "adam";
-  home.homeDirectory = "/home/adam";
+  home.username = "adampaterson";
+  home.homeDirectory = "/Users/adampaterson";
   home.stateVersion = "24.11";
 
   programs.home-manager.enable = true;
+
   local.onePasswordSSH.enable = true;
 
   home.packages = with pkgs; [
-    tmux
+    just
   ];
 }

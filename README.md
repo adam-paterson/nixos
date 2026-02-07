@@ -1,85 +1,98 @@
-# Snowfall Configuration Guide
+# Nix Environments for macOS + Linux VPS (Snowfall Lib)
 
-## Structure
+This repository manages two machines with one flake:
 
-```
+- `macbook` on `aarch64-darwin` (nix-darwin)
+- `aurora` on `x86_64-linux` (NixOS)
+
+Snowfall Lib auto-discovers systems, homes, and modules under `src/`.
+
+## Layout
+
+```text
 src/
-├── systems/              # System configurations
-│   ├── aarch64-darwin/   # macOS systems
-│   │   └── macbook/     # Your MacBook
-│   └── x86_64-linux/     # Linux systems
-│       └── hetzner/     # Hetzner server
-└── homes/                # Home Manager configs
-    ├── aarch64-darwin/   # macOS homes
-    │   └── adam@macbook/
-    └── x86_64-linux/     # Linux homes
-        └── adam@hetzner/
+├── homes/
+│   ├── aarch64-darwin/
+│   │   └── adampaterson@macbook/default.nix
+│   └── x86_64-linux/
+│       └── adam@aurora/default.nix
+├── modules/
+│   ├── base.nix
+│   ├── darwin/
+│   │   └── base/default.nix
+│   ├── home/
+│   │   └── common/
+│   │       ├── default.nix
+│   │       ├── git.nix
+│   │       ├── packages.nix
+│   │       ├── shell.nix
+│   │       └── ssh-agent-1password.nix
+│   └── nixos/
+│       ├── base/default.nix
+│       └── server/default.nix
+└── systems/
+    ├── aarch64-darwin/
+    │   └── macbook/default.nix
+    └── x86_64-linux/
+        └── aurora/
+            ├── default.nix
+            └── hardware-configuration.nix
+```
+
+## How Modules Are Applied
+
+- `src/modules/home/*` modules apply to all Home Manager profiles.
+- `src/modules/darwin/*` modules apply to all darwin systems.
+- `src/modules/nixos/*` modules apply to all NixOS systems.
+
+This keeps host files small and host-specific, while shared behavior lives in `modules/`.
+
+## 1Password SSH Agent
+
+SSH keys stay in 1Password. Nix only points SSH to the 1Password agent socket.
+
+- macOS default socket: `~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock`
+- Linux default socket: `~/.1password/agent.sock`
+
+Enable per-home with:
+
+```nix
+local.onePasswordSSH.enable = true;
 ```
 
 ## Commands
 
-### Build MacBook (without activating)
+### Inspect outputs
+
 ```bash
-nix build .#darwinConfigurations.macbook.system
+nix flake show
 ```
 
-### Switch MacBook (activate)
+### macOS (build + switch)
+
 ```bash
-darwin-rebuild switch --flake .#macbook
-# OR on first install:
+nix build .#darwinConfigurations.macbook.system
 nix run nix-darwin -- switch --flake .#macbook
 ```
 
-### Build Hetzner (dry run)
+### Linux VPS (build + switch)
+
 ```bash
-nix build .#nixosConfigurations.hetzner.config.system.build.toplevel
+nix build .#nixosConfigurations.aurora.config.system.build.toplevel
+sudo nixos-rebuild switch --flake .#aurora
 ```
 
-### Switch Hetzner (activate)
-```bash
-# On the Hetzner server:
-sudo nixos-rebuild switch --flake .#hetzner
-```
+### Home Manager
 
-### Build Home Manager for MacBook
 ```bash
-home-manager switch --flake .#adam@macbook
-```
-
-### Build Home Manager for Hetzner
-```bash
-home-manager switch --flake .#adam@hetzner
+home-manager switch --flake .#adampaterson@macbook
+home-manager switch --flake .#adam@aurora
 ```
 
 ## Important Notes
 
-1. **Files must be in git**: Snowfall only discovers files that are tracked by git
-2. **Naming convention**:
-   - System configs: `systems/<arch>/<hostname>/default.nix`
-   - Home configs: `homes/<arch>/<username>@<hostname>/default.nix`
-
-3. **On Hetzner**: You'll need to generate hardware-configuration.nix:
-   ```bash
-   sudo nixos-generate-config --show-hardware-config > /etc/nixos/hardware-configuration.nix
-   ```
-   Then copy it to your repo's `src/systems/x86_64-linux/hetzner/hardware-configuration.nix`
-
-## What We Accomplished
-
-✅ flake.nix with snowfall-lib
-✅ MacBook configuration (darwin)
-✅ Hetzner configuration (nixos)
-✅ Home Manager configurations for both
-✅ Working build for MacBook
-
-## Next Steps
-
-1. **MacBook**: Test `darwin-rebuild switch --flake .#macbook`
-2. **Hetzner**: Update `hardware-configuration.nix` with actual disk UUIDs from the server
-3. **SSH Keys**: Add your SSH public key to hetzner config
-4. **Email**: Update email addresses in home configs
-
-## Snowfall Resources
-
-- Main site: https://snowfall.org/
-- Lib docs: https://snowfall.org/reference/lib/
+- Snowfall only discovers files tracked by git.
+- System identifier `macbook` does not change your real macOS hostname; that remains set in `systems/aarch64-darwin/macbook/default.nix`.
+- Replace `REPLACE_ME` SSH public key in `src/systems/x86_64-linux/aurora/default.nix`.
+- Replace `src/systems/x86_64-linux/aurora/hardware-configuration.nix` with values generated on the server.
+- For a truly headless VPS, 1Password agent requires an active desktop/session; otherwise use SSH agent forwarding from your laptop.

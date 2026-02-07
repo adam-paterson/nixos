@@ -1,16 +1,17 @@
 {
-  description = "NixOS & Darwin configurations";
+  description = "Cross-platform development environments with Snowfall Lib";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
 
     snowfall-lib = {
+      # Name must stay `snowfall-lib` for mkFlake input discovery.
       url = "github:snowfallorg/lib";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
     darwin = {
-      url = "github:lnl7/nix-darwin";
+      url = "github:LnL7/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -18,33 +19,17 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    deploy-rs = {
-      url = "github:serokell/deploy-rs";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
   outputs = inputs:
     inputs.snowfall-lib.mkFlake {
       inherit inputs;
-      src = ./src;
+      src = ./.;
 
       snowfall = {
-        namespace = "adam-paterson";
-        meta = {
-          name = "adam-config";
-          title = "Adam's NixOS Configuration";
-        };
+        namespace = "adam";
+        root = ./src;
       };
-
-      systems.modules.darwin = with inputs; [
-        home-manager.darwinModules.default
-      ];
-
-      systems.modules.nixos = with inputs; [
-        home-manager.nixosModules.default
-      ];
 
       channels-config = {
         allowUnfree = true;
