@@ -8,6 +8,11 @@
 
   local.onePasswordSSH.enable = true;
 
+  local.opencode = {
+    enable = true;
+    installDesktop = true;
+  };
+
   home.packages = with pkgs; [
     just
   ];

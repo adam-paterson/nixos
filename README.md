@@ -26,6 +26,7 @@ src/
 │   │       ├── git.nix
 │   │       ├── packages.nix
 │   │       ├── shell.nix
+│   │       ├── spaceship.nix
 │   │       └── ssh-agent-1password.nix
 │   └── nixos/
 │       ├── base/default.nix
@@ -58,6 +59,20 @@ Enable per-home with:
 
 ```nix
 local.onePasswordSSH.enable = true;
+```
+
+## Spaceship Prompt
+
+`src/modules/home/common/spaceship.nix` configures Spaceship for Zsh and is enabled by default.
+
+Optional per-home overrides:
+
+```nix
+local.prompts.spaceship = {
+  enable = true;
+  addNewline = false;
+  separateLine = false;
+};
 ```
 
 ## Commands

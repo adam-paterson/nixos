@@ -109,11 +109,32 @@
         "type": "github"
       }
     },
+    "opencode": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1770422081,
+        "narHash": "sha256-V5fLv7jBDgXgAaf9inNqz/Z0foizsa3cydxtLVCbuwA=",
+        "owner": "anomalyco",
+        "repo": "opencode",
+        "rev": "4abf8049c99b6adc0f130e28d0126f59b3869e49",
+        "type": "github"
+      },
+      "original": {
+        "owner": "anomalyco",
+        "repo": "opencode",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "darwin": "darwin",
         "home-manager": "home-manager",
         "nixpkgs": "nixpkgs",
+        "opencode": "opencode",
         "snowfall-lib": "snowfall-lib"
       }
     },
