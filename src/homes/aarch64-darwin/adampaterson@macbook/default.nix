@@ -21,9 +21,8 @@
   };
 
   local.openclaw = {
-    enable = true;
+    enable = false;
     installApp = true;
-    settingsFile = ../../../config/openclaw/shared.json;
   };
 
   home.packages = with pkgs; [

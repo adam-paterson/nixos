@@ -1,0 +1,27 @@
+{
+  "nix.enableLanguageServer": true,
+  "nix.serverPath": "nixd",
+  "nix.serverSettings": {
+    "nixd": {
+      "formatting": {
+        "command": [
+          "alejandra"
+        ]
+      },
+      "options": {
+        "nixos": {
+          "expr": "(builtins.getFlake \"${workspaceFolder}\").nixosConfigurations.aurora.options"
+        },
+        "nix-darwin": {
+          "expr": "(builtins.getFlake \"${workspaceFolder}\").darwinConfigurations.macbook.options"
+        },
+        "home-manager-aurora": {
+          "expr": "(builtins.getFlake \"${workspaceFolder}\").homeConfigurations.\"adam@aurora\".options"
+        },
+        "home-manager-macbook": {
+          "expr": "(builtins.getFlake \"${workspaceFolder}\").homeConfigurations.\"adampaterson@macbook\".options"
+        }
+      }
+    }
+  }
+}

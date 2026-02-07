@@ -173,6 +173,20 @@ just fix
 just ci
 ```
 
+### Direnv + nixd (VS Code)
+
+This repo provides a flake dev shell named `dev` with `nixd` and common Nix tooling.
+
+```bash
+# one-time
+direnv allow
+
+# manual shell entry (optional)
+nix develop .#dev
+```
+
+The `.envrc` is configured to load `.#dev`, so entering the repo adds `nixd` to your environment.
+
 ### macOS (build + switch)
 
 ```bash

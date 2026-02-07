@@ -25,6 +25,9 @@
     };
   };
 
+  # Let Home Manager move aside pre-existing dotfiles instead of failing activation.
+  home-manager.backupFileExtension = "hm-backup";
+
   users.users.adam = {
     isNormalUser = true;
     extraGroups = ["wheel" "networkmanager"];

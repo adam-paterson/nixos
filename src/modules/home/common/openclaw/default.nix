@@ -117,6 +117,6 @@ in {
     warnings =
       []
       ++ lib.optional (cfg.settingsFile != null) "local.openclaw.settingsFile is set; local.openclaw.settings is ignored."
-      ++ lib.optional (!cfg.manageConfig) "local.openclaw.manageConfig=false; OpenClaw config will not be managed declaratively.";
+      ++ lib.optional (!cfg.manageConfig && config.programs.openclaw.instances == {}) "local.openclaw.manageConfig=false; OpenClaw config will not be managed declaratively.";
   };
 }

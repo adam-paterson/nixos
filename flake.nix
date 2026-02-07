@@ -40,6 +40,13 @@
       snowfall = {
         namespace = "adam";
         root = ./src;
+        meta = {
+          name = "nixos-config";
+          title = "NixOS Config";
+        };
+        alias = {
+          shells.default = "dev";
+        };
       };
 
       overlays = [
