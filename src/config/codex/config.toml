@@ -1,0 +1,7 @@
+# Baseline Codex configuration synced by Home Manager.
+#
+# This file is copied to ~/.codex/config.toml when missing (or always when
+# local.codex.overwriteExisting = true).
+#
+# Keep defaults minimal so Codex can continue managing runtime state locally.
+

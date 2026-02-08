@@ -43,3 +43,21 @@ switch-aurora:
   nix run nixpkgs#nixos-rebuild -- switch --flake path:.#aurora --build-host {{aurora_user}}@{{aurora_host}} --target-host {{aurora_user}}@{{aurora_host}} --sudo --ask-sudo-password
 
 ci: fmt-check lint check eval
+
+# Fast, local pre-deploy checks for OpenClaw on the aurora config.
+# This validates that:
+# - the default instance evaluates
+# - expected gateway port is present
+# - generated OpenClaw files/services are emitted by Home Manager
+test-openclaw-aurora:
+  nix eval --json '.#nixosConfigurations."aurora".config.home-manager.users.adam.programs.openclaw.instances' | jq -e 'has("default")'
+  nix eval --json '.#nixosConfigurations."aurora".config.home-manager.users.adam.programs.openclaw.instances.default.gatewayPort' | jq -e '. == 18789'
+  nix eval --json '.#nixosConfigurations."aurora".config.home-manager.users.adam.home.file' | jq -e 'has(".openclaw/openclaw.json") and has("/home/adam/.config/systemd/user/openclaw-gateway.service")'
+  @echo "OpenClaw aurora eval smoke test passed."
+
+# Full NixOS eval/build graph check (no switch).
+build-aurora-system:
+  nix build '.#nixosConfigurations."aurora".config.system.build.toplevel' --dry-run
+
+# Recommended pre-deploy for aurora OpenClaw changes.
+predeploy-openclaw: fmt-check lint test-openclaw-aurora build-aurora-system

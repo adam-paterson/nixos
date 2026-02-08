@@ -8,6 +8,7 @@
     la = "eza -a";
     gst = "git status -sb";
     glog = "git log --oneline --graph";
+    vim = "nvim";
   };
 in {
   programs.direnv = {
@@ -32,5 +33,11 @@ in {
   programs.nushell = {
     enable = true;
     shellAliases = sharedAliases;
+  };
+
+  home.sessionVariables = {
+    TERM = "xterm-ghostty";
+    EDITOR = "nvim";
+    GIT_EDITOR = "nvim";
   };
 }

@@ -5,6 +5,7 @@
     direnv
     nixd
     gh
+    codex
     ripgrep
     fd
     jq

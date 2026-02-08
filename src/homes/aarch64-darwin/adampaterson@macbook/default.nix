@@ -25,6 +25,23 @@
     installApp = true;
   };
 
+  local.codex.enable = true;
+
+  # Neovim configuration
+  local.neovim = {
+    enable = true;
+    enableAI = true;
+    enableDAP = false;
+    languages = {
+      typescript = true;
+      python = false;
+      go = true;
+      rust = true;
+      nix = true;
+      csharp = true;
+    };
+  };
+
   home.packages = with pkgs; [
     just
   ];
