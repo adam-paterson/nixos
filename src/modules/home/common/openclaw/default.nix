@@ -6,7 +6,7 @@
   ...
 }: let
   cfg = config.local.openclaw;
-  system = pkgs.stdenv.hostPlatform.system;
+  inherit (pkgs.stdenv.hostPlatform) system;
   openclawPackages = inputs.nix-openclaw.packages.${system};
   defaultSettings = {
     gateway.mode = "local";
@@ -102,21 +102,18 @@ in {
       enable = true;
       package = openclawPackages.openclaw;
       appPackage =
-        if openclawPackages ? openclaw-app
-        then openclawPackages.openclaw-app
-        else null;
-      installApp = cfg.installApp;
-      stateDir = cfg.stateDir;
-      workspaceDir = cfg.workspaceDir;
-      documents = cfg.documents;
+        openclawPackages.openclaw-app or null;
+      inherit (cfg) installApp;
+      inherit (cfg) stateDir;
+      inherit (cfg) workspaceDir;
+      inherit (cfg) documents;
       config = lib.mkIf cfg.manageConfig effectiveSettings;
     };
 
     home.packages = lib.optional cfg.installExportHelper exportScript;
 
     warnings =
-      []
-      ++ lib.optional (cfg.settingsFile != null) "local.openclaw.settingsFile is set; local.openclaw.settings is ignored."
+      lib.optional (cfg.settingsFile != null) "local.openclaw.settingsFile is set; local.openclaw.settings is ignored."
       ++ lib.optional (!cfg.manageConfig && config.programs.openclaw.instances == {}) "local.openclaw.manageConfig=false; OpenClaw config will not be managed declaratively.";
   };
 }

@@ -34,7 +34,7 @@
         ingress = ingressList;
       }
       // lib.optionalAttrs (cfg.originRequest != {}) {
-        originRequest = cfg.originRequest;
+        inherit (cfg) originRequest;
       }
     ));
 in {

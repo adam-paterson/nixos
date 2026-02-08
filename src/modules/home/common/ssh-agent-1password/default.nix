@@ -9,7 +9,7 @@
     if pkgs.stdenv.isDarwin
     then "${config.home.homeDirectory}/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
     else "${config.home.homeDirectory}/.1password/agent.sock";
-  hostType = lib.types.submodule ({...}: {
+  hostType = lib.types.submodule (_: {
     options = {
       hostName = lib.mkOption {
         type = lib.types.nullOr lib.types.str;
@@ -61,25 +61,25 @@
     };
   });
   hostMatchBlocks = lib.mapAttrs (_: hostCfg: ({
-      identitiesOnly = hostCfg.identitiesOnly;
+      inherit (hostCfg) identitiesOnly;
     }
     // lib.optionalAttrs (hostCfg.hostName != null) {
       hostname = hostCfg.hostName;
     }
     // lib.optionalAttrs (hostCfg.user != null) {
-      user = hostCfg.user;
+      inherit (hostCfg) user;
     }
     // lib.optionalAttrs (hostCfg.port != null) {
-      port = hostCfg.port;
+      inherit (hostCfg) port;
     }
     // lib.optionalAttrs (hostCfg.identityFile != null) {
-      identityFile = hostCfg.identityFile;
+      inherit (hostCfg) identityFile;
     }
     // lib.optionalAttrs (hostCfg.identityAgent != null) {
-      identityAgent = hostCfg.identityAgent;
+      inherit (hostCfg) identityAgent;
     }
     // lib.optionalAttrs (hostCfg.preferredAuthentications != null) {
-      preferredAuthentications = hostCfg.preferredAuthentications;
+      inherit (hostCfg) preferredAuthentications;
     }
     // lib.optionalAttrs (hostCfg.pubkeyAuthentication != null) {
       inherit (hostCfg) pubkeyAuthentication;

@@ -1,4 +1,4 @@
-{...}: {
+_: {
   # Keep this disabled if you install/manage Nix via Determinate Nix.
   nix.enable = false;
 

@@ -1,4 +1,4 @@
-{...}: {
+_: {
   services.fail2ban.enable = true;
 
   security.sudo = {

@@ -6,7 +6,7 @@
   ...
 }: let
   cfg = config.local.opencode;
-  system = pkgs.stdenv.hostPlatform.system;
+  inherit (pkgs.stdenv.hostPlatform) system;
   desktopEval =
     if inputs ? opencode
     then builtins.tryEval inputs.opencode.packages.${system}.desktop.drvPath
