@@ -136,6 +136,7 @@
       mode = "merge";
       providers = {};
     };
+    plugins.entries.whatsapp.enabled = true;
     agents.defaults = {
       model.primary = "cerebras/zai-glm-4.7";
       models."cerebras/zai-glm-4.7" = {
@@ -215,8 +216,7 @@ in {
 
           channels.whatsapp = {
             dmPolicy = "allowlist";
-            # TODO: replace with Adam's allowed sender number.
-            allowFrom = ["+15550000001"];
+            allowFrom = ["+447595944315"];
             groups = {
               "*" = {requireMention = true;};
             };
@@ -251,8 +251,10 @@ in {
 
           channels.whatsapp = {
             dmPolicy = "allowlist";
-            # TODO: replace with Rachel's allowed sender number.
-            allowFrom = ["+15550000002"];
+            allowFrom = [
+              "+447595944315"
+              "+447432133399"
+            ];
             groups = {
               "*" = {requireMention = true;};
             };
@@ -262,12 +264,12 @@ in {
           agents.list = [
             {
               id = "main";
-              default = true;
               agentDir = "/home/adam/.openclaw-rachel/workspace/agents/main";
               identity.name = "rachel";
             }
             {
               id = "personal-trainer";
+              default = true;
               agentDir = "/home/adam/.openclaw-rachel/agents/personal-trainer";
               workspace = "/home/adam/.openclaw-rachel/workspace/agents/personal-trainer";
               identity.name = "Personal Trainer";
@@ -334,7 +336,7 @@ in {
       # Optional file: keep gateway booting even before secrets are provisioned.
       Service.EnvironmentFile = ["-%h/.config/openclaw/secrets.env"];
       Service.ExecStart = lib.mkForce ''
-        ${pkgs.bash}/bin/bash -lc 'tok="''${OP_SERVICE_ACCOUNT_TOKEN:-}"; tok="''${tok#\"}"; tok="''${tok%\"}"; if [ -n "$tok" ] && [ -f "$HOME/.config/op/env-vars" ]; then OP_SERVICE_ACCOUNT_TOKEN="$tok" ${pkgs._1password-cli}/bin/op run --env-file "$HOME/.config/op/env-vars" -- ${config.programs.openclaw.package}/bin/openclaw gateway --port 18789 || echo "[openclaw] op run failed for adam, falling back to direct env" >&2; fi; exec ${config.programs.openclaw.package}/bin/openclaw gateway --port 18789'
+        ${pkgs.bash}/bin/bash -lc 'tok="''${OP_SERVICE_ACCOUNT_TOKEN:-}"; tok="$(echo "$tok" | sed -e "s/^\"//" -e "s/\"$//")"; if [ -n "$tok" ] && [ -f "$HOME/.config/op/env-vars" ]; then OP_SERVICE_ACCOUNT_TOKEN="$tok" ${pkgs._1password-cli}/bin/op run --env-file "$HOME/.config/op/env-vars" -- ${config.programs.openclaw.package}/bin/openclaw gateway --port 18789 || echo "[openclaw] op run failed for adam, falling back to direct env" >&2; fi; exec ${config.programs.openclaw.package}/bin/openclaw gateway --port 18789'
       '';
     };
 
@@ -343,7 +345,7 @@ in {
       # Optional file: keep gateway booting even before secrets are provisioned.
       Service.EnvironmentFile = ["-%h/.config/openclaw/secrets.env"];
       Service.ExecStart = lib.mkForce ''
-        ${pkgs.bash}/bin/bash -lc 'tok="''${OP_SERVICE_ACCOUNT_TOKEN:-}"; tok="''${tok#\"}"; tok="''${tok%\"}"; if [ -n "$tok" ] && [ -f "$HOME/.config/op/env-vars" ]; then OP_SERVICE_ACCOUNT_TOKEN="$tok" ${pkgs._1password-cli}/bin/op run --env-file "$HOME/.config/op/env-vars" -- ${config.programs.openclaw.package}/bin/openclaw gateway --port 18810 || echo "[openclaw] op run failed for rachel, falling back to direct env" >&2; fi; exec ${config.programs.openclaw.package}/bin/openclaw gateway --port 18810'
+        ${pkgs.bash}/bin/bash -lc 'tok="''${OP_SERVICE_ACCOUNT_TOKEN:-}"; tok="$(echo "$tok" | sed -e "s/^\"//" -e "s/\"$//")"; if [ -n "$tok" ] && [ -f "$HOME/.config/op/env-vars" ]; then OP_SERVICE_ACCOUNT_TOKEN="$tok" ${pkgs._1password-cli}/bin/op run --env-file "$HOME/.config/op/env-vars" -- ${config.programs.openclaw.package}/bin/openclaw gateway --port 18810 || echo "[openclaw] op run failed for rachel, falling back to direct env" >&2; fi; exec ${config.programs.openclaw.package}/bin/openclaw gateway --port 18810'
       '';
     };
   };
