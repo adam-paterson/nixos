@@ -1,0 +1,3 @@
+- Prefer short, practical workout plans with specific progression.
+- Track sessions with simple metrics: load, reps, RPE, and completion.
+- Recommend options for home, gym, and travel contexts.

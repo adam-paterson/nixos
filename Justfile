@@ -46,13 +46,14 @@ ci: fmt-check lint check eval
 
 # Fast, local pre-deploy checks for OpenClaw on the aurora config.
 # This validates that:
-# - the default instance evaluates
-# - expected gateway port is present
+# - the adam and rachel instances evaluate
+# - expected gateway ports are present
 # - generated OpenClaw files/services are emitted by Home Manager
 test-openclaw-aurora:
-  nix eval --json '.#nixosConfigurations."aurora".config.home-manager.users.adam.programs.openclaw.instances' | jq -e 'has("default")'
-  nix eval --json '.#nixosConfigurations."aurora".config.home-manager.users.adam.programs.openclaw.instances.default.gatewayPort' | jq -e '. == 18789'
-  nix eval --json '.#nixosConfigurations."aurora".config.home-manager.users.adam.home.file' | jq -e 'has(".openclaw/openclaw.json") and has("/home/adam/.config/systemd/user/openclaw-gateway.service")'
+  nix eval --json '.#nixosConfigurations."aurora".config.home-manager.users.adam.programs.openclaw.instances' | jq -e 'has("adam") and has("rachel") and (has("default") | not)'
+  nix eval --json '.#nixosConfigurations."aurora".config.home-manager.users.adam.programs.openclaw.instances.adam.gatewayPort' | jq -e '. == 18789'
+  nix eval --json '.#nixosConfigurations."aurora".config.home-manager.users.adam.programs.openclaw.instances.rachel.gatewayPort' | jq -e '. == 18810'
+  nix eval --json '.#nixosConfigurations."aurora".config.home-manager.users.adam.home.file' | jq -e 'has(".openclaw-adam/openclaw.json") and has(".openclaw-rachel/openclaw.json") and has("/home/adam/.config/systemd/user/openclaw-gateway-adam.service") and has("/home/adam/.config/systemd/user/openclaw-gateway-rachel.service")'
   @echo "OpenClaw aurora eval smoke test passed."
 
 # Full NixOS eval/build graph check (no switch).
