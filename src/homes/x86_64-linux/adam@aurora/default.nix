@@ -8,7 +8,17 @@
   home.stateVersion = "26.05";
 
   programs.home-manager.enable = true;
-  local.onePasswordSSH.enable = false;
+  local.onePasswordSSH.enable = true;
+
+  local.onePasswordCLI = {
+    enable = true;
+    # Uncomment and configure with your actual secrets:
+    # environmentSecrets = {
+    #   ANTHROPIC_API_KEY = "op://Personal/Anthropic/credential";
+    #   OPENAI_API_KEY = "op://Personal/OpenAI/credential";
+    # };
+  };
+
   local.opencode = {
     enable = true;
     installDesktop = false;
