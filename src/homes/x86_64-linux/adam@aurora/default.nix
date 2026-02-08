@@ -2,7 +2,33 @@
   lib,
   pkgs,
   ...
-}: {
+}: let
+  mergeAttrs = lib.foldl' lib.recursiveUpdate {};
+
+  # Shared OpenClaw settings reused by multiple instances.
+  # Add common env/model/provider settings here once.
+  sharedOpenclawConfig = {
+    env = {
+      shellEnv = {
+        enabled = true;
+        timeoutMs = 6000;
+      };
+    };
+    browser = {
+      enabled = true;
+      evaluateEnabled = true;
+      headless = true;
+    };
+    gateway = {
+      mode = "local";
+      bind = "loopback";
+      auth = {
+        mode = "token";
+        token = "b27f3b80dbedb86512fe5ab0fdb021a268d4bbec6eb35ce2";
+      };
+    };
+  };
+in {
   home.username = "adam";
   home.homeDirectory = "/home/adam";
   home.stateVersion = "26.05";
@@ -33,53 +59,64 @@
   programs.openclaw.instances = {
     adam = {
       gatewayPort = 18789;
-      config = {
-        gateway = {
-          mode = "local";
-          port = 18789;
-          bind = "loopback";
-          auth = {
-            mode = "token";
-            token = "b27f3b80dbedb86512fe5ab0fdb021a268d4bbec6eb35ce2";
-          };
-        };
-      };
+      config = mergeAttrs [
+        sharedOpenclawConfig
+        {
+          gateway.port = 18789;
+        }
+      ];
     };
 
     rachel = {
       gatewayPort = 18790;
-      config = {
-        gateway = {
-          mode = "local";
-          port = 18790;
-          bind = "loopback";
-        };
+      config = mergeAttrs [
+        sharedOpenclawConfig
+        {
+          gateway.port = 18790;
 
-        agents.list = [
-          {
-            id = "rachel-main";
-            default = true;
-            agentDir = "/home/adam/.openclaw-rachel/agents/rachel-main";
-            identity.name = "Rachel";
-          }
-          {
-            id = "rachel-coder";
-            agentDir = "/home/adam/.openclaw-rachel/agents/rachel-coder";
-            identity.name = "Rachel Coder";
-          }
-        ];
-      };
+          channels.whatsapp = {
+            dmPolicy = "allowlist";
+            allowFrom = ["+447432133399"];
+            groups = {
+              "*" = {requireMention = true;};
+            };
+            sendReadReceipts = true;
+          };
+
+          agents.list = [
+            {
+              id = "main";
+              default = true;
+              agentDir = "/home/adam/.openclaw-rachel/agents/main";
+              identity.name = "Rachel";
+            }
+            {
+              id = "tammy";
+              agentDir = "/home/adam/.openclaw-rachel/agents/tammy";
+              identity.name = "Tammy";
+              identity.emoji = "🐾";
+            }
+          ];
+        }
+      ];
     };
   };
 
   home.file = {
     ".openclaw-adam/openclaw.json".force = true;
     ".openclaw-rachel/openclaw.json".force = true;
-    ".openclaw-rachel/agents/rachel-main/AGENTS.md".source = ../../../config/openclaw/agents/rachel-main/AGENTS.md;
-    ".openclaw-rachel/agents/rachel-coder/AGENTS.md".source = ../../../config/openclaw/agents/rachel-coder/AGENTS.md;
+    ".openclaw-rachel/agents/main/AGENTS.md".source = ../../../config/openclaw/agents/rachel/main/AGENTS.md;
+    ".openclaw-rachel/agents/tammy/AGENTS.md".source = ../../../config/openclaw/agents/rachel/tammy/AGENTS.md;
   };
 
   home.packages = with pkgs; [
     tmux
   ];
+
+  systemd.user.services.openclaw-gateway-adam = {
+    Install.WantedBy = ["default.target"];
+  };
+  systemd.user.services.openclaw-gateway-rachel = {
+    Install.WantedBy = ["default.target"];
+  };
 }
