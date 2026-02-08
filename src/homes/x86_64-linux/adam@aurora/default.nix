@@ -20,16 +20,18 @@
     "adam"
     "rachel"
   ];
-  syncPairs = lib.concatMapStringsSep "\n" (
-    instanceName:
-      lib.concatMapStringsSep "\n" (
-        agentId: let
-          repoDir = "${repoAgentsRoot}/${instanceName}/${agentId}";
-          workspaceDir = "/home/adam/.openclaw-${instanceName}/workspace/agents/${agentId}";
-        in
-          lib.concatMapStringsSep "\n" (fileName: "${repoDir}/${fileName}\t${workspaceDir}/${fileName}") managedAgentFiles.${agentId}
-      ) (lib.attrNames managedAgentFiles)
-  ) instanceNames;
+  syncPairs =
+    lib.concatMapStringsSep "\n" (
+      instanceName:
+        lib.concatMapStringsSep "\n" (
+          agentId: let
+            repoDir = "${repoAgentsRoot}/${instanceName}/${agentId}";
+            workspaceDir = "/home/adam/.openclaw-${instanceName}/workspace/agents/${agentId}";
+          in
+            lib.concatMapStringsSep "\n" (fileName: "${repoDir}/${fileName}\t${workspaceDir}/${fileName}") managedAgentFiles.${agentId}
+        ) (lib.attrNames managedAgentFiles)
+    )
+    instanceNames;
   agentSyncScript = pkgs.writeShellScriptBin "openclaw-agent-sync" ''
     set -euo pipefail
 
@@ -247,7 +249,10 @@ in {
         sharedOpenclawConfig
         {
           gateway.port = 18810;
-          agents.defaults.workspace = "/home/adam/.openclaw-rachel/workspace";
+          agents = {
+            defaults.workspace = "/home/adam/.openclaw-rachel/workspace";
+            defaults.skipBootstrap = true;
+          };
 
           channels.whatsapp = {
             dmPolicy = "allowlist";
@@ -264,6 +269,7 @@ in {
           agents.list = [
             {
               id = "main";
+              default = false;
               agentDir = "/home/adam/.openclaw-rachel/workspace/agents/main";
               identity.name = "rachel";
             }

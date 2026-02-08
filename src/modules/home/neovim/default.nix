@@ -114,7 +114,7 @@ in {
       (mkIf cfg.languages.typescript prettierd)
       (mkIf cfg.languages.python black)
       (mkIf cfg.languages.go gofumpt)
-      (mkIf cfg.languages.nix nixfmt-rfc-style)
+      (mkIf cfg.languages.nix nixfmt)
       stylua
       shfmt
 
