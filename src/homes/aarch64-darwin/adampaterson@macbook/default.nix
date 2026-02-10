@@ -13,6 +13,21 @@
       user = "adam";
       identitiesOnly = false;
     };
+    hosts."ssh.dev.azure.com" = {
+      hostName = "ssh.dev.azure.com";
+      user = "git";
+      identitiesOnly = true;
+      identityFile = "~/.ssh/id_rsa_azure";
+    };
+  };
+
+  local.onePasswordCLI = {
+    enable = true;
+    environmentSecrets = {
+      CEREBRAS_API_KEY = "op://Nix/Cerebras/password";
+      OPENAI_API_KEY = "op://Personal/OpenAI/api_key";
+      ANTHROPIC_API_KEY = "op://Personal/Anthropic/api_key";
+    };
   };
 
   local.opencode = {
@@ -41,6 +56,11 @@
       csharp = true;
     };
   };
+
+  # Enable new CLI tools
+  local.git.enable = true;
+  local.shell.enable = true;
+  local.tailwind.enable = true;
 
   home.packages = with pkgs; [
     just

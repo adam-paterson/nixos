@@ -28,7 +28,10 @@
             repoDir = "${repoAgentsRoot}/${instanceName}/${agentId}";
             workspaceDir = "/home/adam/.openclaw-${instanceName}/workspace/agents/${agentId}";
           in
-            lib.concatMapStringsSep "\n" (fileName: "${repoDir}/${fileName}\t${workspaceDir}/${fileName}") managedAgentFiles.${agentId}
+            lib.concatMapStringsSep "\n" (
+              fileName: "${repoDir}/${fileName}\t${workspaceDir}/${fileName}"
+            )
+            managedAgentFiles.${agentId}
         ) (lib.attrNames managedAgentFiles)
     )
     instanceNames;
@@ -192,6 +195,11 @@ in {
 
   local.codex.enable = true;
 
+  # Enable CLI tools (Linux-compatible subset)
+  local.git.enable = true;
+  local.shell.enable = true;
+  local.tailwind.enable = true;
+
   # Neovim configuration
   local.neovim = {
     enable = true;
@@ -220,7 +228,9 @@ in {
             dmPolicy = "allowlist";
             allowFrom = ["+447595944315"];
             groups = {
-              "*" = {requireMention = true;};
+              "*" = {
+                requireMention = true;
+              };
             };
             sendReadReceipts = true;
           };
@@ -261,7 +271,9 @@ in {
               "+447432133399"
             ];
             groups = {
-              "*" = {requireMention = true;};
+              "*" = {
+                requireMention = true;
+              };
             };
             sendReadReceipts = true;
           };

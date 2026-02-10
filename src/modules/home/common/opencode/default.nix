@@ -34,10 +34,9 @@ in {
         "$schema" = "https://opencode.ai/config.json";
         theme = "opencode";
         permission = {
-          "*" = "ask";
           bash = "allow";
-          edit = "ask";
-          webfetch = "ask";
+          edit = "allow";
+          webfetch = "allow";
         };
       };
       description = "OpenCode JSON settings rendered to ~/.config/opencode/opencode.json.";
