@@ -12,5 +12,6 @@
     bat
     fzf
     delta
+    cachix
   ];
 }

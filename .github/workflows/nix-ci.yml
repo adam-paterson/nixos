@@ -9,6 +9,8 @@ on:
 jobs:
   lint-check-eval:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
     steps:
       - name: Checkout
@@ -19,6 +21,29 @@ jobs:
         with:
           extra_nix_config: |
             experimental-features = nix-command flakes
+
+      - name: Setup Cachix (read-only)
+        if: github.event_name == 'pull_request' && vars.CACHIX_CACHE_NAME != ''
+        uses: cachix/cachix-action@v16
+        with:
+          name: ${{ vars.CACHIX_CACHE_NAME }}
+          skipPush: true
+
+      - name: Validate Cachix config
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          CACHIX_CACHE_NAME: ${{ vars.CACHIX_CACHE_NAME }}
+          CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
+        run: |
+          test -n "${CACHIX_CACHE_NAME}"
+          test -n "${CACHIX_AUTH_TOKEN}"
+
+      - name: Setup Cachix (push on main)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: cachix/cachix-action@v16
+        with:
+          name: ${{ vars.CACHIX_CACHE_NAME }}
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
       - name: Enable Nix cache
         uses: DeterminateSystems/magic-nix-cache-action@v7
@@ -37,3 +62,6 @@ jobs:
 
       - name: Evaluate configurations
         run: just eval
+
+      - name: Build Aurora system (populate binary cache)
+        run: nix build .#nixosConfigurations.aurora.config.system.build.toplevel

@@ -1,104 +1,95 @@
+# ╭──────────────────────────────────────────────────────────╮
+# │ Nix flake (Snowfall Lib)                                 │
+# ╰──────────────────────────────────────────────────────────╯
 {
   description = "Cross-platform development environments with Snowfall Lib";
-
+  # ── Inputs ────────────────────────────────────────────────────────────
   inputs = {
+    # ── Primary Inputs ──────────────────────────────────────────────────
+    # Nix
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-
+    # Snowfall Lib
     snowfall-lib = {
-      # Name must stay `snowfall-lib` for mkFlake input discovery.
       url = "github:snowfallorg/lib";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
+    # Nix Darwin (macOS support)
     darwin = {
       url = "github:LnL7/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
+    # Home Manager (user-level package management)
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
+    # Homebrew (macOS package manager)
+    homebrew = {
+      url = "github:zhaofengli-wip/nix-homebrew";
+    };
+    # Homebrew packages and casks
+    homebrew-core = {
+      url = "github:homebrew/homebrew-core";
+      flake = false;
+    };
+    homebrew-cask = {
+      url = "github:homebrew/homebrew-cask";
+      flake = false;
+    };
+    homebrew-aerospace = {
+      url = "github:nikitabobko/homebrew-tap";
+      flake = false;
+    };
     opencode = {
       url = "github:anomalyco/opencode";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    nix-openclaw = {
+    openclaw = {
       url = "github:openclaw/nix-openclaw";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.home-manager.follows = "home-manager";
     };
+
+    openclaw-tools = {
+      url = "github:openclaw/nix-steipete-tools";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    codex-cli-nix = {
+      url = "github:sadjow/codex-cli-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = inputs:
+  outputs = inputs @ {...}: let
+    meta = import ./meta.nix {inherit inputs;};
+  in
     inputs.snowfall-lib.mkFlake {
       inherit inputs;
       src = ./.;
 
+      homes.modules = [
+        inputs.openclaw.homeManagerModules.openclaw
+      ];
+
       snowfall = {
-        namespace = "adam";
+        namespace = "adampaterson";
         root = ./src;
         meta = {
           name = "nixos-config";
           title = "NixOS Config";
         };
-        alias = {
-          shells.default = "dev";
-        };
+        entities = meta;
+      };
+
+      alias = {
+        shells.default = "dev";
       };
 
       overlays = [
-        (final: prev: let
-          version = "0.98.0";
-          releaseTag = "rust-v${version}";
-          assets = {
-            x86_64-linux = {
-              triple = "x86_64-unknown-linux-musl";
-              hash = "sha256-wJ7m7G8e71iCS96hTvsQre5U4OPFzL+k4/862bDd3IM=";
-            };
-            aarch64-darwin = {
-              triple = "aarch64-apple-darwin";
-              hash = "sha256-PMdXcogDruDEyZTFaCENmQCrxs7GC+Aj57LApuMBglU=";
-            };
-          };
-          selectedAsset = assets.${final.stdenv.hostPlatform.system} or null;
-        in {
-          codex =
-            if selectedAsset == null
-            then prev.codex
-            else
-              final.stdenvNoCC.mkDerivation {
-                pname = "codex";
-                inherit version;
-
-                src = final.fetchurl {
-                  url = "https://github.com/openai/codex/releases/download/${releaseTag}/codex-${selectedAsset.triple}.tar.gz";
-                  hash = selectedAsset.hash;
-                };
-
-                sourceRoot = ".";
-                dontConfigure = true;
-                dontBuild = true;
-
-                installPhase = ''
-                  runHook preInstall
-                  mkdir -p "$out/bin"
-                  cp "codex-${selectedAsset.triple}" "$out/bin/codex"
-                  chmod +x "$out/bin/codex"
-                  runHook postInstall
-                '';
-
-                meta =
-                  prev.codex.meta
-                  // {
-                    inherit version;
-                    sourceProvenance = [final.lib.sourceTypes.binaryNativeCode];
-                  };
-              };
-        })
-        inputs.nix-openclaw.overlays.default
+        inputs.codex-cli-nix.overlays.default
+        inputs.openclaw.overlays.default
       ];
 
       channels-config = {

@@ -18,5 +18,15 @@
     installApp = true;
   };
 
+  homebrew = {
+    casks = [
+      "ghostty"
+      "obsidian"
+      "aerospace"
+    ];
+
+    taps = ["nikitabobko/tap"];
+  };
+
   system.stateVersion = "26.05";
 }

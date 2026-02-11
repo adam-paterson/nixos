@@ -25,7 +25,7 @@ in {
 
     homebrew = lib.mkIf cfg.installApp {
       enable = lib.mkDefault true;
-      casks = lib.mkAfter ["tailscale"];
+      casks = lib.mkAfter ["tailscale-app"];
     };
   };
 }

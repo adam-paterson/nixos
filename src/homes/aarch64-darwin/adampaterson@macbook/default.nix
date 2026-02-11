@@ -35,11 +35,6 @@
     installDesktop = true;
   };
 
-  local.openclaw = {
-    enable = false;
-    installApp = true;
-  };
-
   local.codex.enable = true;
 
   # Neovim configuration

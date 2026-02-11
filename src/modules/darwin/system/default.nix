@@ -67,6 +67,7 @@ _: {
         NSAutomaticPeriodSubstitutionEnabled = false;
         NSAutomaticQuoteSubstitutionEnabled = false;
         NSAutomaticSpellingCorrectionEnabled = false;
+        NSWindowShouldDragOnGesture = true; # allows for cmd + ctrl and mouse drag to move windows instead of needing to click the title bar
 
         # Trackpad
         "com.apple.swipescrolldirection" = true; # Natural scrolling
