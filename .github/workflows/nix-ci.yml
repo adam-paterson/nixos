@@ -11,6 +11,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+    env:
+      CACHIX_CACHE_NAME: ${{ vars.CACHIX_CACHE_NAME || secrets.CACHIX_CACHE_NAME }}
 
     steps:
       - name: Checkout
@@ -23,16 +25,15 @@ jobs:
             experimental-features = nix-command flakes
 
       - name: Setup Cachix (read-only)
-        if: github.event_name == 'pull_request' && vars.CACHIX_CACHE_NAME != ''
+        if: github.event_name == 'pull_request' && env.CACHIX_CACHE_NAME != ''
         uses: cachix/cachix-action@v16
         with:
-          name: ${{ vars.CACHIX_CACHE_NAME }}
+          name: ${{ env.CACHIX_CACHE_NAME }}
           skipPush: true
 
       - name: Validate Cachix config
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         env:
-          CACHIX_CACHE_NAME: ${{ vars.CACHIX_CACHE_NAME }}
           CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
         run: |
           test -n "${CACHIX_CACHE_NAME}"
@@ -42,7 +43,7 @@ jobs:
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: cachix/cachix-action@v16
         with:
-          name: ${{ vars.CACHIX_CACHE_NAME }}
+          name: ${{ env.CACHIX_CACHE_NAME }}
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
       - name: Enable Nix cache
