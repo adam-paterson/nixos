@@ -14,6 +14,7 @@
     tree
     unzip
     p7zip
+    direnv
   ];
 
   environment.shellAliases = {

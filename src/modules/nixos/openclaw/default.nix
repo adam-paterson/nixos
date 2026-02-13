@@ -1,48 +1,65 @@
-{lib, ...}: {
-  home-manager.sharedModules = [
-    {
-      # OpenClaw available on all NixOS Home Manager users by default.
-      programs.openclaw.enable = lib.mkDefault true;
+{
+  config,
+  inputs,
+  lib,
+  ...
+}: let
+  cfg = config.local.openclaw;
+in {
+  options.local.openclaw = {
+    enable = lib.mkEnableOption "OpenClaw shared defaults for NixOS Home Manager users";
+  };
 
-      # Linux launch management on apply.
-      programs.openclaw.installApp = lib.mkDefault false;
-      programs.openclaw.launchd.enable = lib.mkDefault false;
-      programs.openclaw.systemd.enable = lib.mkDefault true;
+  config = lib.mkIf cfg.enable {
+    home-manager.sharedModules = [
+      inputs.openclaw.homeManagerModules.openclaw
+      {
+        # Linux launch management on apply.
+        programs.openclaw = {
+          enable = lib.mkDefault true;
+          installApp = lib.mkDefault false;
+          launchd.enable = lib.mkDefault false;
+          systemd.enable = lib.mkDefault true;
 
-      # Shared repo-managed documents applied per instance workspace.
-      programs.openclaw.documents = lib.mkDefault ../../../config/openclaw/documents;
+          # Shared repo-managed documents applied per instance workspace.
+          documents = lib.mkDefault ../../../config/openclaw/documents;
 
-      # Shared baseline config inherited by all user-defined instances.
-      programs.openclaw.config = lib.mkDefault {
-        gateway = {
-          mode = "local";
-          bind = "loopback";
-          auth = {
-            mode = "token";
-            token = "{env:OPENCLAW_GATEWAY_TOKEN}";
+          # Shared baseline config inherited by all user-defined instances.
+          config = lib.mkDefault {
+            gateway = {
+              mode = "local";
+              bind = "loopback";
+              auth = {
+                mode = "token";
+                token = "{env:OPENCLAW_GATEWAY_TOKEN}";
+              };
+            };
+            env = {
+              shellEnv = {
+                enabled = true;
+                timeoutMs = 6000;
+              };
+              vars = {
+                OPENAI_API_KEY = "{env:OPENAI_API_KEY}";
+                ANTHROPIC_API_KEY = "{env:ANTHROPIC_API_KEY}";
+                FIREWORKS_API_KEY = "{env:FIREWORKS_API_KEY}";
+              };
+            };
+            browser = {
+              enabled = true;
+              headless = true;
+            };
+          };
+
+          # Default Linux-compatible bundled tools.
+          bundledPlugins = {
+            # Enable bundled plugins by default, but allow users to disable them if desired.
+            summarize.enable = lib.mkDefault true;
+            oracle.enable = lib.mkDefault true;
+            goplaces.enable = lib.mkDefault true;
           };
         };
-        env = {
-          shellEnv = {
-            enabled = true;
-            timeoutMs = 6000;
-          };
-          vars = {
-            OPENAI_API_KEY = "{env:OPENAI_API_KEY}";
-            ANTHROPIC_API_KEY = "{env:ANTHROPIC_API_KEY}";
-          };
-        };
-        browser = {
-          enabled = true;
-          evaluateEnabled = true;
-          headless = true;
-        };
-      };
-
-      # Default Linux-compatible bundled tools.
-      programs.openclaw.bundledPlugins.summarize.enable = lib.mkDefault true;
-      programs.openclaw.bundledPlugins.oracle.enable = lib.mkDefault true;
-      programs.openclaw.bundledPlugins.goplaces.enable = lib.mkDefault true;
-    }
-  ];
+      }
+    ];
+  };
 }

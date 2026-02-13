@@ -1,72 +1,37 @@
-name: Nix CI
+name: Nix Cache
 
 on:
-  pull_request:
-  push:
+  workflow_run:
+    workflows:
+      - Nix Checks
     branches:
       - main
+    types:
+      - completed
+  workflow_dispatch:
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.event.workflow_run.head_sha || github.sha }}
   cancel-in-progress: true
 
 jobs:
-  checks:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Free disk space
-        run: |
-          df -h
-          sudo rm -rf /usr/share/dotnet
-          sudo rm -rf /opt/ghc
-          sudo rm -rf /usr/local/lib/android
-          sudo rm -rf /opt/hostedtoolcache/CodeQL
-          sudo rm -rf /usr/local/.ghcup
-          docker system prune -af || true
-          df -h
-
-      - name: Install Nix
-        uses: cachix/install-nix-action@v31
-        with:
-          extra_nix_config: |
-            experimental-features = nix-command flakes
-
-      - name: Enable Nix cache
-        uses: DeterminateSystems/magic-nix-cache-action@v7
-
-      - name: Install just
-        run: nix profile add nixpkgs#just
-
-      - name: Format check
-        run: just fmt-check
-
-      - name: Lint
-        run: just lint
-
-      - name: Flake checks
-        run: just check
-
-      - name: Evaluate configurations
-        run: just eval
-
   build-aurora-cache:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: checks
+    name: Build Aurora and Push Cache
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
     runs-on: ubuntu-latest
     permissions:
       contents: read
     env:
       CACHIX_CACHE_NAME: ${{ vars.CACHIX_CACHE_NAME || secrets.CACHIX_CACHE_NAME }}
+      BUILD_REF: ${{ github.event.workflow_run.head_sha || github.sha }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: ${{ env.BUILD_REF }}
 
       - name: Free disk space
         run: |

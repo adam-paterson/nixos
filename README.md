@@ -1,3 +1,5 @@
+![Banner image](./assets/banner.png)
+
 # Nix Environments for macOS + Linux VPS (Snowfall Lib)
 
 This repository manages two machines with one flake:
@@ -210,33 +212,28 @@ home-manager switch --flake .#adam@aurora
 
 ## Automation
 
-- GitHub Actions CI is defined in `.github/workflows/nix-ci.yml`.
-- GitHub Actions deploy is defined in `.github/workflows/deploy-aurora.yml`.
+- GitHub Actions checks are defined in `.github/workflows/nix-checks.yml`.
+- GitHub Actions cache population is defined in `.github/workflows/nix-cache.yml`.
 - Pre-commit checks are defined in `lefthook.yml`.
 
-### Safe Auto-Deploy Setup (aurora)
+### CI and Cache Flow
 
-`deploy-aurora.yml` deploys on:
+`nix-checks.yml` runs on:
 
+- pull requests
+- pushes to `main`
+
+`nix-cache.yml` runs on:
+
+- successful completion of `nix-checks.yml` on `main`
 - `workflow_dispatch` (manual)
-- pushes to `main` when Nix files change
 
-To keep this safe, configure a protected GitHub Environment named `aurora-production` with required reviewers.
+Required repository configuration for cache push:
 
-Required repository secrets:
+- variable or secret `CACHIX_CACHE_NAME`
+- secret `CACHIX_AUTH_TOKEN`
 
-- `AURORA_SSH_USER`: remote SSH user (for example `adam`)
-- `AURORA_HOST`: remote host (public IP, Tailscale IP, or MagicDNS name)
-- `AURORA_SSH_PRIVATE_KEY`: private key used by CI for SSH
-- `AURORA_KNOWN_HOSTS`: pinned host key line(s), for example from:
-  `ssh-keyscan -H <host>`
-
-The deploy workflow enforces:
-
-- serialized deployments (`concurrency`)
-- host key checking (`StrictHostKeyChecking=yes`)
-- single explicit identity (`IdentitiesOnly=yes`)
-- SSH preflight before switch
+Host switching is handled by Cachix agents rather than direct GitHub Actions SSH deployment.
 
 Set up lefthook locally once:
 

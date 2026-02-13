@@ -69,10 +69,6 @@
       inherit inputs;
       src = ./.;
 
-      homes.modules = [
-        inputs.openclaw.homeManagerModules.openclaw
-      ];
-
       snowfall = {
         namespace = "adampaterson";
         root = ./src;

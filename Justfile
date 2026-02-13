@@ -1,6 +1,7 @@
 set shell := ["bash", "-euo", "pipefail", "-c"]
 aurora_user := "adam"
 aurora_host := "aurora-1.taileb2c54.ts.net"
+container_image := "nixos-config-test:latest"
 
 default:
   @just --list
@@ -62,3 +63,22 @@ build-aurora-system:
 
 # Recommended pre-deploy for aurora OpenClaw changes.
 predeploy-openclaw: fmt-check lint test-openclaw-aurora build-aurora-system
+
+# Build the local Linux test image for Apple's container runtime.
+container-build-image:
+  container build -f Containerfile -t {{container_image}} .
+
+# Evaluate/build aurora system closure in container.
+# - If local linux/amd64 is available, do a full build in amd64 container.
+# - Otherwise run an eval-only dry-run in arm64 and print next steps.
+container-build-aurora-system:
+  if container run --rm --arch amd64 --rosetta {{container_image}} uname -m >/dev/null 2>&1; then \
+    container run --rm --arch amd64 --rosetta --volume "$PWD:/work" --workdir /work {{container_image}} bash -lc 'nix build .#nixosConfigurations.aurora.config.system.build.toplevel --print-out-paths'; \
+  else \
+    echo "Local Apple container runtime does not support linux/amd64 on this machine."; \
+    echo "Running eval-only dry-run in linux/arm64 instead..."; \
+    container run --rm --volume "$PWD:/work" --workdir /work {{container_image}} bash -lc 'nix build .#nixosConfigurations.aurora.config.system.build.toplevel --dry-run'; \
+    echo ""; \
+    echo "For a full x86_64-linux build, use remote build on aurora:"; \
+    echo "  nix run nixpkgs#nixos-rebuild -- build --flake path:.#aurora --build-host {{aurora_user}}@{{aurora_host}} --target-host {{aurora_user}}@{{aurora_host}} --sudo --ask-sudo-password"; \
+  fi

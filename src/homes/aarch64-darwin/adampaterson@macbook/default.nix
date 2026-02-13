@@ -1,7 +1,9 @@
 {pkgs, ...}: {
-  home.username = "adampaterson";
-  home.homeDirectory = "/Users/adampaterson";
-  home.stateVersion = "26.05";
+  home = {
+    username = "adampaterson";
+    homeDirectory = "/Users/adampaterson";
+    stateVersion = "26.05";
+  };
 
   programs.home-manager.enable = true;
 
