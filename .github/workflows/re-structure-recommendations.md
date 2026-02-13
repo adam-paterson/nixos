@@ -7,7 +7,7 @@ on:
 # Permissions - what can this workflow access?
 permissions:
   contents: read
-  issues: write
+  issues: read
   pull-requests: read
 
 # AI Engine - using OpenAI Codex
