@@ -1,0 +1,54 @@
+name: NixOS System Build
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Git ref to build (branch, tag, or SHA)
+        required: false
+        default: main
+        type: string
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.inputs.ref || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  nixos-system-build:
+    name: Build NixOS System (aurora)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.inputs.ref || github.ref }}
+
+      - name: Free Disk Space
+        run: |
+          df -h
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+          sudo rm -rf /usr/local/.ghcup
+          docker system prune -af || true
+          df -h
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+
+      - name: Enable Nix Cache
+        uses: DeterminateSystems/magic-nix-cache-action@v13
+
+      - name: Build NixOS System (aurora)
+        run: nix build --print-build-logs --no-link '.#nixosConfigurations.aurora.config.system.build.toplevel'

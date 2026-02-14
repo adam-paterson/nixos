@@ -1,25 +1,15 @@
-name: Nix Cache Build
+name: NixOS Cache Build
 
 on:
   workflow_run:
     workflows:
-      - Nix Checks
+      - NixOS System Build
     branches:
       - main
     types:
       - completed
   workflow_dispatch:
     inputs:
-      build_linux:
-        description: Build and push Linux cache targets
-        required: true
-        default: true
-        type: boolean
-      build_macos:
-        description: Build and push macOS cache targets
-        required: true
-        default: true
-        type: boolean
       ref:
         description: Git ref to build (branch, tag, or SHA)
         required: false
@@ -40,8 +30,6 @@ jobs:
       should_run: ${{ steps.compute.outputs.should_run }}
       build_ref: ${{ steps.compute.outputs.build_ref }}
       cache_name: ${{ steps.compute.outputs.cache_name }}
-      run_linux: ${{ steps.compute.outputs.run_linux }}
-      run_macos: ${{ steps.compute.outputs.run_macos }}
     steps:
       - name: Compute Metadata
         id: compute
@@ -50,8 +38,6 @@ jobs:
           WORKFLOW_CONCLUSION: ${{ github.event.workflow_run.conclusion || '' }}
           WORKFLOW_HEAD_SHA: ${{ github.event.workflow_run.head_sha || '' }}
           INPUT_REF: ${{ github.event.inputs.ref || '' }}
-          INPUT_BUILD_LINUX: ${{ github.event.inputs.build_linux || '' }}
-          INPUT_BUILD_MACOS: ${{ github.event.inputs.build_macos || '' }}
           CACHE_NAME: ${{ vars.CACHIX_CACHE_NAME }}
         run: |
           set -euo pipefail
@@ -65,32 +51,25 @@ jobs:
 
           if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
             build_ref="${INPUT_REF:-main}"
-            run_linux="${INPUT_BUILD_LINUX:-true}"
-            run_macos="${INPUT_BUILD_MACOS:-true}"
           else
             build_ref="$WORKFLOW_HEAD_SHA"
-            run_linux=true
-            run_macos=true
           fi
 
-          # Keep cache name deterministic for this repo if no variable/secret is set.
           cache_name="${CACHE_NAME:-adam-paterson}"
 
           {
             echo "should_run=$should_run"
             echo "build_ref=$build_ref"
             echo "cache_name=$cache_name"
-            echo "run_linux=$run_linux"
-            echo "run_macos=$run_macos"
           } >> "$GITHUB_OUTPUT"
 
-  linux-cache-targets:
-    name: Cache Linux Targets
+  nixos-cache-targets:
+    name: Cache NixOS Targets (aurora)
     needs: metadata
-    if: needs.metadata.outputs.should_run == 'true' && needs.metadata.outputs.run_linux == 'true'
+    if: needs.metadata.outputs.should_run == 'true'
     uses: ./.github/workflows/_nix-build-and-push-cache.yml
     with:
-      job_name: Build And Push Linux Targets
+      job_name: Build And Push NixOS Targets (aurora)
       runs_on: ubuntu-latest
       checkout_ref: ${{ needs.metadata.outputs.build_ref }}
       cache_name: ${{ needs.metadata.outputs.cache_name }}
@@ -99,23 +78,5 @@ jobs:
         nix build --print-build-logs --no-link \
           .#devShells.x86_64-linux.default \
           .#nixosConfigurations.aurora.config.system.build.toplevel
-    secrets:
-      CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
-
-  macos-cache-targets:
-    name: Cache macOS Targets
-    needs: metadata
-    if: needs.metadata.outputs.should_run == 'true' && needs.metadata.outputs.run_macos == 'true'
-    uses: ./.github/workflows/_nix-build-and-push-cache.yml
-    with:
-      job_name: Build And Push macOS Targets
-      runs_on: macos-latest
-      checkout_ref: ${{ needs.metadata.outputs.build_ref }}
-      cache_name: ${{ needs.metadata.outputs.cache_name }}
-      build_command: |
-        nix build --print-build-logs --no-link \
-          .#devShells.aarch64-darwin.default \
-          .#darwinConfigurations.macbook.system \
-          '.#homeConfigurations."adampaterson@macbook".activationPackage'
     secrets:
       CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
