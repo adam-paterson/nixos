@@ -4,7 +4,6 @@
 {
   config,
   lib,
-  pkgs,
   ...
 }: {
   options.local.oh-my-posh = {

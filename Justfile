@@ -2,6 +2,7 @@ set shell := ["bash", "-euo", "pipefail", "-c"]
 aurora_user := "adam"
 aurora_host := "aurora-1.taileb2c54.ts.net"
 container_image := "nixos-config-test:latest"
+container_image_amd64 := "nixos-config-test:amd64"
 
 default:
   @just --list
@@ -27,11 +28,11 @@ eval:
   nix eval .#nixosConfigurations.aurora.config.networking.hostName
   nix eval .#nixosConfigurations.aurora.config.system.stateVersion
   nix eval .#darwinConfigurations.macbook.config.networking.hostName
-  nix eval '.#homeConfigurations."adam@aurora".activationPackage.drvPath'
+  nix eval '.#nixosConfigurations.aurora.config.home-manager.users.adam.home.activationPackage.drvPath'
   nix eval '.#homeConfigurations."adampaterson@macbook".activationPackage.drvPath'
 
 build-aurora:
-  nix build '.#homeConfigurations."adam@aurora".activationPackage' --dry-run
+  nix build '.#nixosConfigurations.aurora.config.home-manager.users.adam.home.activationPackage' --dry-run
 
 build-macbook:
   nix build '.#homeConfigurations."adampaterson@macbook".activationPackage' --dry-run
@@ -68,14 +69,19 @@ predeploy-openclaw: fmt-check lint test-openclaw-aurora build-aurora-system
 container-build-image:
   container build -f Containerfile -t {{container_image}} .
 
+# Build an amd64 image for Rosetta-backed x86_64 Linux testing.
+container-build-image-amd64:
+  container build --platform linux/amd64 -f Containerfile -t {{container_image_amd64}} .
+
 # Evaluate/build aurora system closure in container.
 # - If local linux/amd64 is available, do a full build in amd64 container.
 # - Otherwise run an eval-only dry-run in arm64 and print next steps.
 container-build-aurora-system:
-  if container run --rm --arch amd64 --rosetta {{container_image}} uname -m >/dev/null 2>&1; then \
-    container run --rm --arch amd64 --rosetta --volume "$PWD:/work" --workdir /work {{container_image}} bash -lc 'nix build .#nixosConfigurations.aurora.config.system.build.toplevel --print-out-paths'; \
+  if container run --rm --arch amd64 --rosetta {{container_image_amd64}} uname -m >/dev/null 2>&1; then \
+    container run --rm --arch amd64 --rosetta --volume "$PWD:/work" --workdir /work {{container_image_amd64}} bash -lc 'nix build .#nixosConfigurations.aurora.config.system.build.toplevel --print-out-paths'; \
   else \
-    echo "Local Apple container runtime does not support linux/amd64 on this machine."; \
+    echo "Local linux/amd64 image is not available or not runnable on this machine."; \
+    echo "Build it first with: just container-build-image-amd64"; \
     echo "Running eval-only dry-run in linux/arm64 instead..."; \
     container run --rm --volume "$PWD:/work" --workdir /work {{container_image}} bash -lc 'nix build .#nixosConfigurations.aurora.config.system.build.toplevel --dry-run'; \
     echo ""; \

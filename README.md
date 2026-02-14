@@ -214,7 +214,7 @@ home-manager switch --flake .#adam@aurora
 
 - GitHub Actions checks are defined in `.github/workflows/nix-checks.yml`.
 - GitHub Actions cache population is defined in `.github/workflows/nix-cache.yml`.
-- Pre-commit checks are defined in `lefthook.yml`.
+- Pre-commit hooks are managed by devenv in `devenv.nix`.
 
 ### CI and Cache Flow
 
@@ -235,11 +235,7 @@ Required repository configuration for cache push:
 
 Host switching is handled by Cachix agents rather than direct GitHub Actions SSH deployment.
 
-Set up lefthook locally once:
-
-```bash
-nix run nixpkgs#lefthook -- install
-```
+Pre-commit hooks are installed automatically when entering the devenv shell.
 
 ## Important Notes
 

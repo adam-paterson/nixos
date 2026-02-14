@@ -1,4 +1,4 @@
-{...}: rec {
+_: rec {
   emails = {
     personal = "hello@adampaterson.co.uk";
     work = "adam.paterson@idhl.co.uk";

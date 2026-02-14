@@ -3,6 +3,12 @@
 # ╰──────────────────────────────────────────────────────────╯
 {
   description = "Cross-platform development environments with Snowfall Lib";
+
+  nixConfig = {
+    extra-trusted-public-keys = "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw=";
+    extra-substituters = "https://devenv.cachix.org";
+  };
+
   # ── Inputs ────────────────────────────────────────────────────────────
   inputs = {
     # ── Primary Inputs ──────────────────────────────────────────────────
@@ -45,24 +51,18 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    openclaw = {
-      url = "github:openclaw/nix-openclaw";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.home-manager.follows = "home-manager";
-    };
-
-    openclaw-tools = {
-      url = "github:openclaw/nix-steipete-tools";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     codex-cli-nix = {
       url = "github:sadjow/codex-cli-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    devenv = {
+      url = "github:cachix/devenv";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = inputs @ {...}: let
+  outputs = inputs: let
     meta = import ./meta.nix {inherit inputs;};
   in
     inputs.snowfall-lib.mkFlake {
@@ -79,13 +79,8 @@
         entities = meta;
       };
 
-      alias = {
-        shells.default = "dev";
-      };
-
       overlays = [
         inputs.codex-cli-nix.overlays.default
-        inputs.openclaw.overlays.default
       ];
 
       channels-config = {

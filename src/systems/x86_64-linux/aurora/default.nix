@@ -25,8 +25,6 @@
     };
   };
 
-  local.openclaw.enable = true;
-
   # Let Home Manager move aside pre-existing dotfiles instead of failing activation.
   home-manager.backupFileExtension = "hm-backup";
 
