@@ -52,7 +52,7 @@ jobs:
           INPUT_REF: ${{ github.event.inputs.ref || '' }}
           INPUT_BUILD_LINUX: ${{ github.event.inputs.build_linux || '' }}
           INPUT_BUILD_MACOS: ${{ github.event.inputs.build_macos || '' }}
-          CACHE_NAME: ${{ vars.CACHIX_CACHE_NAME || secrets.CACHIX_CACHE_NAME }}
+          CACHE_NAME: ${{ vars.CACHIX_CACHE_NAME }}
         run: |
           set -euo pipefail
 
