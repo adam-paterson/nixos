@@ -19,6 +19,7 @@ safe-outputs:
     max: 5               # Maximum 5 issues per run
     labels: [cleanup, refactoring, automated]
     title-prefix: "[Cleanup] "
+    close-older-issues: true   # Close older issues with same title prefix
 
 ---
 
@@ -54,6 +55,15 @@ Scan the repository for areas that could be consolidated and cleaned up:
    - Unused dependencies
    - Dependencies that could be replaced with built-ins
    - Multiple dependencies serving the same purpose
+
+6. **Nix-specific analysis** - Review:
+   - Flake structure and organization
+   - Missing or incorrect `follows` patterns
+   - Unfree package handling issues
+   - Overlay application patterns
+   - Binary overlay creation opportunities
+   - Dev shell optimizations
+   - Common nix anti-patterns
 
 ## Output Format
 
