@@ -1,7 +1,7 @@
 ---
 # Trigger - when should this workflow run?
 on:
-  schedule: hourly      # Runs every hour with scattered minute
+  schedule: daily       # Runs once per day
   workflow_dispatch:    # Manual trigger
 
 # Permissions - what can this workflow access?
@@ -24,7 +24,7 @@ safe-outputs:
 
 # Repository Cleanup Recommendations
 
-Automatically scan the repository every hour to identify areas for consolidation and cleanup.
+Automatically scan the repository once per day to identify areas for consolidation and cleanup.
 
 ## Instructions
 
