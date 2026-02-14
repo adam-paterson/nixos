@@ -59,8 +59,14 @@ jobs:
 
       - name: Validate Cachix Config
         run: |
-          test -n "${{ inputs.cache_name }}"
-          test -n "${{ secrets.CACHIX_AUTH_TOKEN }}"
+          if [ -z "${{ inputs.cache_name }}" ]; then
+            echo "::error::Cachix cache name is empty. Set repository variable CACHIX_CACHE_NAME."
+            exit 1
+          fi
+          if [ -z "${{ secrets.CACHIX_AUTH_TOKEN }}" ]; then
+            echo "::error::CACHIX_AUTH_TOKEN secret is empty."
+            exit 1
+          fi
 
       - name: Setup Cachix Push
         uses: cachix/cachix-action@v16

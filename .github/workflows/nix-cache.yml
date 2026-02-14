@@ -73,10 +73,13 @@ jobs:
             run_macos=true
           fi
 
+          # Keep cache name deterministic for this repo if no variable/secret is set.
+          cache_name="${CACHE_NAME:-adam-paterson}"
+
           {
             echo "should_run=$should_run"
             echo "build_ref=$build_ref"
-            echo "cache_name=$CACHE_NAME"
+            echo "cache_name=$cache_name"
             echo "run_linux=$run_linux"
             echo "run_macos=$run_macos"
           } >> "$GITHUB_OUTPUT"
