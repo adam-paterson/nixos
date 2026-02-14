@@ -1,5 +1,11 @@
 ![Banner image](./assets/banner.png)
 
+[![Nix Checks](https://img.shields.io/github/actions/workflow/status/adam-paterson/nixos/nix-checks.yml?label=Nix%20Checks&style=for-the-badge&logo=githubactions&logoColor=white)](https://github.com/adam-paterson/nixos/actions/workflows/nix-checks.yml)
+[![NixOS System Build](https://img.shields.io/github/actions/workflow/status/adam-paterson/nixos/nix-aurora-build.yml?label=NixOS%20Build&style=for-the-badge&logo=nixos&logoColor=white)](https://github.com/adam-paterson/nixos/actions/workflows/nix-aurora-build.yml)
+[![macbook System Build](https://img.shields.io/github/actions/workflow/status/adam-paterson/nixos/nix-macbook-build.yml?label=macOS%20Build&style=for-the-badge&logo=apple&logoColor=white)](https://github.com/adam-paterson/nixos/actions/workflows/nix-macbook-build.yml)
+[![NixOS Cache Build](https://img.shields.io/github/actions/workflow/status/adam-paterson/nixos/nix-cache-aurora.yml?label=NixOS%20Cache&style=for-the-badge&logo=cachix&logoColor=white)](https://github.com/adam-paterson/nixos/actions/workflows/nix-cache-aurora.yml)
+[![macbook Cache Build](https://img.shields.io/github/actions/workflow/status/adam-paterson/nixos/nix-cache-macbook.yml?label=macOS%20Cache&style=for-the-badge&logo=cachix&logoColor=white)](https://github.com/adam-paterson/nixos/actions/workflows/nix-cache-macbook.yml)
+
 # Nix Environments for macOS + Linux VPS (Snowfall Lib)
 
 This repository manages two machines with one flake:
@@ -213,7 +219,10 @@ home-manager switch --flake .#adam@aurora
 ## Automation
 
 - GitHub Actions checks are defined in `.github/workflows/nix-checks.yml`.
-- GitHub Actions cache population is defined in `.github/workflows/nix-cache.yml`.
+- NixOS system build checks are defined in `.github/workflows/nix-aurora-build.yml`.
+- macOS system build checks are defined in `.github/workflows/nix-macbook-build.yml`.
+- NixOS cache population is defined in `.github/workflows/nix-cache-aurora.yml`.
+- macOS cache population is defined in `.github/workflows/nix-cache-macbook.yml`.
 - GitHub Actions deploy via Cachix agents is defined in `.github/workflows/cachix-deploy-agents.yml`.
 - Reusable cache job logic lives in `.github/workflows/_nix-build-and-push-cache.yml`.
 - Pre-commit hooks are managed by devenv in `src/shells/default/default.nix`.
@@ -225,9 +234,25 @@ home-manager switch --flake .#adam@aurora
 - pull requests
 - pushes to `main`
 
-`nix-cache.yml` runs on:
+`nix-aurora-build.yml` and `nix-macbook-build.yml` run on:
 
-- successful completion of `nix-checks.yml` on `main`
+- pull requests
+- pushes to `main`
+- `workflow_dispatch` (manual)
+
+`nix-cache-aurora.yml` runs on:
+
+- successful completion of `nix-aurora-build.yml` on `main`
+- `workflow_dispatch` (manual)
+
+`nix-cache-macbook.yml` runs on:
+
+- successful completion of `nix-macbook-build.yml` on `main`
+- `workflow_dispatch` (manual)
+
+`cachix-deploy-agents.yml` runs on:
+
+- successful completion of either system cache workflow on `main`
 - `workflow_dispatch` (manual)
 
 It builds and pushes these cache targets:
@@ -237,12 +262,13 @@ It builds and pushes these cache targets:
 
 Required repository configuration for cache push and deploy:
 
-- variable or secret `CACHIX_CACHE_NAME`
+- variable `CACHIX_CACHE_NAME` (recommended: `adam-paterson`)
 - secret `CACHIX_AUTH_TOKEN`
 - secret `CACHIX_ACTIVATE_TOKEN` (for `cachix deploy activate`)
 
 Use `cachix-deploy-agents.yml` for agent activation after cache builds.
-The workflow dispatch inputs let you deploy only Aurora, only macbook, or both.
+By default, successful NixOS cache builds deploy only the NixOS agent and successful macOS cache builds deploy only the macOS agent.
+Manual dispatch still allows deploying either or both agents.
 
 ### Local Cache Target Commands
 
