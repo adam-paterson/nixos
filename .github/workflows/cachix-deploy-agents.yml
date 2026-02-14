@@ -1,0 +1,131 @@
+name: Cachix Deploy Agents
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Git ref to deploy (branch, tag, or SHA)
+        required: true
+        default: main
+        type: string
+      deploy_aurora:
+        description: Deploy aurora (NixOS)
+        required: true
+        default: true
+        type: boolean
+      aurora_agent_name:
+        description: Cachix agent name for aurora
+        required: true
+        default: aurora
+        type: string
+      deploy_macbook:
+        description: Deploy macbook (nix-darwin)
+        required: true
+        default: false
+        type: boolean
+      macbook_agent_name:
+        description: Cachix agent name for macbook
+        required: true
+        default: macbook
+        type: string
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.inputs.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy-aurora:
+    name: Deploy Aurora Agent
+    if: github.event.inputs.deploy_aurora == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      CACHIX_CACHE_NAME: ${{ vars.CACHIX_CACHE_NAME || secrets.CACHIX_CACHE_NAME }}
+      CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
+      CACHIX_ACTIVATE_TOKEN: ${{ secrets.CACHIX_ACTIVATE_TOKEN }}
+      AGENT_NAME: ${{ github.event.inputs.aurora_agent_name }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.inputs.ref }}
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+
+      - name: Validate Cachix Deploy Secrets
+        run: |
+          test -n "$CACHIX_CACHE_NAME"
+          test -n "$CACHIX_AUTH_TOKEN"
+          test -n "$CACHIX_ACTIVATE_TOKEN"
+          test -n "$AGENT_NAME"
+
+      - name: Build Aurora System
+        id: build
+        run: |
+          store_path="$(nix build --no-link --print-out-paths .#nixosConfigurations.aurora.config.system.build.toplevel)"
+          echo "store_path=$store_path" >> "$GITHUB_OUTPUT"
+
+      - name: Push Aurora Closure To Cachix
+        run: nix run nixpkgs#cachix -- push "$CACHIX_CACHE_NAME" '${{ steps.build.outputs.store_path }}'
+
+      - name: Activate Aurora Agent
+        run: |
+          jq -n \
+            --arg agent "$AGENT_NAME" \
+            --arg path '${{ steps.build.outputs.store_path }}' \
+            '{agents: {($agent): $path}}' > deploy.json
+          nix run nixpkgs#cachix -- deploy activate deploy.json --agent "$AGENT_NAME"
+
+  deploy-macbook:
+    name: Deploy macbook Agent
+    if: github.event.inputs.deploy_macbook == 'true'
+    runs-on: macos-latest
+    permissions:
+      contents: read
+    env:
+      CACHIX_CACHE_NAME: ${{ vars.CACHIX_CACHE_NAME || secrets.CACHIX_CACHE_NAME }}
+      CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
+      CACHIX_ACTIVATE_TOKEN: ${{ secrets.CACHIX_ACTIVATE_TOKEN }}
+      AGENT_NAME: ${{ github.event.inputs.macbook_agent_name }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.inputs.ref }}
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+
+      - name: Validate Cachix Deploy Secrets
+        run: |
+          test -n "$CACHIX_CACHE_NAME"
+          test -n "$CACHIX_AUTH_TOKEN"
+          test -n "$CACHIX_ACTIVATE_TOKEN"
+          test -n "$AGENT_NAME"
+
+      - name: Build macbook Darwin System
+        id: build
+        run: |
+          store_path="$(nix build --no-link --print-out-paths .#darwinConfigurations.macbook.system)"
+          echo "store_path=$store_path" >> "$GITHUB_OUTPUT"
+
+      - name: Push macbook Closure To Cachix
+        run: nix run nixpkgs#cachix -- push "$CACHIX_CACHE_NAME" '${{ steps.build.outputs.store_path }}'
+
+      - name: Activate macbook Agent
+        run: |
+          jq -n \
+            --arg agent "$AGENT_NAME" \
+            --arg path '${{ steps.build.outputs.store_path }}' \
+            '{agents: {($agent): $path}}' > deploy.json
+          nix run nixpkgs#cachix -- deploy activate deploy.json --agent "$AGENT_NAME"

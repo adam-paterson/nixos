@@ -1,4 +1,4 @@
-name: Nix Cache
+name: Nix Cache Build
 
 on:
   workflow_run:
@@ -9,82 +9,110 @@ on:
     types:
       - completed
   workflow_dispatch:
+    inputs:
+      build_linux:
+        description: Build and push Linux cache targets
+        required: true
+        default: true
+        type: boolean
+      build_macos:
+        description: Build and push macOS cache targets
+        required: true
+        default: true
+        type: boolean
+      ref:
+        description: Git ref to build (branch, tag, or SHA)
+        required: false
+        default: main
+        type: string
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.workflow_run.head_sha || github.sha }}
   cancel-in-progress: true
 
 jobs:
-  build-aurora-cache:
-    name: Build Aurora and Push Cache
-    if: >
-      github.event_name == 'workflow_dispatch' ||
-      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
+  metadata:
+    name: Resolve Build Metadata
     runs-on: ubuntu-latest
     permissions:
       contents: read
-    env:
-      CACHIX_CACHE_NAME: ${{ vars.CACHIX_CACHE_NAME || secrets.CACHIX_CACHE_NAME }}
-      BUILD_REF: ${{ github.event.workflow_run.head_sha || github.sha }}
-
+    outputs:
+      should_run: ${{ steps.compute.outputs.should_run }}
+      build_ref: ${{ steps.compute.outputs.build_ref }}
+      cache_name: ${{ steps.compute.outputs.cache_name }}
+      run_linux: ${{ steps.compute.outputs.run_linux }}
+      run_macos: ${{ steps.compute.outputs.run_macos }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ env.BUILD_REF }}
-
-      - name: Free disk space
-        run: |
-          df -h
-          sudo rm -rf /usr/share/dotnet
-          sudo rm -rf /opt/ghc
-          sudo rm -rf /usr/local/lib/android
-          sudo rm -rf /opt/hostedtoolcache/CodeQL
-          sudo rm -rf /usr/local/.ghcup
-          docker system prune -af || true
-          df -h
-
-      - name: Install Nix
-        uses: cachix/install-nix-action@v31
-        with:
-          extra_nix_config: |
-            experimental-features = nix-command flakes
-
-      - name: Validate Cachix config
+      - name: Compute Metadata
+        id: compute
         env:
-          CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
+          EVENT_NAME: ${{ github.event_name }}
+          WORKFLOW_CONCLUSION: ${{ github.event.workflow_run.conclusion || '' }}
+          WORKFLOW_HEAD_SHA: ${{ github.event.workflow_run.head_sha || '' }}
+          INPUT_REF: ${{ github.event.inputs.ref || '' }}
+          INPUT_BUILD_LINUX: ${{ github.event.inputs.build_linux || '' }}
+          INPUT_BUILD_MACOS: ${{ github.event.inputs.build_macos || '' }}
+          CACHE_NAME: ${{ vars.CACHIX_CACHE_NAME || secrets.CACHIX_CACHE_NAME }}
         run: |
-          test -n "${CACHIX_CACHE_NAME}"
-          test -n "${CACHIX_AUTH_TOKEN}"
+          set -euo pipefail
 
-      - name: Setup Cachix (push)
-        uses: cachix/cachix-action@v16
-        with:
-          name: ${{ env.CACHIX_CACHE_NAME }}
-          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+          should_run=false
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            should_run=true
+          elif [ "$EVENT_NAME" = "workflow_run" ] && [ "$WORKFLOW_CONCLUSION" = "success" ]; then
+            should_run=true
+          fi
 
-      - name: Enable Nix cache
-        uses: DeterminateSystems/magic-nix-cache-action@v7
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            build_ref="${INPUT_REF:-main}"
+            run_linux="${INPUT_BUILD_LINUX:-true}"
+            run_macos="${INPUT_BUILD_MACOS:-true}"
+          else
+            build_ref="$WORKFLOW_HEAD_SHA"
+            run_linux=true
+            run_macos=true
+          fi
 
-      - name: Reclaim Nix store space before build
-        run: |
-          nix store gc
-          df -h
-          du -sh /nix/store || true
+          {
+            echo "should_run=$should_run"
+            echo "build_ref=$build_ref"
+            echo "cache_name=$CACHE_NAME"
+            echo "run_linux=$run_linux"
+            echo "run_macos=$run_macos"
+          } >> "$GITHUB_OUTPUT"
 
-      - name: Build Aurora system (populate binary cache)
-        id: build_aurora
-        continue-on-error: true
-        run: nix build --print-build-logs .#nixosConfigurations.aurora.config.system.build.toplevel
+  linux-cache-targets:
+    name: Cache Linux Targets
+    needs: metadata
+    if: needs.metadata.outputs.should_run == 'true' && needs.metadata.outputs.run_linux == 'true'
+    uses: ./.github/workflows/_nix-build-and-push-cache.yml
+    with:
+      job_name: Build And Push Linux Targets
+      runs_on: ubuntu-latest
+      checkout_ref: ${{ needs.metadata.outputs.build_ref }}
+      cache_name: ${{ needs.metadata.outputs.cache_name }}
+      reclaim_disk: true
+      build_command: |
+        nix build --print-build-logs --no-link \
+          .#devShells.x86_64-linux.default \
+          .#nixosConfigurations.aurora.config.system.build.toplevel
+    secrets:
+      CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
 
-      - name: Build diagnostics
-        if: steps.build_aurora.outcome == 'failure'
-        run: |
-          echo "Aurora build failed; collecting diagnostics."
-          df -h
-          du -sh /nix/store || true
-          nix path-info -S .#nixosConfigurations.aurora.config.system.build.toplevel || true
-
-      - name: Fail if Aurora build failed
-        if: steps.build_aurora.outcome == 'failure'
-        run: exit 1
+  macos-cache-targets:
+    name: Cache macOS Targets
+    needs: metadata
+    if: needs.metadata.outputs.should_run == 'true' && needs.metadata.outputs.run_macos == 'true'
+    uses: ./.github/workflows/_nix-build-and-push-cache.yml
+    with:
+      job_name: Build And Push macOS Targets
+      runs_on: macos-latest
+      checkout_ref: ${{ needs.metadata.outputs.build_ref }}
+      cache_name: ${{ needs.metadata.outputs.cache_name }}
+      build_command: |
+        nix build --print-build-logs --no-link \
+          .#devShells.aarch64-darwin.default \
+          .#darwinConfigurations.macbook.system \
+          '.#homeConfigurations."adampaterson@macbook".activationPackage'
+    secrets:
+      CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}

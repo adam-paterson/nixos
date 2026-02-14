@@ -11,17 +11,17 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  lint-eval-linux:
-    name: Lint and Eval (Linux)
+  linux-quality-and-eval:
+    name: Linux Quality And Eval
     runs-on: ubuntu-latest
     permissions:
       contents: read
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
-      - name: Free disk space
+      - name: Free Disk Space
         run: |
           df -h
           sudo rm -rf /usr/share/dotnet
@@ -38,33 +38,33 @@ jobs:
           extra_nix_config: |
             experimental-features = nix-command flakes
 
-      - name: Enable Nix cache
-        uses: DeterminateSystems/magic-nix-cache-action@v7
+      - name: Enable Nix Cache
+        uses: DeterminateSystems/magic-nix-cache-action@v13
 
-      - name: Install just
-        run: nix profile add nixpkgs#just
-
-      - name: Format check
-        run: just fmt-check
+      - name: Format Check
+        run: nix run nixpkgs#just -- fmt-check
 
       - name: Lint
-        run: just lint
+        run: nix run nixpkgs#just -- lint
 
-      - name: Flake checks
-        run: just check
+      - name: Flake Checks
+        run: nix run nixpkgs#just -- check
 
-      - name: Evaluate configurations
-        run: just eval
+      - name: Evaluate Configurations
+        run: nix run nixpkgs#just -- eval
 
-  eval-macos:
-    name: macOS Configuration Checks
+      - name: Dry-Run Linux Devshell Build
+        run: nix build --no-link '.#devShells.x86_64-linux.default'
+
+  macos-eval-and-build:
+    name: macOS Eval And Build
     runs-on: macos-latest
     permissions:
       contents: read
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Install Nix
         uses: cachix/install-nix-action@v31
@@ -72,13 +72,16 @@ jobs:
           extra_nix_config: |
             experimental-features = nix-command flakes
 
-      - name: Enable Nix cache
-        uses: DeterminateSystems/magic-nix-cache-action@v7
+      - name: Enable Nix Cache
+        uses: DeterminateSystems/magic-nix-cache-action@v13
 
-      - name: Evaluate macOS config
+      - name: Evaluate macOS Config
         run: |
           nix eval .#darwinConfigurations.macbook.config.networking.hostName
           nix eval '.#homeConfigurations."adampaterson@macbook".activationPackage.drvPath'
 
-      - name: Dry-run macOS Home Manager build
-        run: nix build '.#homeConfigurations."adampaterson@macbook".activationPackage' --dry-run
+      - name: Dry-Run macOS Home Manager Build
+        run: nix build --no-link '.#homeConfigurations."adampaterson@macbook".activationPackage'
+
+      - name: Dry-Run macOS Devshell Build
+        run: nix build --no-link '.#devShells.aarch64-darwin.default'

@@ -5,8 +5,14 @@
   description = "Cross-platform development environments with Snowfall Lib";
 
   nixConfig = {
-    extra-trusted-public-keys = "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw=";
-    extra-substituters = "https://devenv.cachix.org";
+    extra-trusted-public-keys = ''
+      devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw=
+      adam-paterson.cachix.org-1:kBJ4hRgKh5d2yEWnbCssWhcM/Ya+bDGnroeI0O0G5jk=
+    '';
+    extra-substituters = ''
+      https://devenv.cachix.org
+      https://adam-paterson.cachix.org
+    '';
   };
 
   # ── Inputs ────────────────────────────────────────────────────────────

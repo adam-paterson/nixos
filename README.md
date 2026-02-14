@@ -214,7 +214,9 @@ home-manager switch --flake .#adam@aurora
 
 - GitHub Actions checks are defined in `.github/workflows/nix-checks.yml`.
 - GitHub Actions cache population is defined in `.github/workflows/nix-cache.yml`.
-- Pre-commit hooks are managed by devenv in `devenv.nix`.
+- GitHub Actions deploy via Cachix agents is defined in `.github/workflows/cachix-deploy-agents.yml`.
+- Reusable cache job logic lives in `.github/workflows/_nix-build-and-push-cache.yml`.
+- Pre-commit hooks are managed by devenv in `src/shells/default/default.nix`.
 
 ### CI and Cache Flow
 
@@ -228,12 +230,46 @@ home-manager switch --flake .#adam@aurora
 - successful completion of `nix-checks.yml` on `main`
 - `workflow_dispatch` (manual)
 
-Required repository configuration for cache push:
+It builds and pushes these cache targets:
+
+- Linux: `devShells.x86_64-linux.default`, `nixosConfigurations.aurora.config.system.build.toplevel`
+- macOS: `devShells.aarch64-darwin.default`, `darwinConfigurations.macbook.system`, `homeConfigurations."adampaterson@macbook".activationPackage`
+
+Required repository configuration for cache push and deploy:
 
 - variable or secret `CACHIX_CACHE_NAME`
 - secret `CACHIX_AUTH_TOKEN`
+- secret `CACHIX_ACTIVATE_TOKEN` (for `cachix deploy activate`)
 
-Host switching is handled by Cachix agents rather than direct GitHub Actions SSH deployment.
+Use `cachix-deploy-agents.yml` for agent activation after cache builds.
+The workflow dispatch inputs let you deploy only Aurora, only macbook, or both.
+
+### Local Cache Target Commands
+
+```bash
+# Linux cache targets (same attrs as CI cache workflow)
+just cache-targets-linux
+
+# macOS cache targets (same attrs as CI cache workflow)
+just cache-targets-macos
+```
+
+### Devenv Notes
+
+- `devenv.root` is pinned in `src/shells/default/default.nix` so `nix flake show` works reliably in CI.
+- `cachix.pull = [ "adam-paterson" ]` is enabled in the dev shell for fast local substitute downloads.
+
+### Cachix Agent Bootstrap
+
+Run this once per host after creating the agent/token in Cachix Deploy:
+
+```bash
+# Aurora (NixOS)
+sudo CACHIX_AGENT_TOKEN="<token>" cachix deploy agent aurora system --bootstrap
+
+# macbook (nix-darwin)
+sudo CACHIX_AGENT_TOKEN="<token>" cachix deploy agent macbook system-profiles/system --bootstrap
+```
 
 Pre-commit hooks are installed automatically when entering the devenv shell.
 

@@ -65,6 +65,14 @@ build-aurora-system:
 # Recommended pre-deploy for aurora OpenClaw changes.
 predeploy-openclaw: fmt-check lint test-openclaw-aurora build-aurora-system
 
+# Build the Linux cache targets used by CI.
+cache-targets-linux:
+  nix build --no-link '.#devShells.x86_64-linux.default' '.#nixosConfigurations.aurora.config.system.build.toplevel'
+
+# Build the macOS cache targets used by CI.
+cache-targets-macos:
+  nix build --no-link '.#devShells.aarch64-darwin.default' '.#darwinConfigurations.macbook.system' '.#homeConfigurations."adampaterson@macbook".activationPackage'
+
 # Build the local Linux test image for Apple's container runtime.
 container-build-image:
   container build -f Containerfile -t {{container_image}} .
