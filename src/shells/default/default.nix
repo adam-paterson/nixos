@@ -8,6 +8,9 @@ inputs.devenv.lib.mkShell {
   modules = [
     (
       {pkgs, ...}: {
+        # Ensure flake evaluation in CI has a stable root for devenv.
+        devenv.root = toString ../../..;
+
         cachix.pull = ["adam-paterson"];
 
         packages = with pkgs; [
