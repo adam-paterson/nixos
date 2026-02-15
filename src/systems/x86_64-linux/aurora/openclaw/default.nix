@@ -7,11 +7,11 @@
   adamInstance = import ./instances/adam;
   rachelInstance = import ./instances/rachel;
 in {
-  snowfallorg.users.adam.home.config = {
-    imports = [
-      inputs.openclaw.homeManagerModules.openclaw
-    ];
+  home-manager.sharedModules = [
+    inputs.openclaw.homeManagerModules.openclaw
+  ];
 
+  snowfallorg.users.adam.home.config = {
     programs.openclaw = {
       package = inputs.openclaw.packages.${pkgs.stdenv.hostPlatform.system}.openclaw;
       installApp = false;
@@ -26,10 +26,6 @@ in {
         gogcli.enable = true;
         goplaces.enable = true;
       };
-
-      customPlugins = [
-        {source = "github:openclaw/nix-steipete-tools";}
-      ];
 
       config = {
         gateway.mode = "local";

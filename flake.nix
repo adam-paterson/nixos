@@ -96,6 +96,7 @@
       };
 
       overlays = [
+        inputs.openclaw.overlays.default
         inputs.codex-cli-nix.overlays.default
       ];
 
