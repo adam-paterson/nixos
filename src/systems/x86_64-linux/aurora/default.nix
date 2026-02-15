@@ -1,6 +1,7 @@
 {...}: {
   imports = [
     ./hardware
+    ./openclaw
   ];
 
   networking = {
@@ -9,7 +10,10 @@
     firewall.enable = true;
   };
 
-  services.cachix-agent.enable = true;
+  services = {
+    cachix-agent.enable = true;
+    vscode-server.enable = true;
+  };
 
   time.timeZone = "UTC";
 
