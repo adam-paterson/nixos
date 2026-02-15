@@ -204,9 +204,18 @@ jobs:
         if: matrix.id == 'linux'
         run: |
           set -euo pipefail
-          mapfile -t roots < <(nix path-info \
-            .#devShells.x86_64-linux.default \
-            .#nixosConfigurations.aurora.config.system.build.toplevel)
+          roots=()
+          while IFS= read -r line; do
+            roots+=("$line")
+          done < <(
+            nix path-info \
+              .#devShells.x86_64-linux.default \
+              .#nixosConfigurations.aurora.config.system.build.toplevel
+          )
+          if [ "${#roots[@]}" -eq 0 ]; then
+            echo "::error::No Linux store paths were resolved for cachix push."
+            exit 1
+          fi
           nix run nixpkgs#cachix -- push "$CACHIX_CACHE_NAME" "${roots[@]}"
 
       - name: Build macOS Targets
@@ -221,8 +230,17 @@ jobs:
         if: matrix.id == 'macos'
         run: |
           set -euo pipefail
-          mapfile -t roots < <(nix path-info \
-            .#devShells.aarch64-darwin.default \
-            .#darwinConfigurations.macbook.system \
-            '.#homeConfigurations."adampaterson@macbook".activationPackage')
+          roots=()
+          while IFS= read -r line; do
+            roots+=("$line")
+          done < <(
+            nix path-info \
+              .#devShells.aarch64-darwin.default \
+              .#darwinConfigurations.macbook.system \
+              '.#homeConfigurations."adampaterson@macbook".activationPackage'
+          )
+          if [ "${#roots[@]}" -eq 0 ]; then
+            echo "::error::No macOS store paths were resolved for cachix push."
+            exit 1
+          fi
           nix run nixpkgs#cachix -- push "$CACHIX_CACHE_NAME" "${roots[@]}"
