@@ -1,7 +1,6 @@
 {
   inputs,
   lib,
-  pkgs,
   ...
 }: let
   adamInstance = import ./instances/adam;
@@ -13,7 +12,6 @@ in {
 
   snowfallorg.users.adam.home.config = {
     programs.openclaw = {
-      package = inputs.openclaw.packages.${pkgs.stdenv.hostPlatform.system}.openclaw;
       excludeTools = ["gogcli"];
       installApp = false;
       launchd.enable = false;

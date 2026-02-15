@@ -1,4 +1,8 @@
-{inputs, ...}: {
+{
+  inputs,
+  pkgs,
+  ...
+}: {
   imports = [
     inputs.vscode-server.nixosModules.default
     ./hardware
@@ -34,6 +38,8 @@
 
   # Let Home Manager move aside pre-existing dotfiles instead of failing activation.
   home-manager.backupFileExtension = "hm-backup";
+
+  environment.systemPackages = [pkgs.openclaw];
 
   users.users.adam = {
     isNormalUser = true;
