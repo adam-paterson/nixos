@@ -18,6 +18,9 @@ on:
       build_command:
         required: true
         type: string
+      build_targets:
+        required: true
+        type: string
       reclaim_disk:
         required: false
         type: boolean
@@ -73,9 +76,31 @@ jobs:
         with:
           name: ${{ inputs.cache_name }}
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+          skipPush: true
 
       - name: Enable Nix Cache
         uses: DeterminateSystems/magic-nix-cache-action@v13
 
-      - name: Build And Push Cache Targets
+      - name: Build Cache Targets
         run: ${{ inputs.build_command }}
+
+      - name: Push Built Targets To Cachix
+        run: |
+          set -euo pipefail
+
+          mapfile -t targets < <(printf '%s\n' "${{ inputs.build_targets }}" | sed '/^[[:space:]]*$/d')
+          if [ "${#targets[@]}" -eq 0 ]; then
+            echo "::error::No build targets were provided to cache push step."
+            exit 1
+          fi
+
+          mapfile -t roots < <(nix path-info "${targets[@]}")
+          if [ "${#roots[@]}" -eq 0 ]; then
+            echo "::error::No root store paths were resolved from build targets."
+            exit 1
+          fi
+
+          echo "Resolved ${#roots[@]} root paths to push:"
+          printf '%s\n' "${roots[@]}"
+
+          nix run nixpkgs#cachix -- push "${{ inputs.cache_name }}" "${roots[@]}"

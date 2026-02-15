@@ -73,6 +73,10 @@ jobs:
       runs_on: macos-latest
       checkout_ref: ${{ needs.metadata.outputs.build_ref }}
       cache_name: ${{ needs.metadata.outputs.cache_name }}
+      build_targets: |
+        .#devShells.aarch64-darwin.default
+        .#darwinConfigurations.macbook.system
+        .#homeConfigurations."adampaterson@macbook".activationPackage
       build_command: |
         nix build --print-build-logs --no-link \
           .#devShells.aarch64-darwin.default \

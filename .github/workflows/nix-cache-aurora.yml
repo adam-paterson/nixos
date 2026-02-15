@@ -74,6 +74,9 @@ jobs:
       checkout_ref: ${{ needs.metadata.outputs.build_ref }}
       cache_name: ${{ needs.metadata.outputs.cache_name }}
       reclaim_disk: true
+      build_targets: |
+        .#devShells.x86_64-linux.default
+        .#nixosConfigurations.aurora.config.system.build.toplevel
       build_command: |
         nix build --print-build-logs --no-link \
           .#devShells.x86_64-linux.default \
