@@ -105,31 +105,16 @@ Note: at the currently pinned upstream revision, OpenCode desktop package eval i
 
 ## OpenClaw
 
-`src/modules/home/common/openclaw/default.nix` wraps `openclaw/nix-openclaw` for both hosts and follows the same config pattern as OpenCode:
+OpenClaw is configured for `aurora` in:
 
-```nix
-local.openclaw = {
-  enable = true;
-  manageConfig = true;
-  settings = { ... };      # used when settingsFile = null
-  settingsFile = ../../../config/openclaw/shared.json;  # JSON source of truth
-  installApp = true;       # macOS only
-};
-```
+- `src/systems/x86_64-linux/aurora/openclaw/default.nix`
+- `src/systems/x86_64-linux/aurora/openclaw/instances/adam/default.nix`
+- `src/systems/x86_64-linux/aurora/openclaw/instances/rachel/default.nix`
+- `src/systems/x86_64-linux/aurora/openclaw/config/`
 
-Behavior:
+It uses Snowfall's user-home bridge (`snowfallorg.users.adam.home.config`) to load the upstream Home Manager module from `openclaw/nix-openclaw` and declares two named instances (`adam`, `rachel`) with shared defaults plus instance-specific agent directories.
 
-- `settingsFile` takes precedence over `settings`.
-- JSON is parsed and applied to `programs.openclaw.config`.
-- Shared baseline lives at `src/config/openclaw/shared.json`.
-
-Export live config back to JSON for committing:
-
-```bash
-openclaw-export-config
-# or explicit target:
-openclaw-export-config /path/to/shared.json
-```
+OpenClaw documents and agent assets live next to the Aurora OpenClaw module under `src/systems/x86_64-linux/aurora/openclaw/config`.
 
 ## Cloudflared (aurora)
 
