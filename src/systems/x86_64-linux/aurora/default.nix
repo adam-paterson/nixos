@@ -9,6 +9,8 @@
     firewall.enable = true;
   };
 
+  services.cachix-agent.enable = true;
+
   time.timeZone = "UTC";
 
   local.tailscale = {

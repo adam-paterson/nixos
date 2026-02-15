@@ -34,13 +34,6 @@ inputs.devenv.lib.mkShell {
             entry = "${pkgs.just}/bin/just fmt-check";
             pass_filenames = false;
           };
-
-          eval = {
-            enable = true;
-            name = "eval";
-            entry = "${pkgs.just}/bin/just eval";
-            pass_filenames = false;
-          };
         };
       }
     )

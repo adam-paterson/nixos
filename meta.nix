@@ -32,4 +32,15 @@ _: rec {
       }
     ];
   };
+
+  theme = {
+    palette = {
+      os = "#ACB0BE";
+      pink = "#F5BDE6";
+      lavender = "#B7BDF8";
+      blue = "#8AADF4";
+      white = "#FFFFFF";
+      text = "#494D64";
+    };
+  };
 }
