@@ -11,6 +11,23 @@ in {
   ];
 
   snowfallorg.users.adam.home.config = {
+    home.file = {
+      ".openclaw-agents/documents" = {
+        source = ./config/documents;
+        recursive = true;
+      };
+
+      ".openclaw-agents/adam/personal-trainer" = {
+        source = ./config/agents/adam/personal-trainer;
+        recursive = true;
+      };
+
+      ".openclaw-agents/rachel/personal-trainer" = {
+        source = ./config/agents/rachel/personal-trainer;
+        recursive = true;
+      };
+    };
+
     programs.openclaw = {
       excludeTools = ["gogcli"];
       installApp = false;

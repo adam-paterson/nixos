@@ -114,6 +114,8 @@ OpenClaw is configured for `aurora` in:
 
 It uses Snowfall's user-home bridge (`snowfallorg.users.adam.home.config`) to load the upstream Home Manager module from `openclaw/nix-openclaw` and declares two named instances (`adam`, `rachel`) with shared defaults plus instance-specific agent directories.
 
+Agent documents and per-agent prompts are copied into `/home/adam/.openclaw-agents/*`, and each instance points `agentDir` there so deployed configs don't reference the repository checkout path.
+
 OpenClaw documents and agent assets live next to the Aurora OpenClaw module under `src/systems/x86_64-linux/aurora/openclaw/config`.
 
 ## Cloudflared (aurora)

@@ -1,6 +1,6 @@
 let
-  docsDir = toString ../config/documents;
-  trainerDir = toString ../config/agents/adam/personal-trainer;
+  docsDir = "/home/adam/.openclaw-agents/documents";
+  trainerDir = "/home/adam/.openclaw-agents/adam/personal-trainer";
 in {
   enable = true;
   gatewayPort = 18789;
