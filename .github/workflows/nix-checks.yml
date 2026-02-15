@@ -43,13 +43,13 @@ jobs:
         uses: DeterminateSystems/magic-nix-cache-action@v13
 
       - name: Format Check
-        run: nix run nixpkgs#just -- fmt-check
+        run: nix develop .#default --command devenv tasks run fmt-check
 
       - name: Lint
-        run: nix run nixpkgs#just -- lint
+        run: nix develop .#default --command devenv tasks run lint
 
       - name: Flake Checks
-        run: nix run nixpkgs#just -- check
+        run: nix develop .#default --command devenv tasks run check
 
       - name: Evaluate Configurations
-        run: nix run nixpkgs#just -- eval
+        run: nix develop .#default --command devenv tasks run eval

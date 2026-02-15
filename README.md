@@ -155,13 +155,13 @@ nix flake show
 
 ```bash
 # List available tasks
-just --list
+devenv tasks
 
 # Auto-format + auto-fix lints
-just fix
+devenv tasks run fix
 
 # Full local CI pass
-just ci
+devenv tasks run ci
 ```
 
 ### Direnv + nixd (VS Code)
@@ -247,10 +247,10 @@ Manual dispatch allows deploying a specific ref and/or custom Aurora agent name.
 
 ```bash
 # Linux cache targets (same attrs as CI cache workflow)
-just cache-targets-linux
+devenv tasks run cache-targets-linux
 
 # macOS cache targets (same attrs as CI cache workflow)
-just cache-targets-macos
+devenv tasks run cache-targets-macos
 ```
 
 ### Devenv Notes
