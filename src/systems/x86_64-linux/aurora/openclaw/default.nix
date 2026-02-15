@@ -1,24 +1,27 @@
 {
   inputs,
   lib,
+  config,
   ...
 }: let
-  adamInstance = import ./instances/adam;
-  rachelInstance = import ./instances/rachel;
+  openclawUser = "adam";
+  homeDir = config.users.users.${openclawUser}.home;
+  adamInstance = import ./instances/adam {homeDirectory = homeDir;};
+  rachelInstance = import ./instances/rachel {homeDirectory = homeDir;};
 in {
   home-manager.sharedModules = [
     inputs.openclaw.homeManagerModules.openclaw
   ];
 
-  snowfallorg.users.adam.home.config = {
+  snowfallorg.users.${openclawUser}.home.config = {
     home.file = {
       ".openclaw-adam/workspace" = {
         source = ./config/documents;
         recursive = true;
       };
 
-      ".openclaw-adam/workspace/personal-trainer" = {
-        source = ./config/agents/adam/personal-trainer;
+      ".openclaw-adam/workspace/agents" = {
+        source = ./config/agents/adam;
         recursive = true;
       };
 
@@ -27,8 +30,8 @@ in {
         recursive = true;
       };
 
-      ".openclaw-rachel/workspace/personal-trainer" = {
-        source = ./config/agents/rachel/personal-trainer;
+      ".openclaw-rachel/workspace/agents" = {
+        source = ./config/agents/rachel;
         recursive = true;
       };
     };

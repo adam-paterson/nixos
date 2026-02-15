@@ -1,12 +1,13 @@
-let
-  docsDir = "/home/adam/.openclaw-rachel/workspace";
-  trainerDir = "/home/adam/.openclaw-rachel/workspace/personal-trainer";
+{homeDirectory}: let
+  stateDir = "${homeDirectory}/.openclaw-rachel";
+  docsDir = "${stateDir}/workspace";
+  trainerDir = "${docsDir}/agents/personal-trainer";
 in {
   enable = true;
   gatewayPort = 18810;
 
-  stateDir = "/home/adam/.openclaw-rachel";
-  workspaceDir = "/home/adam/.openclaw-rachel/workspace";
+  inherit stateDir;
+  workspaceDir = docsDir;
 
   config = {
     agents = {
