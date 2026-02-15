@@ -189,7 +189,7 @@ return {
 
   -- Mini.bufremove for better buffer deletion
   {
-    "echasnovski/mini.bufremove",
+    "nvim-mini/mini.bufremove",
     keys = {
       {
         "<leader>bd",

@@ -10,7 +10,7 @@ return {
       { "folke/neoconf.nvim", cmd = "Neoconf", config = false },
       { "folke/neodev.nvim", opts = {} },
       "mason.nvim",
-      "williamboman/mason-lspconfig.nvim",
+      "mason-org/mason-lspconfig.nvim",
       {
         "hrsh7th/cmp-nvim-lsp",
         cond = function()
@@ -49,7 +49,7 @@ return {
       setup = {},
     },
     config = function(_, opts)
-      local util = require("lspconfig.util")
+      local lspconfig = require("lspconfig")
 
       -- Diagnostic configuration
       vim.diagnostic.config(vim.deepcopy(opts.diagnostics))
@@ -78,18 +78,25 @@ return {
             return
           end
         end
-        require("lspconfig")[server].setup(server_opts)
+        pcall(function()
+          lspconfig[server].setup(server_opts)
+        end)
       end
 
       -- Get all servers from mason-lspconfig
       local mlsp = require("mason-lspconfig")
-      local all_mslp_servers = vim.tbl_keys(require("mason-lspconfig.mappings.server").lspconfig_to_package)
+      local all_mslp_servers = {}
+      local has_mappings, mappings = pcall(require, "mason-lspconfig.mappings.server")
+      if has_mappings and type(mappings.lspconfig_to_package) == "table" then
+        all_mslp_servers = vim.tbl_keys(mappings.lspconfig_to_package)
+      end
 
       local ensure_installed = {}
       for server, server_opts in pairs(servers) do
         if server_opts then
           server_opts = server_opts == true and {} or server_opts
-          if server_opts.mason == false or not vim.tbl_contains(all_mslp_servers, server) then
+          local should_use_mason = server_opts.mason ~= false and vim.tbl_contains(all_mslp_servers, server)
+          if not should_use_mason then
             setup(server)
           else
             ensure_installed[#ensure_installed + 1] = server
