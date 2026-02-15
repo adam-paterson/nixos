@@ -12,17 +12,22 @@ in {
 
   snowfallorg.users.adam.home.config = {
     home.file = {
-      ".openclaw-agents/documents" = {
+      ".openclaw-adam/workspace" = {
         source = ./config/documents;
         recursive = true;
       };
 
-      ".openclaw-agents/adam/personal-trainer" = {
+      ".openclaw-adam/workspace/personal-trainer" = {
         source = ./config/agents/adam/personal-trainer;
         recursive = true;
       };
 
-      ".openclaw-agents/rachel/personal-trainer" = {
+      ".openclaw-rachel/workspace" = {
+        source = ./config/documents;
+        recursive = true;
+      };
+
+      ".openclaw-rachel/workspace/personal-trainer" = {
         source = ./config/agents/rachel/personal-trainer;
         recursive = true;
       };
