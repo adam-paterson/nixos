@@ -1,0 +1,123 @@
+name: Deploy Aurora
+
+on:
+  workflow_run:
+    workflows:
+      - Nix Cache Build
+    branches:
+      - main
+    types:
+      - completed
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Git ref to deploy (branch, tag, or SHA)
+        required: true
+        default: main
+        type: string
+      agent_name:
+        description: Cachix agent name for aurora
+        required: true
+        default: aurora
+        type: string
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.workflow_run.head_sha || github.event.inputs.ref || github.sha }}
+  cancel-in-progress: true
+
+jobs:
+  metadata:
+    name: Resolve Deploy Metadata
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      should_run: ${{ steps.compute.outputs.should_run }}
+      build_ref: ${{ steps.compute.outputs.build_ref }}
+      agent_name: ${{ steps.compute.outputs.agent_name }}
+      cache_name: ${{ steps.compute.outputs.cache_name }}
+    steps:
+      - name: Compute Metadata
+        id: compute
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          WORKFLOW_CONCLUSION: ${{ github.event.workflow_run.conclusion || '' }}
+          WORKFLOW_HEAD_SHA: ${{ github.event.workflow_run.head_sha || '' }}
+          INPUT_REF: ${{ github.event.inputs.ref || '' }}
+          INPUT_AGENT_NAME: ${{ github.event.inputs.agent_name || '' }}
+          CACHE_NAME: ${{ vars.CACHIX_CACHE_NAME }}
+        run: |
+          set -euo pipefail
+
+          should_run=false
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            should_run=true
+          elif [ "$EVENT_NAME" = "workflow_run" ] && [ "$WORKFLOW_CONCLUSION" = "success" ]; then
+            should_run=true
+          fi
+
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            build_ref="${INPUT_REF:-main}"
+            agent_name="${INPUT_AGENT_NAME:-aurora}"
+          else
+            build_ref="$WORKFLOW_HEAD_SHA"
+            agent_name="aurora"
+          fi
+
+          cache_name="${CACHE_NAME:-adam-paterson}"
+
+          {
+            echo "should_run=$should_run"
+            echo "build_ref=$build_ref"
+            echo "agent_name=$agent_name"
+            echo "cache_name=$cache_name"
+          } >> "$GITHUB_OUTPUT"
+
+  deploy-aurora:
+    name: Deploy Aurora Agent
+    needs: metadata
+    if: needs.metadata.outputs.should_run == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      CACHIX_CACHE_NAME: ${{ needs.metadata.outputs.cache_name }}
+      CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
+      CACHIX_ACTIVATE_TOKEN: ${{ secrets.CACHIX_ACTIVATE_TOKEN }}
+      AGENT_NAME: ${{ needs.metadata.outputs.agent_name }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.metadata.outputs.build_ref }}
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+
+      - name: Validate Cachix Deploy Secrets
+        run: |
+          test -n "$CACHIX_CACHE_NAME"
+          test -n "$CACHIX_AUTH_TOKEN"
+          test -n "$CACHIX_ACTIVATE_TOKEN"
+          test -n "$AGENT_NAME"
+
+      - name: Build Aurora NixOS System
+        id: build
+        run: |
+          store_path="$(nix build --no-link --print-out-paths .#nixosConfigurations.aurora.config.system.build.toplevel)"
+          echo "store_path=$store_path" >> "$GITHUB_OUTPUT"
+
+      - name: Push Aurora Closure To Cachix
+        run: nix run nixpkgs#cachix -- push "$CACHIX_CACHE_NAME" '${{ steps.build.outputs.store_path }}'
+
+      - name: Activate Aurora Agent
+        run: |
+          jq -n \
+            --arg agent "$AGENT_NAME" \
+            --arg path '${{ steps.build.outputs.store_path }}' \
+            '{agents: {($agent): $path}}' > deploy.json
+          nix run nixpkgs#cachix -- deploy activate deploy.json --agent "$AGENT_NAME"

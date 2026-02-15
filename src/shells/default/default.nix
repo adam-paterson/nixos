@@ -22,6 +22,7 @@ inputs.devenv.lib.mkShell {
           git
         ];
 
+        # Set up git hooks for code quality checks.
         git-hooks.hooks = {
           alejandra.enable = true;
           deadnix.enable = true;

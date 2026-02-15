@@ -1,0 +1,228 @@
+name: Nix Cache Build
+
+on:
+  workflow_run:
+    workflows:
+      - Nix Checks
+    branches:
+      - main
+    types:
+      - completed
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: Git ref to build (branch, tag, or SHA)
+        required: false
+        default: main
+        type: string
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.workflow_run.head_sha || github.sha }}
+  cancel-in-progress: true
+
+jobs:
+  metadata:
+    name: Resolve Build Metadata
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      should_run: ${{ steps.compute.outputs.should_run }}
+      build_ref: ${{ steps.compute.outputs.build_ref }}
+      cache_name: ${{ steps.compute.outputs.cache_name }}
+    steps:
+      - name: Compute Metadata
+        id: compute
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          WORKFLOW_CONCLUSION: ${{ github.event.workflow_run.conclusion || '' }}
+          WORKFLOW_HEAD_SHA: ${{ github.event.workflow_run.head_sha || '' }}
+          INPUT_REF: ${{ github.event.inputs.ref || '' }}
+          CACHE_NAME: ${{ vars.CACHIX_CACHE_NAME }}
+        run: |
+          set -euo pipefail
+
+          should_run=false
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            should_run=true
+          elif [ "$EVENT_NAME" = "workflow_run" ] && [ "$WORKFLOW_CONCLUSION" = "success" ]; then
+            should_run=true
+          fi
+
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            build_ref="${INPUT_REF:-main}"
+          else
+            build_ref="$WORKFLOW_HEAD_SHA"
+          fi
+
+          cache_name="${CACHE_NAME:-adam-paterson}"
+
+          {
+            echo "should_run=$should_run"
+            echo "build_ref=$build_ref"
+            echo "cache_name=$cache_name"
+          } >> "$GITHUB_OUTPUT"
+
+  build-targets:
+    name: Build Cache Targets
+    needs: metadata
+    if: needs.metadata.outputs.should_run == 'true'
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - id: linux
+            label: Linux
+            runs_on: ubuntu-latest
+            reclaim_disk: true
+          - id: macos
+            label: macOS
+            runs_on: macos-latest
+            reclaim_disk: false
+    runs-on: ${{ matrix.runs_on }}
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.metadata.outputs.build_ref }}
+
+      - name: Free Disk Space
+        if: matrix.reclaim_disk
+        run: |
+          df -h
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+          sudo rm -rf /usr/local/.ghcup
+          docker system prune -af || true
+          df -h
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+
+      - name: Enable Nix Cache
+        uses: DeterminateSystems/magic-nix-cache-action@v13
+
+      - name: Build Linux Targets
+        if: matrix.id == 'linux'
+        run: |
+          nix build --print-build-logs --no-link \
+            .#devShells.x86_64-linux.default \
+            .#nixosConfigurations.aurora.config.system.build.toplevel
+
+      - name: Build macOS Targets
+        if: matrix.id == 'macos'
+        run: |
+          nix build --print-build-logs --no-link \
+            .#devShells.aarch64-darwin.default \
+            .#darwinConfigurations.macbook.system \
+            '.#homeConfigurations."adampaterson@macbook".activationPackage'
+
+  push-cache:
+    name: Push Cache
+    needs:
+      - metadata
+      - build-targets
+    if: needs.metadata.outputs.should_run == 'true'
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - id: linux
+            label: Linux
+            runs_on: ubuntu-latest
+            reclaim_disk: true
+          - id: macos
+            label: macOS
+            runs_on: macos-latest
+            reclaim_disk: false
+    runs-on: ${{ matrix.runs_on }}
+    permissions:
+      contents: read
+    env:
+      CACHIX_CACHE_NAME: ${{ needs.metadata.outputs.cache_name }}
+      CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.metadata.outputs.build_ref }}
+
+      - name: Free Disk Space
+        if: matrix.reclaim_disk
+        run: |
+          df -h
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+          sudo rm -rf /usr/local/.ghcup
+          docker system prune -af || true
+          df -h
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+
+      - name: Validate Cachix Config
+        run: |
+          if [ -z "$CACHIX_CACHE_NAME" ]; then
+            echo "::error::Cachix cache name is empty. Set repository variable CACHIX_CACHE_NAME."
+            exit 1
+          fi
+          if [ -z "$CACHIX_AUTH_TOKEN" ]; then
+            echo "::error::CACHIX_AUTH_TOKEN secret is empty."
+            exit 1
+          fi
+
+      - name: Setup Cachix
+        uses: cachix/cachix-action@v16
+        with:
+          name: ${{ env.CACHIX_CACHE_NAME }}
+          authToken: ${{ env.CACHIX_AUTH_TOKEN }}
+          skipPush: true
+
+      - name: Enable Nix Cache
+        uses: DeterminateSystems/magic-nix-cache-action@v13
+
+      - name: Build Linux Targets
+        if: matrix.id == 'linux'
+        run: |
+          nix build --print-build-logs --no-link \
+            .#devShells.x86_64-linux.default \
+            .#nixosConfigurations.aurora.config.system.build.toplevel
+
+      - name: Push Linux Targets
+        if: matrix.id == 'linux'
+        run: |
+          set -euo pipefail
+          mapfile -t roots < <(nix path-info \
+            .#devShells.x86_64-linux.default \
+            .#nixosConfigurations.aurora.config.system.build.toplevel)
+          nix run nixpkgs#cachix -- push "$CACHIX_CACHE_NAME" "${roots[@]}"
+
+      - name: Build macOS Targets
+        if: matrix.id == 'macos'
+        run: |
+          nix build --print-build-logs --no-link \
+            .#devShells.aarch64-darwin.default \
+            .#darwinConfigurations.macbook.system \
+            '.#homeConfigurations."adampaterson@macbook".activationPackage'
+
+      - name: Push macOS Targets
+        if: matrix.id == 'macos'
+        run: |
+          set -euo pipefail
+          mapfile -t roots < <(nix path-info \
+            .#devShells.aarch64-darwin.default \
+            .#darwinConfigurations.macbook.system \
+            '.#homeConfigurations."adampaterson@macbook".activationPackage')
+          nix run nixpkgs#cachix -- push "$CACHIX_CACHE_NAME" "${roots[@]}"
