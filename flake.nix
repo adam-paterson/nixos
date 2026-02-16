@@ -67,11 +67,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    openclaw = {
-      url = "github:openclaw/nix-openclaw";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     vscode-server = {
       url = "github:nix-community/nixos-vscode-server";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -96,7 +91,6 @@
       };
 
       overlays = [
-        inputs.openclaw.overlays.default
         inputs.codex-cli-nix.overlays.default
       ];
 

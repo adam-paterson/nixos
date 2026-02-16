@@ -1,5 +1,0 @@
-- Name: Rachel
-- Recovering from having a cesarean section on 8th May 2025.
-- Young child at home, so time for workouts is limited.
-- Prefers concise plans and clear next steps.
-- Wants sustainable progress over short-term intensity.

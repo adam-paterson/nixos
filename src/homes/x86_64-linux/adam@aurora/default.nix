@@ -1,7 +1,6 @@
 {pkgs, ...}: {
   imports = [
     ../../common
-    ./openclaw
   ];
 
   home = {
