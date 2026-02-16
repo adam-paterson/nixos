@@ -1,0 +1,34 @@
+name: Ubuntu Artifact Build
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-aurora-in-ubuntu-container:
+    name: Build Aurora in Ubuntu Container
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Build Ubuntu Nix Builder Image
+        run: docker build -f Containerfile -t nix-ubuntu-builder .
+
+      - name: Build NixOS Artifact
+        run: |
+          docker run --rm \
+            -v "$PWD:/work" \
+            -w /work \
+            nix-ubuntu-builder \
+            bash -lc "nix build --print-build-logs --no-link .#nixosConfigurations.aurora.config.system.build.toplevel"

@@ -32,12 +32,16 @@ in {
       type = lib.types.attrs;
       default = {
         "$schema" = "https://opencode.ai/config.json";
-        theme = "opencode";
+        theme = "catppuccin-macchiato";
+        plugins = [
+          "opencode-pty"
+        ];
         permission = {
           bash = "allow";
           edit = "allow";
           webfetch = "allow";
         };
+        experimental = true;
       };
       description = "OpenCode JSON settings rendered to ~/.config/opencode/opencode.json.";
     };
@@ -57,7 +61,9 @@ in {
 
   config = lib.mkIf cfg.enable {
     home.packages =
-      [pkgs.opencode]
+      [
+        pkgs.opencode
+      ]
       ++ lib.optional (cfg.installDesktop && opencodeDesktop != null) opencodeDesktop;
 
     xdg.enable = true;

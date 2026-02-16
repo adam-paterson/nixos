@@ -1,6 +1,7 @@
-# ╭──────────────────────────────────────────────────────────╮
-# │ Nix flake (Snowfall Lib)                                 │
-# ╰──────────────────────────────────────────────────────────╯
+# ╔══════════════════════════════════════════════════════════════════╗
+# ║ flake.nix                                                        ║
+# ║ Nix flake outputs: devShells, packages, checks, formatter        ║
+# ╚══════════════════════════════════════════════════════════════════╝
 {
   description = "Cross-platform development environments with Snowfall Lib";
 
@@ -15,12 +16,18 @@
     '';
   };
 
-  # ── Inputs ────────────────────────────────────────────────────────────
+  # ──[ Inputs ]───────────────────────────────────────────────────────────
+  # Dev shells + build outputs. Prefer `nix develop` or direnv `use flake`.
+  # ───────────────────────────────────────────────────────────────────────
   inputs = {
-    # ── Primary Inputs ──────────────────────────────────────────────────
-    # Nix
+    # ──[ Nix Inputs ]─────────────────────────────────────────────────────
+    # Official NixOS package source, using nixos's unstable branch by default.
+    # Follow it in other flakes for consistency. Pinning to a specific commit
+    # or branch ensures reproducibility.
+    # ───────────────────────────────────────────────────────────────────────
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-    # Snowfall Lib
+
+    # ──[ Snowfall Lib Inputs ]────────────────────────────────────────────
     snowfall-lib = {
       url = "github:snowfallorg/lib";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -54,6 +61,11 @@
     };
     opencode = {
       url = "github:anomalyco/opencode";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    openclaw = {
+      url = "github:openclaw/nix-openclaw";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -92,6 +104,7 @@
 
       overlays = [
         inputs.codex-cli-nix.overlays.default
+        inputs.openclaw.overlays.default
       ];
 
       channels-config = {

@@ -113,14 +113,14 @@ jobs:
         if: matrix.id == 'linux'
         run: |
           nix build --print-build-logs --no-link \
-            .#devShells.x86_64-linux.default \
+            .#devShells.x86_64-linux.dev \
             .#nixosConfigurations.aurora.config.system.build.toplevel
 
       - name: Build macOS Targets
         if: matrix.id == 'macos'
         run: |
           nix build --print-build-logs --no-link \
-            .#devShells.aarch64-darwin.default \
+            .#devShells.aarch64-darwin.dev \
             .#darwinConfigurations.macbook.system \
             '.#homeConfigurations."adampaterson@macbook".activationPackage'
 
@@ -197,7 +197,7 @@ jobs:
         if: matrix.id == 'linux'
         run: |
           nix build --print-build-logs --no-link \
-            .#devShells.x86_64-linux.default \
+            .#devShells.x86_64-linux.dev \
             .#nixosConfigurations.aurora.config.system.build.toplevel
 
       - name: Push Linux Targets
@@ -209,7 +209,7 @@ jobs:
             roots+=("$line")
           done < <(
             nix path-info \
-              .#devShells.x86_64-linux.default \
+              .#devShells.x86_64-linux.dev \
               .#nixosConfigurations.aurora.config.system.build.toplevel
           )
           if [ "${#roots[@]}" -eq 0 ]; then
@@ -222,7 +222,7 @@ jobs:
         if: matrix.id == 'macos'
         run: |
           nix build --print-build-logs --no-link \
-            .#devShells.aarch64-darwin.default \
+            .#devShells.aarch64-darwin.dev \
             .#darwinConfigurations.macbook.system \
             '.#homeConfigurations."adampaterson@macbook".activationPackage'
 
@@ -235,7 +235,7 @@ jobs:
             roots+=("$line")
           done < <(
             nix path-info \
-              .#devShells.aarch64-darwin.default \
+              .#devShells.aarch64-darwin.dev \
               .#darwinConfigurations.macbook.system \
               '.#homeConfigurations."adampaterson@macbook".activationPackage'
           )

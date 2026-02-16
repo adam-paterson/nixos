@@ -147,6 +147,12 @@ just --list
 # Auto-format + auto-fix lints
 just fix
 
+# Run parity checks with CI shell
+just fmt-check
+just lint
+just check
+just eval
+
 # Full local CI pass
 just ci
 ```
@@ -161,6 +167,9 @@ direnv allow
 
 # manual shell entry (optional)
 nix develop .#dev
+
+# minimal CI shell (optional)
+nix develop .#ci
 ```
 
 The `.envrc` is configured to load `.#dev`, so entering the repo adds `nixd` to your environment.
@@ -191,7 +200,8 @@ home-manager switch --flake .#adam@aurora
 - GitHub Actions lint/eval checks are defined in `.github/workflows/nix-checks.yml`.
 - GitHub Actions cache build/push workflow is defined in `.github/workflows/nix-cache.yml`.
 - GitHub Actions Aurora deploy workflow is defined in `.github/workflows/deploy-aurora.yml`.
-- Pre-commit hooks are managed by devenv in `src/shells/default/default.nix`.
+- GitHub Actions Ubuntu container artifact build is defined in `.github/workflows/ubuntu-artifacts.yml`.
+- Pre-commit hooks are managed by devenv in `src/shells/dev/default.nix`.
 
 ### CI and Cache Flow
 
@@ -218,8 +228,8 @@ It has two jobs:
 
 It builds and pushes these cache targets:
 
-- Linux: `devShells.x86_64-linux.default`, `nixosConfigurations.aurora.config.system.build.toplevel`
-- macOS: `devShells.aarch64-darwin.default`, `darwinConfigurations.macbook.system`, `homeConfigurations."adampaterson@macbook".activationPackage`
+- Linux: `devShells.x86_64-linux.dev`, `nixosConfigurations.aurora.config.system.build.toplevel`
+- macOS: `devShells.aarch64-darwin.dev`, `darwinConfigurations.macbook.system`, `homeConfigurations."adampaterson@macbook".activationPackage`
 
 Required repository configuration for cache push and deploy:
 
@@ -242,8 +252,18 @@ just cache-targets-macos
 
 ### Devenv Notes
 
-- `devenv.root` is pinned in `src/shells/default/default.nix` so `nix flake show` works reliably in CI.
+- `devenv.root` is pinned in `src/shells/dev/default.nix` and `src/shells/ci/default.nix` so flake evaluation runs consistently.
 - `cachix.pull = [ "adam-paterson" ]` is enabled in the dev shell for fast local substitute downloads.
+
+### Ubuntu Container Artifact Validation
+
+Build the Ubuntu-based Nix container and verify the Aurora system artifact:
+
+```bash
+docker build -f Containerfile -t nix-ubuntu-builder .
+docker run --rm -v "$PWD:/work" -w /work nix-ubuntu-builder \
+  bash -lc "nix build --print-build-logs --no-link .#nixosConfigurations.aurora.config.system.build.toplevel"
+```
 
 ### Cachix Agent Bootstrap
 
