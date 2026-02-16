@@ -9,7 +9,10 @@ in {
 
   config = lib.mkIf cfg.enable {
     local = {
-      opencode.enable = lib.mkDefault true;
+      opencode = {
+        enable = lib.mkDefault true;
+        installDesktop = lib.mkDefault false;
+      };
     };
   };
 }

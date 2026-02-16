@@ -1,6 +1,6 @@
 {pkgs, ...}: {
   imports = [
-    ../../common
+    ./openclaw
   ];
 
   home = {
@@ -9,9 +9,18 @@
     stateVersion = "26.05";
   };
 
-  local.onePasswordSSH.enable = true;
+  local = {
+    onePasswordSSH.enable = true;
 
-  local.neovim.enableDAP = true;
+    collections.home = {
+      base.enable = true;
+      dev.enable = true;
+      cli.enable = true;
+      ai.enable = true;
+    };
+
+    neovim.enableDAP = true;
+  };
 
   home.packages = with pkgs; [
     tmux

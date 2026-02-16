@@ -1,8 +1,4 @@
 {pkgs, ...}: {
-  imports = [
-    ../../common
-  ];
-
   home = {
     username = "adampaterson";
     homeDirectory = "/Users/adampaterson";
@@ -10,6 +6,13 @@
   };
 
   local = {
+    collections.home = {
+      base.enable = true;
+      dev.enable = true;
+      cli.enable = true;
+      ai.enable = true;
+    };
+
     onePasswordSSH = {
       enable = true;
       includeBookmarkConfig = true;
