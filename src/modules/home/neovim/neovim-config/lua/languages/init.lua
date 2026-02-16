@@ -1,6 +1,0 @@
--- ╭─────────────────────────────────────────────────────────╮
--- │ Language Module Loader                                    │
--- ╰─────────────────────────────────────────────────────────╯
--- This file is automatically loaded by Lazy.nvim
-
-return {}
