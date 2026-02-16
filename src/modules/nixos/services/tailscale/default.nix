@@ -6,7 +6,7 @@
   cfg = config.local.tailscale;
 in {
   imports = [
-    ../../common/tailscale
+    ../../../common/tailscale
   ];
 
   options.local.tailscale.openFirewall = lib.mkOption {
