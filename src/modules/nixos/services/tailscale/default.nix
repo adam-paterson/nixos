@@ -1,13 +1,12 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }: let
   cfg = config.local.tailscale;
 in {
-  imports = [
-    ../../../common/tailscale
-  ];
+  options.local.tailscale.enable = lib.mkEnableOption "Tailscale";
 
   options.local.tailscale.openFirewall = lib.mkOption {
     type = lib.types.bool;
@@ -16,6 +15,11 @@ in {
   };
 
   config = lib.mkIf cfg.enable {
+    services.tailscale.enable = true;
     services.tailscale.openFirewall = cfg.openFirewall;
+
+    environment.systemPackages = [
+      pkgs.tailscale
+    ];
   };
 }

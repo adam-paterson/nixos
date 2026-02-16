@@ -5,9 +5,7 @@
 }: let
   cfg = config.local.tailscale;
 in {
-  imports = [
-    ../../../common/tailscale
-  ];
+  options.local.tailscale.enable = lib.mkEnableOption "Tailscale";
 
   options.local.tailscale.installApp = lib.mkOption {
     type = lib.types.bool;
