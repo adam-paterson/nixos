@@ -18,43 +18,36 @@ Snowfall Lib auto-discovers systems, homes, and modules under `src/`.
 ```text
 src/
 ├── homes/
-│   ├── aarch64-darwin/
-│   │   └── adampaterson@macbook/default.nix
-│   └── x86_64-linux/
-│       └── adam@aurora/default.nix
+│   ├── aarch64-darwin/adampaterson@macbook/default.nix
+│   └── x86_64-linux/adam@aurora/default.nix
 ├── modules/
 │   ├── base.nix
 │   ├── darwin/
-│   │   ├── base/default.nix
-│   │   └── system/
-│   │       ├── default.nix
-│   │       └── input/default.nix
+│   │   ├── apps/homebrew/default.nix
+│   │   ├── collections/{base,workstation}/default.nix
+│   │   ├── services/tailscale/default.nix
+│   │   └── system/{core,input}/default.nix
 │   ├── home/
-│   │   └── common/
-│   │       ├── default.nix
-│   │       ├── git/default.nix
-│   │       ├── opencode/default.nix
-│   │       ├── packages/default.nix
-│   │       ├── shell/default.nix
-│   │       ├── spaceship/default.nix
-│   │       └── ssh-agent-1password/default.nix
+│   │   ├── apps/{cli,desktop}/...
+│   │   ├── collections/{ai,base,cli,desktop,dev}/default.nix
+│   │   ├── dev/{git,languages,neovim,shell,tailwind,tmux}/...
+│   │   ├── prompts/{oh-my-posh,spaceship}/...
+│   │   └── security/{onepassword-cli,ssh-agent-1password}/...
 │   └── nixos/
-│       ├── base/default.nix
-│       └── server/default.nix
+│       ├── collections/{base,server,workstation}/default.nix
+│       └── services/{cloudflared,tailscale}/default.nix
 └── systems/
-    ├── aarch64-darwin/
-    │   └── macbook/default.nix
-    └── x86_64-linux/
-        └── aurora/
-            ├── default.nix
-            └── hardware-configuration.nix
+    ├── aarch64-darwin/macbook/default.nix
+    └── x86_64-linux/aurora/
+        ├── default.nix
+        └── hardware/default.nix
 ```
 
 ## How Modules Are Applied
 
-- `src/modules/home/*` modules apply to all Home Manager profiles.
-- `src/modules/darwin/*` modules apply to all darwin systems.
-- `src/modules/nixos/*` modules apply to all NixOS systems.
+- `src/modules/home/collections/*` bundles Home Manager feature modules.
+- `src/modules/darwin/collections/*` bundles Darwin feature modules.
+- `src/modules/nixos/collections/*` bundles NixOS feature modules.
 
 This keeps host files small and host-specific, while shared behavior lives in `modules/`.
 
@@ -73,7 +66,7 @@ local.onePasswordSSH.enable = true;
 
 ## Spaceship Prompt
 
-`src/modules/home/common/spaceship/default.nix` configures Spaceship for Zsh and is enabled by default.
+`src/modules/home/prompts/spaceship/default.nix` configures Spaceship for Zsh and is enabled by default.
 
 Optional per-home overrides:
 
@@ -87,7 +80,7 @@ local.prompts.spaceship = {
 
 ## OpenCode
 
-`src/modules/home/common/opencode/default.nix` manages OpenCode CLI on both hosts and can manage `~/.config/opencode/opencode.json`.
+`src/modules/home/apps/cli/opencode/default.nix` manages OpenCode CLI on both hosts and can manage `~/.config/opencode/opencode.json`.
 
 Per-home options:
 
@@ -105,7 +98,7 @@ Note: at the currently pinned upstream revision, OpenCode desktop package eval i
 
 ## Cloudflared (aurora)
 
-`src/modules/nixos/cloudflared/default.nix` adds a host-level wrapper around `services.cloudflared`.
+`src/modules/nixos/services/cloudflared/default.nix` adds a host-level wrapper around `services.cloudflared`.
 
 Aurora wiring lives in:
 
