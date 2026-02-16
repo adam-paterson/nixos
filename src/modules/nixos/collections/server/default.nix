@@ -8,6 +8,8 @@ in {
   options.local.collections.nixos.server.enable = lib.mkEnableOption "server NixOS collection";
 
   config = lib.mkIf cfg.enable {
+    local.collections.nixos.base.enable = lib.mkDefault true;
+
     services.fail2ban.enable = true;
 
     security.sudo = {

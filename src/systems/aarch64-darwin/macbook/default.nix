@@ -8,16 +8,20 @@
   # Set to your local macOS username.
   system.primaryUser = "adampaterson";
 
-  local.darwin.input = {
-    enable = true;
-    remapCapsLockToControl = true;
-    keyRepeat = 2;
-    initialKeyRepeat = 15;
-  };
+  local = {
+    collections.darwin.workstation.enable = true;
 
-  local.tailscale = {
-    enable = true;
-    installApp = true;
+    darwin.input = {
+      enable = true;
+      remapCapsLockToControl = true;
+      keyRepeat = 2;
+      initialKeyRepeat = 15;
+    };
+
+    tailscale = {
+      enable = true;
+      installApp = true;
+    };
   };
 
   homebrew = {
