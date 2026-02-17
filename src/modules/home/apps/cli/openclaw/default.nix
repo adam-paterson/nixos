@@ -2,11 +2,12 @@
   config,
   inputs,
   lib,
+  pkgs,
   ...
 }: let
-  cfg = config.local.openclaw;
+  cfg = config.cosmos.openclaw;
 in {
-  options.local.openclaw.enable = lib.mkEnableOption "OpenClaw Home Manager module";
+  options.cosmos.openclaw.enable = lib.mkEnableOption "OpenClaw Home Manager module";
 
   imports = [
     inputs.openclaw.homeManagerModules.openclaw
@@ -15,6 +16,7 @@ in {
   config = lib.mkIf cfg.enable {
     programs.openclaw = {
       enable = true;
+      package = inputs.openclaw.packages.${pkgs.system}.openclaw;
     };
   };
 }

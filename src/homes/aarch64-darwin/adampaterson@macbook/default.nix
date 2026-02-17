@@ -1,4 +1,4 @@
-{pkgs, ...}: {
+_: {
   home = {
     username = "adampaterson";
     homeDirectory = "/Users/adampaterson";
@@ -11,6 +11,10 @@
       dev.enable = true;
       cli.enable = true;
       ai.enable = true;
+    };
+
+    codex = {
+      enable = true;
     };
 
     onePasswordSSH = {
@@ -38,8 +42,4 @@
       };
     };
   };
-
-  home.packages = with pkgs; [
-    just
-  ];
 }

@@ -16,15 +16,15 @@
     '';
   };
 
-  # ──[ Inputs ]───────────────────────────────────────────────────────────
+  # ──[ Inputs ]──────────────────────────────────────────────────────────────
   # Dev shells + build outputs. Prefer `nix develop` or direnv `use flake`.
-  # ───────────────────────────────────────────────────────────────────────
+  # ──────────────────────────────────────────────────────────────────────────
   inputs = {
-    # ──[ Nix Inputs ]─────────────────────────────────────────────────────
+    # ──[ Nix Inputs ]────────────────────────────────────────────────────────
     # Official NixOS package source, using nixos's unstable branch by default.
     # Follow it in other flakes for consistency. Pinning to a specific commit
     # or branch ensures reproducibility.
-    # ───────────────────────────────────────────────────────────────────────
+    # ────────────────────────────────────────────────────────────────────────
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
 
     # ──[ Snowfall Lib Inputs ]────────────────────────────────────────────
@@ -59,6 +59,12 @@
       url = "github:nikitabobko/homebrew-tap";
       flake = false;
     };
+
+    codex = {
+      url = "github:openai/codex";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     opencode = {
       url = "github:anomalyco/opencode";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -66,11 +72,6 @@
 
     openclaw = {
       url = "github:openclaw/nix-openclaw";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    codex-cli-nix = {
-      url = "github:sadjow/codex-cli-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -93,17 +94,16 @@
       src = ./.;
 
       snowfall = {
-        namespace = "adampaterson";
+        namespace = "cosmos";
         root = ./src;
         meta = {
-          name = "nixos-config";
-          title = "NixOS Config";
+          name = "cosmos";
+          title = "Adam Paterson | Cosmos";
         };
         entities = meta;
       };
 
       overlays = [
-        inputs.codex-cli-nix.overlays.default
         inputs.openclaw.overlays.default
       ];
 

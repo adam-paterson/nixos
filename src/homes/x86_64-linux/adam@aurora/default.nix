@@ -1,4 +1,8 @@
 {pkgs, ...}: {
+  imports = [
+    ./programs/openclaw
+  ];
+
   home = {
     username = "adam";
     homeDirectory = "/home/adam";
@@ -16,7 +20,12 @@
     };
 
     neovim.enableDAP = true;
-    openclaw.enable = true;
+  };
+
+  cosmos = {
+    openclaw = {
+      enable = true;
+    };
   };
 
   home.packages = with pkgs; [
