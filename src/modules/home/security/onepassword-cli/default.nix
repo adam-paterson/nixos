@@ -4,7 +4,7 @@
   pkgs,
   ...
 }: let
-  cfg = config.local.onePasswordCLI;
+  cfg = config.cosmos.onePasswordCLI;
 
   # Generate the env file content from the configured secrets
   envFileContent = lib.concatStringsSep "\n" (
@@ -30,7 +30,7 @@
     echo "1Password environment variables loaded!"
   '';
 in {
-  options.local.onePasswordCLI = {
+  options.cosmos.onePasswordCLI = {
     enable = lib.mkEnableOption "1Password CLI with automatic environment variable loading";
 
     enableBashIntegration = lib.mkOption {

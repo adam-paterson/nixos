@@ -4,9 +4,9 @@
   pkgs,
   ...
 }: let
-  cfg = config.local.prompts.spaceship;
+  cfg = config.cosmos.prompts.spaceship;
 in {
-  options.local.prompts.spaceship = {
+  options.cosmos.prompts.spaceship = {
     enable = lib.mkOption {
       type = lib.types.bool;
       default = true;

@@ -4,30 +4,27 @@
   pkgs,
   ...
 }: let
-  cfg = config.local.cloudflared;
+  cfg = config.cosmos.cloudflared;
   ingressList =
-    (map
-      (
-        host: let
-          value = cfg.ingress.${host};
-        in
-          if builtins.isString value
-          then {
-            hostname = host;
-            service = value;
-          }
-          else ({hostname = host;} // value)
-      )
-      (builtins.attrNames cfg.ingress))
+    (map (
+      host: let
+        value = cfg.ingress.${host};
+      in
+        if builtins.isString value
+        then {
+          hostname = host;
+          service = value;
+        }
+        else ({hostname = host;} // value)
+    ) (builtins.attrNames cfg.ingress))
     ++ [
       {
         service = cfg.defaultService;
       }
     ];
 
-  cloudflaredConfig =
-    pkgs.writeText "cloudflared-${cfg.tunnelId}.json"
-    (builtins.toJSON (
+  cloudflaredConfig = pkgs.writeText "cloudflared-${cfg.tunnelId}.json" (
+    builtins.toJSON (
       {
         tunnel = cfg.tunnelId;
         "credentials-file" = cfg.credentialsFile;
@@ -36,9 +33,10 @@
       // lib.optionalAttrs (cfg.originRequest != {}) {
         inherit (cfg) originRequest;
       }
-    ));
+    )
+  );
 in {
-  options.local.cloudflared = {
+  options.cosmos.cloudflared = {
     enable = lib.mkEnableOption "Cloudflared tunnel service";
 
     installCli = lib.mkOption {
@@ -100,11 +98,11 @@ in {
       assertions = [
         {
           assertion = cfg.tunnelId != null;
-          message = "local.cloudflared.tunnelId must be set when local.cloudflared.enable = true.";
+          message = "cosmos.cloudflared.tunnelId must be set when cosmos.cloudflared.enable = true.";
         }
         {
           assertion = builtins.length (builtins.attrNames cfg.ingress) > 0;
-          message = "local.cloudflared.ingress must define at least one hostname rule when local.cloudflared.enable = true.";
+          message = "cosmos.cloudflared.ingress must define at least one hostname rule when cosmos.cloudflared.enable = true.";
         }
       ];
 

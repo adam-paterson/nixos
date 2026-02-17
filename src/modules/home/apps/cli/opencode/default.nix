@@ -5,7 +5,7 @@
   inputs,
   ...
 }: let
-  cfg = config.local.opencode;
+  cfg = config.cosmos.opencode;
   inherit (pkgs.stdenv.hostPlatform) system;
   desktopEval =
     if inputs ? opencode
@@ -19,7 +19,7 @@
     then inputs.opencode.packages.${system}.desktop
     else null;
 in {
-  options.local.opencode = {
+  options.cosmos.opencode = {
     enable = lib.mkEnableOption "OpenCode CLI";
 
     manageConfig = lib.mkOption {
@@ -74,7 +74,7 @@ in {
     };
 
     warnings = lib.optional (cfg.installDesktop && opencodeDesktop == null) ''
-      local.opencode.installDesktop=true, but the upstream OpenCode desktop package is currently unavailable for ${system}.
+      cosmos.opencode.installDesktop=true, but the upstream OpenCode desktop package is currently unavailable for ${system}.
       Falling back to CLI-only install.
     '';
   };

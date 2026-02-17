@@ -3,12 +3,12 @@
   lib,
   ...
 }: let
-  cfg = config.local.collections.home.cli;
+  cfg = config.cosmos.collections.home.cli;
 in {
-  options.local.collections.home.cli.enable = lib.mkEnableOption "CLI apps home collection";
+  options.cosmos.collections.home.cli.enable = lib.mkEnableOption "CLI apps home collection";
 
   config = lib.mkIf cfg.enable {
-    local = {
+    cosmos = {
       opencode = {
         enable = lib.mkDefault true;
         installDesktop = lib.mkDefault false;

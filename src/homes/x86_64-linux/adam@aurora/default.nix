@@ -9,7 +9,7 @@
     stateVersion = "26.05";
   };
 
-  local = {
+  cosmos = {
     onePasswordSSH.enable = true;
 
     collections.home = {
@@ -20,12 +20,7 @@
     };
 
     neovim.enableDAP = true;
-  };
-
-  cosmos = {
-    openclaw = {
-      enable = true;
-    };
+    openclaw.enable = true;
   };
 
   home.packages = with pkgs; [

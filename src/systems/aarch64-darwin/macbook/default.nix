@@ -8,7 +8,7 @@
   # Set to your local macOS username.
   system.primaryUser = "adampaterson";
 
-  local = {
+  cosmos = {
     collections.darwin.workstation.enable = true;
 
     darwin.input = {
@@ -34,5 +34,5 @@
     taps = ["nikitabobko/tap"];
   };
 
-  system.stateVersion = "26.05";
+  system.stateVersion = 6;
 }

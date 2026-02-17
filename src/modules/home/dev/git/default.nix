@@ -11,11 +11,11 @@
     sha256 = "1qkqchyj4dn0w4wq5xhc86dpj0vlmn94n814nzzif8y7rj3g8w0w";
   };
 in {
-  options.local.git = {
+  options.cosmos.git = {
     enable = lib.mkEnableOption "Git configuration with Delta";
   };
 
-  config = lib.mkIf config.local.git.enable {
+  config = lib.mkIf config.cosmos.git.enable {
     programs.git = {
       enable = true;
 

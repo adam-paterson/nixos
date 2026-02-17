@@ -3,12 +3,12 @@
   lib,
   ...
 }: let
-  cfg = config.local.collections.home.dev;
+  cfg = config.cosmos.collections.home.dev;
 in {
-  options.local.collections.home.dev.enable = lib.mkEnableOption "developer tooling home collection";
+  options.cosmos.collections.home.dev.enable = lib.mkEnableOption "developer tooling home collection";
 
   config = lib.mkIf cfg.enable {
-    local = {
+    cosmos = {
       neovim = {
         enable = lib.mkDefault true;
         enableAI = lib.mkDefault true;

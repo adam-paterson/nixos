@@ -16,7 +16,7 @@ in {
   config = lib.mkIf cfg.enable {
     programs.openclaw = {
       enable = true;
-      package = inputs.openclaw.packages.${pkgs.system}.openclaw;
+      package = pkgs.openclaw;
     };
   };
 }

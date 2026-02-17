@@ -3,12 +3,12 @@
   lib,
   ...
 }: let
-  cfg = config.local.collections.nixos.server;
+  cfg = config.cosmos.collections.nixos.server;
 in {
-  options.local.collections.nixos.server.enable = lib.mkEnableOption "server NixOS collection";
+  options.cosmos.collections.nixos.server.enable = lib.mkEnableOption "server NixOS collection";
 
   config = lib.mkIf cfg.enable {
-    local.collections.nixos.base.enable = lib.mkDefault true;
+    cosmos.collections.nixos.base.enable = lib.mkDefault true;
 
     services.fail2ban.enable = true;
 

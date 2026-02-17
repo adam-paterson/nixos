@@ -21,11 +21,11 @@
     zi = "__zoxide_zi";
   };
 in {
-  options.local.shell = {
+  options.cosmos.shell = {
     enable = lib.mkEnableOption "Shell configuration with Bat, Eza, Zoxide";
   };
 
-  config = lib.mkIf config.local.shell.enable {
+  config = lib.mkIf config.cosmos.shell.enable {
     programs = {
       # ╭──────────────────────────────────────────────────────────╮
       # │ Bat - Syntax-highlighting cat clone                       │

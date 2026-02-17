@@ -7,11 +7,11 @@
   pkgs,
   ...
 }: {
-  options.local.ghostty = {
+  options.cosmos.ghostty = {
     enable = lib.mkEnableOption "Ghostty terminal configuration";
   };
 
-  config = lib.mkIf config.local.ghostty.enable {
+  config = lib.mkIf config.cosmos.ghostty.enable {
     programs.ghostty = {
       enable = true;
 

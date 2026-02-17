@@ -8,7 +8,7 @@
   ...
 }:
 with lib; let
-  cfg = config.local.neovim;
+  cfg = config.cosmos.neovim;
   gotoolsNoPlay = pkgs.gotools.overrideAttrs (old: {
     postInstall =
       (old.postInstall or "")
@@ -17,7 +17,7 @@ with lib; let
       '';
   });
 in {
-  options.local.neovim = {
+  options.cosmos.neovim = {
     enable = mkEnableOption "Neovim configuration";
 
     enableAI = mkOption {
@@ -35,12 +35,36 @@ in {
     languages = mkOption {
       type = types.submodule {
         options = {
-          typescript = mkEnableOption "TypeScript/JavaScript support" // {default = true;};
-          python = mkEnableOption "Python support" // {default = true;};
-          go = mkEnableOption "Go support" // {default = true;};
-          rust = mkEnableOption "Rust support" // {default = true;};
-          nix = mkEnableOption "Nix support" // {default = true;};
-          csharp = mkEnableOption "C# support" // {default = true;};
+          typescript =
+            mkEnableOption "TypeScript/JavaScript support"
+            // {
+              default = true;
+            };
+          python =
+            mkEnableOption "Python support"
+            // {
+              default = true;
+            };
+          go =
+            mkEnableOption "Go support"
+            // {
+              default = true;
+            };
+          rust =
+            mkEnableOption "Rust support"
+            // {
+              default = true;
+            };
+          nix =
+            mkEnableOption "Nix support"
+            // {
+              default = true;
+            };
+          csharp =
+            mkEnableOption "C# support"
+            // {
+              default = true;
+            };
         };
       };
       default = {};

@@ -17,7 +17,7 @@
 
   time.timeZone = "UTC";
 
-  local = {
+  cosmos = {
     collections.nixos.server.enable = true;
 
     tailscale = {

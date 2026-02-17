@@ -3,9 +3,9 @@
   lib,
   ...
 }: let
-  cfg = config.local.darwin.input;
+  cfg = config.cosmos.darwin.input;
 in {
-  options.local.darwin.input = {
+  options.cosmos.darwin.input = {
     enable = lib.mkOption {
       type = lib.types.bool;
       default = true;

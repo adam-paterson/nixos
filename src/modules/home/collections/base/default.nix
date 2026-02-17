@@ -3,14 +3,14 @@
   lib,
   ...
 }: let
-  cfg = config.local.collections.home.base;
+  cfg = config.cosmos.collections.home.base;
 in {
-  options.local.collections.home.base.enable = lib.mkEnableOption "baseline home collection";
+  options.cosmos.collections.home.base.enable = lib.mkEnableOption "baseline home collection";
 
   config = lib.mkIf cfg.enable {
     programs.home-manager.enable = true;
 
-    local = {
+    cosmos = {
       git.enable = lib.mkDefault true;
       shell.enable = lib.mkDefault true;
       onePasswordCLI = {

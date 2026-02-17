@@ -8,5 +8,5 @@
     inputs.homebrew.darwinModules.nix-homebrew
   ];
 
-  options.local.collections.darwin.base.enable = lib.mkEnableOption "baseline Darwin collection";
+  options.cosmos.collections.darwin.base.enable = lib.mkEnableOption "baseline Darwin collection";
 }

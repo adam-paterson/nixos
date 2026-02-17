@@ -5,7 +5,7 @@ _: {
     stateVersion = "26.05";
   };
 
-  local = {
+  cosmos = {
     collections.home = {
       base.enable = true;
       dev.enable = true;
@@ -13,9 +13,7 @@ _: {
       ai.enable = true;
     };
 
-    codex = {
-      enable = true;
-    };
+    codex.enable = true;
 
     onePasswordSSH = {
       enable = true;

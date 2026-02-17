@@ -3,11 +3,11 @@
   lib,
   ...
 }: let
-  cfg = config.local.tailscale;
+  cfg = config.cosmos.tailscale;
 in {
-  options.local.tailscale.enable = lib.mkEnableOption "Tailscale";
+  options.cosmos.tailscale.enable = lib.mkEnableOption "Tailscale";
 
-  options.local.tailscale.installApp = lib.mkOption {
+  options.cosmos.tailscale.installApp = lib.mkOption {
     type = lib.types.bool;
     default = true;
     description = "Install the Tailscale macOS app via Homebrew cask.";

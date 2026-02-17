@@ -4,7 +4,7 @@
   pkgs,
   ...
 }: let
-  cfg = config.local.onePasswordSSH;
+  cfg = config.cosmos.onePasswordSSH;
   defaultSocket =
     if pkgs.stdenv.isDarwin
     then "${config.home.homeDirectory}/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
@@ -60,33 +60,38 @@
       };
     };
   });
-  hostMatchBlocks = lib.mapAttrs (_: hostCfg: ({
-      inherit (hostCfg) identitiesOnly;
-    }
-    // lib.optionalAttrs (hostCfg.hostName != null) {
-      hostname = hostCfg.hostName;
-    }
-    // lib.optionalAttrs (hostCfg.user != null) {
-      inherit (hostCfg) user;
-    }
-    // lib.optionalAttrs (hostCfg.port != null) {
-      inherit (hostCfg) port;
-    }
-    // lib.optionalAttrs (hostCfg.identityFile != null) {
-      inherit (hostCfg) identityFile;
-    }
-    // lib.optionalAttrs (hostCfg.identityAgent != null) {
-      inherit (hostCfg) identityAgent;
-    }
-    // lib.optionalAttrs (hostCfg.preferredAuthentications != null) {
-      inherit (hostCfg) preferredAuthentications;
-    }
-    // lib.optionalAttrs (hostCfg.pubkeyAuthentication != null) {
-      inherit (hostCfg) pubkeyAuthentication;
-    }))
-  cfg.hosts;
+  hostMatchBlocks =
+    lib.mapAttrs (
+      _: hostCfg: (
+        {
+          inherit (hostCfg) identitiesOnly;
+        }
+        // lib.optionalAttrs (hostCfg.hostName != null) {
+          hostname = hostCfg.hostName;
+        }
+        // lib.optionalAttrs (hostCfg.user != null) {
+          inherit (hostCfg) user;
+        }
+        // lib.optionalAttrs (hostCfg.port != null) {
+          inherit (hostCfg) port;
+        }
+        // lib.optionalAttrs (hostCfg.identityFile != null) {
+          inherit (hostCfg) identityFile;
+        }
+        // lib.optionalAttrs (hostCfg.identityAgent != null) {
+          inherit (hostCfg) identityAgent;
+        }
+        // lib.optionalAttrs (hostCfg.preferredAuthentications != null) {
+          inherit (hostCfg) preferredAuthentications;
+        }
+        // lib.optionalAttrs (hostCfg.pubkeyAuthentication != null) {
+          inherit (hostCfg) pubkeyAuthentication;
+        }
+      )
+    )
+    cfg.hosts;
 in {
-  options.local.onePasswordSSH = {
+  options.cosmos.onePasswordSSH = {
     enable = lib.mkEnableOption "1Password SSH agent integration";
 
     socketPath = lib.mkOption {

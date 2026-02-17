@@ -7,11 +7,11 @@
   pkgs,
   ...
 }: {
-  options.local.tmux = {
+  options.cosmos.tmux = {
     enable = lib.mkEnableOption "Tmux configuration";
   };
 
-  config = lib.mkIf config.local.tmux.enable {
+  config = lib.mkIf config.cosmos.tmux.enable {
     programs.tmux = {
       enable = true;
 
