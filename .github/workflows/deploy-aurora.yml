@@ -82,7 +82,6 @@ jobs:
       contents: read
     env:
       CACHIX_CACHE_NAME: ${{ needs.metadata.outputs.cache_name }}
-      CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
       CACHIX_ACTIVATE_TOKEN: ${{ secrets.CACHIX_ACTIVATE_TOKEN }}
       AGENT_NAME: ${{ needs.metadata.outputs.agent_name }}
 
@@ -101,18 +100,17 @@ jobs:
       - name: Validate Cachix Deploy Secrets
         run: |
           test -n "$CACHIX_CACHE_NAME"
-          test -n "$CACHIX_AUTH_TOKEN"
           test -n "$CACHIX_ACTIVATE_TOKEN"
           test -n "$AGENT_NAME"
 
-      - name: Build Aurora NixOS System
+      - name: Enable Nix Cache
+        uses: DeterminateSystems/magic-nix-cache-action@v13
+
+      - name: Resolve Aurora NixOS System From Cache
         id: build
         run: |
-          store_path="$(nix build --no-link --print-out-paths .#nixosConfigurations.aurora.config.system.build.toplevel)"
+          store_path="$(nix build --no-link --print-out-paths --max-jobs 0 .#nixosConfigurations.aurora.config.system.build.toplevel)"
           echo "store_path=$store_path" >> "$GITHUB_OUTPUT"
-
-      - name: Push Aurora Closure To Cachix
-        run: nix run nixpkgs#cachix -- push "$CACHIX_CACHE_NAME" '${{ steps.build.outputs.store_path }}'
 
       - name: Activate Aurora Agent
         run: |

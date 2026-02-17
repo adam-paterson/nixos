@@ -63,72 +63,10 @@ jobs:
             echo "cache_name=$cache_name"
           } >> "$GITHUB_OUTPUT"
 
-  build-targets:
-    name: Build Cache Targets
-    needs: metadata
-    if: needs.metadata.outputs.should_run == 'true'
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - id: linux
-            label: Linux
-            runs_on: ubuntu-latest
-            reclaim_disk: true
-          - id: macos
-            label: macOS
-            runs_on: macos-latest
-            reclaim_disk: false
-    runs-on: ${{ matrix.runs_on }}
-    permissions:
-      contents: read
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v6
-        with:
-          ref: ${{ needs.metadata.outputs.build_ref }}
-
-      - name: Free Disk Space
-        if: matrix.reclaim_disk
-        run: |
-          df -h
-          sudo rm -rf /usr/share/dotnet
-          sudo rm -rf /opt/ghc
-          sudo rm -rf /usr/local/lib/android
-          sudo rm -rf /opt/hostedtoolcache/CodeQL
-          sudo rm -rf /usr/local/.ghcup
-          docker system prune -af || true
-          df -h
-
-      - name: Install Nix
-        uses: cachix/install-nix-action@v31
-        with:
-          extra_nix_config: |
-            experimental-features = nix-command flakes
-
-      - name: Enable Nix Cache
-        uses: DeterminateSystems/magic-nix-cache-action@v13
-
-      - name: Build Linux Targets
-        if: matrix.id == 'linux'
-        run: |
-          nix build --print-build-logs --no-link \
-            .#devShells.x86_64-linux.dev \
-            .#nixosConfigurations.aurora.config.system.build.toplevel
-
-      - name: Build macOS Targets
-        if: matrix.id == 'macos'
-        run: |
-          nix build --print-build-logs --no-link \
-            .#devShells.aarch64-darwin.dev \
-            .#darwinConfigurations.macbook.system \
-            '.#homeConfigurations."adampaterson@macbook".activationPackage'
-
   push-cache:
-    name: Push Cache
+    name: Build and Push Cache
     needs:
       - metadata
-      - build-targets
     if: needs.metadata.outputs.should_run == 'true'
     strategy:
       fail-fast: false
