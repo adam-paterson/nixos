@@ -47,21 +47,24 @@ _: {
       # ────────────────────────────────────────────────────────────────────
       channels = {
         whatsapp = {
+          ackReaction = "👍🏻";
           accounts = {
             "adam" = {
               dmPolicy = "open";
               sendReadReceipts = true;
+              allowFrom = [
+                "*"
+              ];
             };
             "rachel" = {
               dmPolicy = "open";
               sendReadReceipts = true;
+              allowFrom = [
+                "*"
+              ];
             };
           };
         };
-      };
-
-      messages = {
-        ackReaction = "👍🏻";
       };
     };
   };

@@ -27,7 +27,9 @@
     ll = "eza -la";
     la = "eza -a";
     lt = "eza --tree";
+    find = "fd";
     g = "git";
+    grep = "rg";
     ga = "git add";
     gc = "git commit";
     gp = "git push";
