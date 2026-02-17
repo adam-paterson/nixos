@@ -47,7 +47,11 @@ _: {
       # ────────────────────────────────────────────────────────────────────
       channels = {
         whatsapp = {
-          ackReaction = "👍🏻";
+          ackReaction = {
+            direct = true;
+            group = "mentions";
+            emoji = "✅";
+          };
           accounts = {
             "adam" = {
               dmPolicy = "open";
