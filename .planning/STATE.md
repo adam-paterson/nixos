@@ -10,17 +10,17 @@ See: `.planning/PROJECT.md` (updated 2026-02-24)
 ## Current Position
 
 Phase: 3 of 6 (Cross-Host User Environment)
-Plan: 1 of 2 in current phase
-Status: In Progress
-Last activity: 2026-02-24 - Completed 03-01 cross-host Home baseline normalization and contract checks
+Plan: 2 of 2 in current phase
+Status: Complete
+Last activity: 2026-02-24 - Completed 03-02 canonical cross-host Home Manager apply workflow and verification evidence
 
-Progress: [██████░░░░] 60%
+Progress: [███████░░░] 70%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 6
-- Average duration: 9 min
+- Total plans completed: 7
+- Average duration: 8 min
 - Total execution time: 0.9 hours
 
 **By Phase:**
@@ -29,10 +29,10 @@ Progress: [██████░░░░] 60%
 |-------|-------|-------|----------|
 | 1 | 2 | 19 min | 10 min |
 | 2 | 3 | 27 min | 9 min |
-| 3 | 1 | 6 min | 6 min |
+| 3 | 2 | 8 min | 4 min |
 
 **Recent Trend:**
-- Last 5 plans: 03-01 (6 min), 02-03 (1 min), 02-01 (19 min), 02-02 (7 min), 01-02 (7 min)
+- Last 5 plans: 03-02 (2 min), 03-01 (6 min), 02-03 (1 min), 02-01 (19 min), 02-02 (7 min)
 - Trend: Stable
 
 | Phase 02 P01 | 19 min | 3 tasks | 1 file |
@@ -40,6 +40,7 @@ Progress: [██████░░░░] 60%
 | Phase 02 P03 | 1 min | 3 tasks | 7 files |
 | Phase 03 P01 | 6 min | 3 tasks | 8 files |
 | Phase 01 P02 | 7 min | 2 tasks | 2 files |
+| Phase 03 P02 | 2 min | 3 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -56,6 +57,9 @@ Recent decisions affecting current work:
 - [Phase 03]: Shared home module defaults now use mkDefault with host-aware fallbacks to preserve explicit override precedence.
 - [Phase 03]: Host homes remain thin by removing redundant policy and keeping only host facts plus local exceptions.
 - [Phase 03]: Aurora home activation verification on Darwin uses dry-run plus contract checks when uncached Linux builds are unavailable.
+- [Phase 03]: Expose Home Manager operations through explicit just home-* wrappers for a single cross-host workflow.
+- [Phase 03]: Use an explicit apply-vs-rebuild decision tree so user-layer changes do not require system rebuilds.
+- [Phase 03]: Record darwin-to-linux build constraints in verification evidence with dry-run fallback coverage.
 
 ### Pending Todos
 
@@ -67,6 +71,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-24 22:03
-Stopped at: Completed 03-01-PLAN.md
-Resume file: .planning/phases/03-cross-host-user-environment/03-02-PLAN.md
+Last session: 2026-02-24 22:10
+Stopped at: Completed 03-02-PLAN.md
+Resume file: None
