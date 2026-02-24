@@ -43,6 +43,19 @@ src/
         └── hardware/default.nix
 ```
 
+## Architecture Contracts
+
+The following local READMEs are authoritative for placement, naming, and migration decisions:
+
+- `src/modules/README.md` - top-level module placement contract (capability-first + platform boundaries)
+- `src/modules/darwin/README.md` - Darwin module boundaries and override guidance
+- `src/modules/nixos/README.md` - NixOS module boundaries and server/workstation composition guidance
+- `src/modules/home/README.md` - Home Manager module placement and cross-host user-layer conventions
+- `src/systems/README.md` - thin-host system composition contract (facts and toggles only)
+- `src/homes/README.md` - thin-home user composition contract (host-local user data and toggles)
+
+When moving modules, follow the hard-move policy in `src/modules/README.md` (no alias layer).
+
 ## How Modules Are Applied
 
 - `src/modules/home/collections/*` bundles Home Manager feature modules.
