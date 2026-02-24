@@ -17,7 +17,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 - [x] **STRU-01**: User can organize shared logic in reusable modules with explicit Darwin vs NixOS boundaries
 - [x] **STRU-02**: User can keep host definitions thin, with host files composing modules instead of embedding policy
-- [ ] **STRU-03**: User can navigate repository structure quickly using documented architecture conventions
+- [x] **STRU-03**: User can navigate repository structure quickly using documented architecture conventions
 
 ### User Environment
 
@@ -83,7 +83,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CORE-03 | Phase 1 | Complete |
 | STRU-01 | Phase 2 | Complete |
 | STRU-02 | Phase 2 | Complete |
-| STRU-03 | Phase 2 | Pending |
+| STRU-03 | Phase 2 | Complete |
 | HOME-01 | Phase 3 | Pending |
 | SECR-01 | Phase 4 | Pending |
 | SECR-02 | Phase 4 | Pending |

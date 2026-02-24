@@ -39,8 +39,8 @@ Plans:
 **Plans**: 3 plans
 Plans:
 - [x] 02-modular-repository-architecture/02-01-PLAN.md - Refactor Darwin host composition to thin host plus dedicated macbook override boundaries. (completed 2026-02-24)
-- [ ] 02-modular-repository-architecture/02-02-PLAN.md - Refactor NixOS host composition to thin host plus dedicated aurora override boundaries.
-- [ ] 02-modular-repository-architecture/02-03-PLAN.md - Add local architecture contract READMEs and root navigation links for fast structure discovery.
+- [x] 02-modular-repository-architecture/02-02-PLAN.md - Refactor NixOS host composition to thin host plus dedicated aurora override boundaries. (completed 2026-02-24)
+- [x] 02-modular-repository-architecture/02-03-PLAN.md - Add local architecture contract READMEs and root navigation links for fast structure discovery. (completed 2026-02-24)
 
 ### Phase 3: Cross-Host User Environment
 **Goal**: Users can manage one consistent user environment layer across workstation and VPS.
@@ -86,7 +86,7 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Flake Control Plane | 0/2 | Complete    | 2026-02-24 |
-| 2. Modular Repository Architecture | 1/3 | In Progress | - |
+| 2. Modular Repository Architecture | 3/3 | Complete | 2026-02-24 |
 | 3. Cross-Host User Environment | 0/TBD | Not started | - |
 | 4. Secrets-Safe Configuration | 0/TBD | Not started | - |
 | 5. Validation and Change Gates | 0/TBD | Not started | - |
