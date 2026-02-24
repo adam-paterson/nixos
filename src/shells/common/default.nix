@@ -20,10 +20,28 @@
 
     eval.exec = ''
       set -euo pipefail
-      nix eval "path:$PWD#nixosConfigurations.aurora.config.system.build.toplevel.drvPath" >/dev/null
-      nix eval "path:$PWD#darwinConfigurations.macbook.system.drvPath" >/dev/null
-      nix eval "path:$PWD#homeConfigurations.\"adampaterson@macbook\".activationPackage.drvPath" >/dev/null
-      nix eval "path:$PWD#homeConfigurations.\"adam@aurora\".activationPackage.drvPath" >/dev/null
+
+      list_hosts() {
+        local attr=$1
+        nix eval --raw --apply 'hosts: builtins.concatStringsSep "\n" (builtins.attrNames hosts)' "path:$PWD#''${attr}"
+      }
+
+      eval_hosts() {
+        local attr=$1
+        local suffix=$2
+        local hosts=$3
+
+        while IFS= read -r host; do
+          [ -n "$host" ] || continue
+          nix eval "path:$PWD#''${attr}.''${host}.''${suffix}" >/dev/null
+        done <<< "$hosts"
+      }
+
+      darwin_hosts=$(list_hosts darwinConfigurations)
+      nixos_hosts=$(list_hosts nixosConfigurations)
+
+      eval_hosts darwinConfigurations system.drvPath "$darwin_hosts"
+      eval_hosts nixosConfigurations config.system.build.toplevel.drvPath "$nixos_hosts"
     '';
 
     fix.exec = ''
