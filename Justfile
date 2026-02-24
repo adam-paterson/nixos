@@ -32,3 +32,15 @@ cache-targets-macos:
 
 ubuntu-build-aurora:
   @just _run ubuntu-build-aurora
+
+lock-verify:
+  @before=$$(shasum flake.lock | cut -d' ' -f1); \
+  nix flake lock --no-update-lock-file; \
+  after=$$(shasum flake.lock | cut -d' ' -f1); \
+  test "$$before" = "$$after"
+
+lock-sync:
+  @nix flake lock
+
+lock-update input:
+  @nix flake update --update-input {{input}}
