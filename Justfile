@@ -24,6 +24,22 @@ fix:
 ci:
   @just _run ci
 
+home-build-macbook:
+  @nix build .#homeConfigurations."adampaterson@macbook".activationPackage
+
+home-build-aurora:
+  @nix build .#homeConfigurations."adam@aurora".activationPackage
+
+home-switch-macbook:
+  @home-manager switch --flake .#adampaterson@macbook
+
+home-switch-aurora:
+  @home-manager switch --flake .#adam@aurora
+
+home-check:
+  @just home-build-macbook
+  @just home-build-aurora
+
 cache-targets-linux:
   @just _run cache-targets-linux
 
