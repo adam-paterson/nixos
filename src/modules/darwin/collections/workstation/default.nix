@@ -10,5 +10,6 @@ in {
 
   config = lib.mkIf cfg.enable {
     cosmos.collections.darwin.base.enable = lib.mkDefault true;
+    cosmos.overrides.darwin.macbook.enable = lib.mkDefault true;
   };
 }
