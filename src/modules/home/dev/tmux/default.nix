@@ -16,21 +16,21 @@
       enable = true;
 
       # Prefix key: Ctrl+a (like screen)
-      prefix = "C-a";
+      prefix = lib.mkDefault "C-a";
 
       # Terminal settings
-      terminal = "tmux-256color";
-      escapeTime = 10;
-      historyLimit = 50000;
+      terminal = lib.mkDefault "tmux-256color";
+      escapeTime = lib.mkDefault 10;
+      historyLimit = lib.mkDefault 50000;
 
       # Mouse support
-      mouse = true;
+      mouse = lib.mkDefault true;
 
       # Base index
-      baseIndex = 1;
+      baseIndex = lib.mkDefault 1;
 
       # Use Nushell as default shell
-      shell = "${pkgs.nushell}/bin/nu";
+      shell = lib.mkDefault "${pkgs.nushell}/bin/nu";
 
       # Extra configuration
       extraConfig = ''

@@ -75,7 +75,7 @@ in {
   config = mkIf cfg.enable {
     programs.neovim = {
       enable = true;
-      defaultEditor = true;
+      defaultEditor = mkDefault true;
       viAlias = true;
       vimAlias = true;
       vimdiffAlias = true;
@@ -170,8 +170,8 @@ in {
 
     # Set environment variables
     home.sessionVariables = {
-      EDITOR = "nvim";
-      VISUAL = "nvim";
+      EDITOR = mkDefault "nvim";
+      VISUAL = mkDefault "nvim";
     };
   };
 }

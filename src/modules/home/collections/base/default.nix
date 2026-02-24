@@ -16,9 +16,9 @@ in {
       onePasswordCLI = {
         enable = lib.mkDefault true;
         environmentSecrets = {
-          CEREBRAS_API_KEY = "op://Nix/Cerebras/password";
-          OPENAI_API_KEY = "op://Personal/OpenAI/api_key";
-          ANTHROPIC_API_KEY = "op://Personal/Anthropic/api_key";
+          CEREBRAS_API_KEY = lib.mkDefault "op://Nix/Cerebras/password";
+          OPENAI_API_KEY = lib.mkDefault "op://Personal/OpenAI/api_key";
+          ANTHROPIC_API_KEY = lib.mkDefault "op://Personal/Anthropic/api_key";
         };
       };
       onePasswordSSH.enable = lib.mkDefault true;

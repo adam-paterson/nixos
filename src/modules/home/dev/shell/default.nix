@@ -4,6 +4,10 @@
   pkgs,
   ...
 }: let
+  defaultTerm =
+    if pkgs.stdenv.isDarwin
+    then "xterm-ghostty"
+    else "xterm-256color";
   sharedAliases = {
     ".." = "cd ..";
     "..." = "cd ../..";
@@ -112,9 +116,9 @@ in {
     ];
 
     home.sessionVariables = {
-      TERM = "xterm-ghostty";
-      EDITOR = "nvim";
-      GIT_EDITOR = "nvim";
+      TERM = lib.mkDefault defaultTerm;
+      EDITOR = lib.mkDefault "nvim";
+      GIT_EDITOR = lib.mkDefault "nvim";
     };
   };
 }

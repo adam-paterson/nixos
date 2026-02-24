@@ -4,6 +4,10 @@
   pkgs,
   ...
 }: let
+  defaultSshSigningProgram =
+    if pkgs.stdenv.isDarwin
+    then "${config.home.homeDirectory}/.local/bin/op-ssh-sign"
+    else "${pkgs.openssh}/bin/ssh-keygen";
   catppuccin-delta = pkgs.fetchFromGitHub {
     owner = "catppuccin";
     repo = "delta";
@@ -26,37 +30,44 @@ in {
       settings = lib.mkMerge [
         {
           user = {
-            name = "Adam Paterson";
-            email = "hello@adampaterson.co.uk";
-            signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIL1CJVWAx5tlEl1onIshZURohd68JMza5uk1E+eStOUn";
+            name = lib.mkDefault "Adam Paterson";
+            email = lib.mkDefault "hello@adampaterson.co.uk";
+            signingKey = lib.mkDefault "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIL1CJVWAx5tlEl1onIshZURohd68JMza5uk1E+eStOUn";
           };
 
           # Core settings
           core = {
-            editor = "nvim";
-            longpaths = true;
+            editor = lib.mkDefault "nvim";
+            longpaths = lib.mkDefault true;
           };
 
           # Color
-          color.ui = true;
+          color.ui = lib.mkDefault true;
 
           # Pull behavior
-          pull.rebase = true;
+          pull.rebase = lib.mkDefault true;
+          commit.gpgsign = lib.mkDefault true;
+          tag.gpgSign = lib.mkDefault true;
 
           # Merge settings
           merge = {
-            autoStash = true;
-            conflictstyle = "zdiff3";
+            autoStash = lib.mkDefault true;
+            conflictstyle = lib.mkDefault "zdiff3";
           };
 
           # Rebase settings
-          rebase.autoStash = true;
+          rebase.autoStash = lib.mkDefault true;
 
           # Push behavior
-          push.autoSetupRemote = true;
+          push.autoSetupRemote = lib.mkDefault true;
 
           # Default branch
-          init.defaultBranch = "main";
+          init.defaultBranch = lib.mkDefault "main";
+
+          gpg = {
+            format = lib.mkDefault "ssh";
+            ssh.program = lib.mkDefault defaultSshSigningProgram;
+          };
 
           # Useful aliases
           alias = {
@@ -70,10 +81,6 @@ in {
             last = "log -1 HEAD";
           };
         }
-        (lib.mkIf pkgs.stdenv.isDarwin {
-          gpg.format = "ssh";
-          gpg.ssh.program = "${config.home.homeDirectory}/.local/bin/op-ssh-sign";
-        })
       ];
     };
 
