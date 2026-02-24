@@ -34,7 +34,6 @@ _: {
     opencode.installDesktop = true;
 
     neovim = {
-      enableDAP = false;
       languages = {
         csharp = true;
       };

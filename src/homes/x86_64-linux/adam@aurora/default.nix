@@ -1,4 +1,4 @@
-{pkgs, ...}: {
+{...}: {
   imports = [
     ./programs/openclaw
   ];
@@ -10,8 +10,6 @@
   };
 
   cosmos = {
-    onePasswordSSH.enable = true;
-
     collections.home = {
       base.enable = true;
       dev.enable = true;
@@ -20,10 +18,8 @@
     };
 
     neovim.enableDAP = true;
+
+    # OpenClaw is a host-local gaming utility not shared across hosts.
     openclaw.enable = true;
   };
-
-  home.packages = with pkgs; [
-    tmux
-  ];
 }
