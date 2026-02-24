@@ -7,7 +7,7 @@ This roadmap delivers a single deterministic control plane for one MacBook and o
 ## Phases
 
 - [x] **Phase 1: Flake Control Plane** - Establish deterministic dual-target outputs and pinned dependency behavior. (completed 2026-02-24)
-- [ ] **Phase 2: Modular Repository Architecture** - Enforce shared/platform module boundaries and thin host composition.
+- [x] **Phase 2: Modular Repository Architecture** - Enforce shared/platform module boundaries and thin host composition. (completed 2026-02-24)
 - [ ] **Phase 3: Cross-Host User Environment** - Apply a unified Home Manager user layer on both targets.
 - [ ] **Phase 4: Secrets-Safe Configuration** - Ensure encrypted-only secret handling with runtime decryption.
 - [ ] **Phase 5: Validation and Change Gates** - Add pre-apply validation, CI quality gates, and controlled input updates.
@@ -49,7 +49,10 @@ Plans:
 **Success Criteria** (what must be TRUE):
   1. User can apply Home Manager-managed configuration on both MacBook and VPS targets.
   2. User can keep core user-level environment settings consistent across both targets from repository-defined config.
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [x] 03-cross-host-user-environment/03-01-PLAN.md - Normalize shared Home Manager user baseline and explicit host override boundaries for macbook and aurora. (completed 2026-02-24)
+- [ ] 03-cross-host-user-environment/03-02-PLAN.md - Define canonical cross-host Home Manager apply commands and prove both user targets evaluate/build through one workflow contract.
 
 ### Phase 4: Secrets-Safe Configuration
 **Goal**: Users can operate both targets without exposing plaintext secrets in repo or Nix store paths.
@@ -87,7 +90,7 @@ Plans:
 |-------|----------------|--------|-----------|
 | 1. Flake Control Plane | 0/2 | Complete    | 2026-02-24 |
 | 2. Modular Repository Architecture | 3/3 | Complete | 2026-02-24 |
-| 3. Cross-Host User Environment | 0/TBD | Not started | - |
+| 3. Cross-Host User Environment | 1/2 | In Progress | - |
 | 4. Secrets-Safe Configuration | 0/TBD | Not started | - |
 | 5. Validation and Change Gates | 0/TBD | Not started | - |
 | 6. Repeatable Deployment Lifecycle | 0/TBD | Not started | - |

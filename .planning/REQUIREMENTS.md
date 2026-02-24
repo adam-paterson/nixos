@@ -21,7 +21,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### User Environment
 
-- [ ] **HOME-01**: User can apply Home Manager-managed user configuration on both MacBook and VPS targets
+- [x] **HOME-01**: User can apply Home Manager-managed user configuration on both MacBook and VPS targets
 
 ### Secrets and Security
 
@@ -84,7 +84,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | STRU-01 | Phase 2 | Complete |
 | STRU-02 | Phase 2 | Complete |
 | STRU-03 | Phase 2 | Complete |
-| HOME-01 | Phase 3 | Pending |
+| HOME-01 | Phase 3 | Complete |
 | SECR-01 | Phase 4 | Pending |
 | SECR-02 | Phase 4 | Pending |
 | VALD-01 | Phase 5 | Pending |
