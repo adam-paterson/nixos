@@ -6,7 +6,7 @@ This roadmap delivers a single deterministic control plane for one MacBook and o
 
 ## Phases
 
-- [ ] **Phase 1: Flake Control Plane** - Establish deterministic dual-target outputs and pinned dependency behavior.
+- [x] **Phase 1: Flake Control Plane** - Establish deterministic dual-target outputs and pinned dependency behavior. (completed 2026-02-24)
 - [ ] **Phase 2: Modular Repository Architecture** - Enforce shared/platform module boundaries and thin host composition.
 - [ ] **Phase 3: Cross-Host User Environment** - Apply a unified Home Manager user layer on both targets.
 - [ ] **Phase 4: Secrets-Safe Configuration** - Ensure encrypted-only secret handling with runtime decryption.
@@ -81,7 +81,7 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Flake Control Plane | 0/2 | Not started | - |
+| 1. Flake Control Plane | 0/2 | Complete    | 2026-02-24 |
 | 2. Modular Repository Architecture | 0/TBD | Not started | - |
 | 3. Cross-Host User Environment | 0/TBD | Not started | - |
 | 4. Secrets-Safe Configuration | 0/TBD | Not started | - |
