@@ -150,6 +150,24 @@ just eval
 just ci
 ```
 
+### Lockfile Workflow
+
+Use `flake.lock` verify mode during normal work and explicit update commands for
+intentional dependency changes. Policy and review checklist:
+
+- `docs/flake-lock-workflow.md`
+
+```bash
+# Verify lock integrity without updating flake.lock
+just lock-verify
+
+# Sync lock entries when flake input declarations changed
+just lock-sync
+
+# Scoped input update (replace input name)
+just lock-update nixpkgs
+```
+
 ### Direnv + nixd (VS Code)
 
 This repo provides a flake dev shell named `dev` with `nixd` and common Nix tooling.
