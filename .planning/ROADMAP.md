@@ -78,7 +78,7 @@ This roadmap delivers a single deterministic control plane for one MacBook and o
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Flake Control Plane | 0/TBD | Not started | - |
+| 1. Flake Control Plane | 1/2 | In Progress | - |
 | 2. Modular Repository Architecture | 0/TBD | Not started | - |
 | 3. Cross-Host User Environment | 0/TBD | Not started | - |
 | 4. Secrets-Safe Configuration | 0/TBD | Not started | - |
