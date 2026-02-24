@@ -36,7 +36,11 @@ Plans:
   1. User can place shared policy in reusable modules with explicit Darwin vs NixOS separation.
   2. User can keep host definitions thin by composing modules instead of embedding host-specific policy logic.
   3. User can quickly find where to add or modify logic using documented architecture conventions.
-**Plans**: TBD
+**Plans**: 3 plans
+Plans:
+- [ ] 02-modular-repository-architecture/02-01-PLAN.md - Refactor Darwin host composition to thin host plus dedicated macbook override boundaries.
+- [ ] 02-modular-repository-architecture/02-02-PLAN.md - Refactor NixOS host composition to thin host plus dedicated aurora override boundaries.
+- [ ] 02-modular-repository-architecture/02-03-PLAN.md - Add local architecture contract READMEs and root navigation links for fast structure discovery.
 
 ### Phase 3: Cross-Host User Environment
 **Goal**: Users can manage one consistent user environment layer across workstation and VPS.
