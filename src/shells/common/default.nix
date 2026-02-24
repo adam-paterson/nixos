@@ -44,6 +44,34 @@
       eval_hosts nixosConfigurations config.system.build.toplevel.drvPath "$nixos_hosts"
     '';
 
+    flake-contract.exec = ''
+      set -euo pipefail
+
+      list_hosts() {
+        local attr=$1
+        nix eval --raw --apply 'hosts: builtins.concatStringsSep "\n" (builtins.attrNames hosts)' "path:$PWD#''${attr}"
+      }
+
+      eval_and_dry_build() {
+        local attr=$1
+        local eval_suffix=$2
+        local build_suffix=$3
+        local hosts=$4
+
+        while IFS= read -r host; do
+          [ -n "$host" ] || continue
+          nix eval "path:$PWD#''${attr}.''${host}.''${eval_suffix}" >/dev/null
+          nix build --dry-run "path:$PWD#''${attr}.''${host}.''${build_suffix}" >/dev/null
+        done <<< "$hosts"
+      }
+
+      darwin_hosts=$(list_hosts darwinConfigurations)
+      nixos_hosts=$(list_hosts nixosConfigurations)
+
+      eval_and_dry_build darwinConfigurations system.drvPath system "$darwin_hosts"
+      eval_and_dry_build nixosConfigurations config.system.build.toplevel.drvPath config.system.build.toplevel "$nixos_hosts"
+    '';
+
     fix.exec = ''
       set -euo pipefail
       ${pkgs.alejandra}/bin/alejandra .
