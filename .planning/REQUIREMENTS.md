@@ -9,9 +9,9 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Core Topology
 
-- [ ] **CORE-01**: User can build both `darwinConfigurations` and `nixosConfigurations` from one flake
+- [x] **CORE-01**: User can build both `darwinConfigurations` and `nixosConfigurations` from one flake
 - [x] **CORE-02**: User can reproduce the same dependency graph from a pinned `flake.lock`
-- [ ] **CORE-03**: User can evaluate all configured hosts without manual per-host imperative setup
+- [x] **CORE-03**: User can evaluate all configured hosts without manual per-host imperative setup
 
 ### Project Structure
 
@@ -78,9 +78,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CORE-01 | Phase 1 | Pending |
+| CORE-01 | Phase 1 | Complete |
 | CORE-02 | Phase 1 | Complete |
-| CORE-03 | Phase 1 | Pending |
+| CORE-03 | Phase 1 | Complete |
 | STRU-01 | Phase 2 | Pending |
 | STRU-02 | Phase 2 | Pending |
 | STRU-03 | Phase 2 | Pending |

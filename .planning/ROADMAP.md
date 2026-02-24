@@ -23,7 +23,10 @@ This roadmap delivers a single deterministic control plane for one MacBook and o
   1. User can build both `darwinConfigurations` and `nixosConfigurations` from the same flake entrypoints.
   2. User can reproduce the same input revisions from `flake.lock` across repeated runs and environments.
   3. User can evaluate all configured hosts without ad hoc per-host imperative setup.
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] 01-flake-control-plane/01-01-PLAN.md - Enforce a host-matrix eval and dry-build contract for all Darwin and NixOS flake targets.
+- [ ] 01-flake-control-plane/01-02-PLAN.md - Define lockfile-first workflow and executable lock verification/update commands.
 
 ### Phase 2: Modular Repository Architecture
 **Goal**: Users can maintain and extend the repo through clear, reusable module composition boundaries.
@@ -78,7 +81,7 @@ This roadmap delivers a single deterministic control plane for one MacBook and o
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Flake Control Plane | 1/2 | In Progress | - |
+| 1. Flake Control Plane | 0/2 | Not started | - |
 | 2. Modular Repository Architecture | 0/TBD | Not started | - |
 | 3. Cross-Host User Environment | 0/TBD | Not started | - |
 | 4. Secrets-Safe Configuration | 0/TBD | Not started | - |
