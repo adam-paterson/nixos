@@ -35,3 +35,18 @@
 1. Put reusable behavior in `src/modules/home/` first.
 2. Keep `src/homes/...` files to host-local user data and toggle composition.
 3. If an exception is unavoidable, document why it cannot be represented as a reusable module.
+
+## Canonical Apply Workflow
+
+Use one repository command surface for Home Manager applies:
+
+- `just home-switch-macbook` for `adampaterson@macbook`
+- `just home-switch-aurora` for `adam@aurora`
+- `just home-check` to build both activation packages before switching
+
+Choose apply path by change scope:
+
+- Use Home Manager switch commands when only user-layer behavior changes (shell, git, editor, tmux, dotfiles).
+- Use full system rebuild commands when machine-level behavior changes (services, networking, platform modules).
+
+This contract preserves thin homes: host files stay as user facts plus explicit local overrides, while shared policy remains in `src/modules/home/`.

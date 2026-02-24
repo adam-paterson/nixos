@@ -1,4 +1,4 @@
-![Banner image](./assets/banner.png)
+![Banner image](./assets/nix.gif)
 
 [![Nix Checks](https://img.shields.io/github/actions/workflow/status/adam-paterson/nixos/nix-checks.yml?label=Nix%20Checks&style=for-the-badge&logo=githubactions&logoColor=white)](https://github.com/adam-paterson/nixos/actions/workflows/nix-checks.yml)
 [![Nix Cache Build](https://img.shields.io/github/actions/workflow/status/adam-paterson/nixos/nix-cache.yml?label=Nix%20Cache%20Build&style=for-the-badge&logo=cachix&logoColor=white)](https://github.com/adam-paterson/nixos/actions/workflows/nix-cache.yml)
@@ -215,8 +215,39 @@ sudo nixos-rebuild switch --flake .#aurora
 ### Home Manager
 
 ```bash
-home-manager switch --flake .#adampaterson@macbook
-home-manager switch --flake .#adam@aurora
+just home-switch-macbook
+just home-switch-aurora
+```
+
+Optional pre-apply checks:
+
+```bash
+just home-build-macbook
+just home-build-aurora
+just home-check
+```
+
+### Activation Decision Tree
+
+Use this quick rule to choose the right command path:
+
+- **Only user-level tools, shell, dotfiles, or editor settings changed?** Use standalone Home Manager apply commands.
+- **System services, host networking, launchd/systemd, or machine-level modules changed?** Use full host rebuild commands.
+
+Examples:
+
+```bash
+# User-layer only changes on macbook
+just home-switch-macbook
+
+# User-layer only changes on aurora
+just home-switch-aurora
+
+# Machine-level changes on macbook
+nix run nix-darwin -- switch --flake .#macbook
+
+# Machine-level changes on aurora
+sudo nixos-rebuild switch --flake .#aurora
 ```
 
 ## Automation
