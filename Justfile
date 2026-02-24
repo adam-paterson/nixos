@@ -34,10 +34,10 @@ ubuntu-build-aurora:
   @just _run ubuntu-build-aurora
 
 lock-verify:
-  @before=$$(shasum flake.lock | cut -d' ' -f1); \
+  @before=$(shasum flake.lock | cut -d' ' -f1); \
   nix flake lock --no-update-lock-file; \
-  after=$$(shasum flake.lock | cut -d' ' -f1); \
-  test "$$before" = "$$after"
+  after=$(shasum flake.lock | cut -d' ' -f1); \
+  test "$before" = "$after"
 
 lock-sync:
   @nix flake lock
