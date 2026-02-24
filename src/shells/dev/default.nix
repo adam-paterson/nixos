@@ -32,10 +32,7 @@ inputs.devenv.lib.mkShell {
             name = "flake-eval";
             entry = "${pkgs.writeShellScript "flake-eval" ''
               set -euo pipefail
-              nix eval "path:''$PWD#nixosConfigurations.aurora.config.system.build.toplevel.drvPath" >/dev/null
-              nix eval "path:''$PWD#darwinConfigurations.macbook.system.drvPath" >/dev/null
-              nix eval "path:''$PWD#homeConfigurations.\"adampaterson@macbook\".activationPackage.drvPath" >/dev/null
-              nix eval "path:''$PWD#homeConfigurations.\"adam@aurora\".activationPackage.drvPath" >/dev/null
+              nix develop "path:''$PWD#ci" -c flake-contract
             ''}";
             language = "system";
             files = "\\.nix$";
