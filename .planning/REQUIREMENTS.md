@@ -78,27 +78,27 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CORE-01 | TBC | Pending |
-| CORE-02 | TBC | Pending |
-| CORE-03 | TBC | Pending |
-| STRU-01 | TBC | Pending |
-| STRU-02 | TBC | Pending |
-| STRU-03 | TBC | Pending |
-| HOME-01 | TBC | Pending |
-| SECR-01 | TBC | Pending |
-| SECR-02 | TBC | Pending |
-| VALD-01 | TBC | Pending |
-| VALD-02 | TBC | Pending |
-| VALD-03 | TBC | Pending |
-| DEPL-01 | TBC | Pending |
-| DEPL-02 | TBC | Pending |
-| DEPL-03 | TBC | Pending |
+| CORE-01 | Phase 1 | Pending |
+| CORE-02 | Phase 1 | Pending |
+| CORE-03 | Phase 1 | Pending |
+| STRU-01 | Phase 2 | Pending |
+| STRU-02 | Phase 2 | Pending |
+| STRU-03 | Phase 2 | Pending |
+| HOME-01 | Phase 3 | Pending |
+| SECR-01 | Phase 4 | Pending |
+| SECR-02 | Phase 4 | Pending |
+| VALD-01 | Phase 5 | Pending |
+| VALD-02 | Phase 5 | Pending |
+| VALD-03 | Phase 5 | Pending |
+| DEPL-01 | Phase 6 | Pending |
+| DEPL-02 | Phase 6 | Pending |
+| DEPL-03 | Phase 6 | Pending |
 
 **Coverage:**
 - v1 requirements: 15 total
-- Mapped to phases: 0
-- Unmapped: 15
+- Mapped to phases: 15
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-02-24*
-*Last updated: 2026-02-24 after initial definition*
+*Last updated: 2026-02-24 after roadmap mapping*
