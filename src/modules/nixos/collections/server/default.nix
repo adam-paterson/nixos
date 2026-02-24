@@ -9,6 +9,7 @@ in {
 
   config = lib.mkIf cfg.enable {
     cosmos.collections.nixos.base.enable = lib.mkDefault true;
+    cosmos.overrides.nixos.aurora.enable = lib.mkDefault false;
 
     services.fail2ban.enable = true;
 

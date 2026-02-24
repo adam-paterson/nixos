@@ -10,15 +10,11 @@
     firewall.enable = true;
   };
 
-  services = {
-    cachix-agent.enable = true;
-    vscode-server.enable = true;
-  };
-
   time.timeZone = "UTC";
 
   cosmos = {
     collections.nixos.server.enable = true;
+    overrides.nixos.aurora.enable = true;
 
     tailscale = {
       enable = true;
@@ -33,20 +29,6 @@
         "app.example.com" = "http://127.0.0.1:3000";
       };
     };
-  };
-
-  # Let Home Manager move aside pre-existing dotfiles instead of failing activation.
-  home-manager.backupFileExtension = "hm-backup";
-
-  users.users.adam = {
-    isNormalUser = true;
-    extraGroups = [
-      "wheel"
-      "networkmanager"
-    ];
-    openssh.authorizedKeys.keys = [
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGnvDtrxaduGQBC/YkKm4QcEvS8Tbn+h8pPLDi5d6wch"
-    ];
   };
 
   system.stateVersion = "26.05";
