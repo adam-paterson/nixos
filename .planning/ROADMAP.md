@@ -38,7 +38,7 @@ Plans:
   3. User can quickly find where to add or modify logic using documented architecture conventions.
 **Plans**: 3 plans
 Plans:
-- [ ] 02-modular-repository-architecture/02-01-PLAN.md - Refactor Darwin host composition to thin host plus dedicated macbook override boundaries.
+- [x] 02-modular-repository-architecture/02-01-PLAN.md - Refactor Darwin host composition to thin host plus dedicated macbook override boundaries. (completed 2026-02-24)
 - [ ] 02-modular-repository-architecture/02-02-PLAN.md - Refactor NixOS host composition to thin host plus dedicated aurora override boundaries.
 - [ ] 02-modular-repository-architecture/02-03-PLAN.md - Add local architecture contract READMEs and root navigation links for fast structure discovery.
 
@@ -86,7 +86,7 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Flake Control Plane | 0/2 | Complete    | 2026-02-24 |
-| 2. Modular Repository Architecture | 0/TBD | Not started | - |
+| 2. Modular Repository Architecture | 1/3 | In Progress | - |
 | 3. Cross-Host User Environment | 0/TBD | Not started | - |
 | 4. Secrets-Safe Configuration | 0/TBD | Not started | - |
 | 5. Validation and Change Gates | 0/TBD | Not started | - |
