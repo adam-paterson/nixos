@@ -5,22 +5,22 @@
 See: `.planning/PROJECT.md` (updated 2026-02-24)
 
 **Core value:** One repository can reliably produce, test, and deploy deterministic system states for both the MacBook and the Hetzner NixOS VPS.
-**Current focus:** Phase 3 - Cross-Host User Environment
+**Current focus:** Phase 4 - Secrets-Safe Configuration
 
 ## Current Position
 
-Phase: 3 of 6 (Cross-Host User Environment)
-Plan: 2 of 2 in current phase
-Status: Complete
-Last activity: 2026-02-24 - Completed 03-02 canonical cross-host Home Manager apply workflow and verification evidence
+Phase: 4 of 6 (Secrets-Safe Configuration)
+Plan: 1 of 3 in current phase
+Status: In Progress
+Last activity: 2026-02-25 - Completed 04-01 encrypted secret artifact foundation
 
-Progress: [███████░░░] 70%
+Progress: [████████░░] 80%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 7
-- Average duration: 8 min
+- Total plans completed: 8
+- Average duration: 7 min
 - Total execution time: 0.9 hours
 
 **By Phase:**
@@ -32,7 +32,7 @@ Progress: [███████░░░] 70%
 | 3 | 2 | 8 min | 4 min |
 
 **Recent Trend:**
-- Last 5 plans: 03-02 (2 min), 03-01 (6 min), 02-03 (1 min), 02-01 (19 min), 02-02 (7 min)
+- Last 5 plans: 04-01 (0 min), 03-02 (2 min), 03-01 (6 min), 02-03 (1 min), 02-01 (19 min)
 - Trend: Stable
 
 | Phase 02 P01 | 19 min | 3 tasks | 1 file |
@@ -41,6 +41,7 @@ Progress: [███████░░░] 70%
 | Phase 03 P01 | 6 min | 3 tasks | 8 files |
 | Phase 01 P02 | 7 min | 2 tasks | 2 files |
 | Phase 03 P02 | 2 min | 3 tasks | 6 files |
+| Phase 04-secrets-safe-configuration P01 | 0 min | 3 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -60,6 +61,8 @@ Recent decisions affecting current work:
 - [Phase 03]: Expose Home Manager operations through explicit just home-* wrappers for a single cross-host workflow.
 - [Phase 03]: Use an explicit apply-vs-rebuild decision tree so user-layer changes do not require system rebuilds.
 - [Phase 03]: Record darwin-to-linux build constraints in verification evidence with dry-run fallback coverage.
+- [Phase 04-secrets-safe-configuration]: Use one SOPS policy file with explicit path_regex rules for shared and per-host files.
+- [Phase 04-secrets-safe-configuration]: Scaffold encrypted files with dummy marker payloads so git stores ciphertext while onboarding remains explicit.
 
 ### Pending Todos
 
@@ -71,6 +74,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-24 22:10
-Stopped at: Completed 03-02-PLAN.md
+Last session: 2026-02-25 10:24
+Stopped at: Completed 04-01-PLAN.md
 Resume file: None
