@@ -65,7 +65,7 @@ Plans:
 **Plans**: 3 plans
 Plans:
 - [x] 04-secrets-safe-configuration/04-01-PLAN.md - Add encrypted secret artifact foundations with `sops-nix` input wiring, SOPS policy rules, and shared plus host-scoped secret files. (completed 2026-02-25)
-- [ ] 04-secrets-safe-configuration/04-02-PLAN.md - Wire runtime-only decryption and secret path consumption across NixOS, darwin, and Home Manager with host-scoped hard-fail behavior.
+- [x] 04-secrets-safe-configuration/04-02-PLAN.md - Wire runtime-only decryption and secret path consumption across NixOS, darwin, and Home Manager with host-scoped hard-fail behavior. (completed 2026-02-25)
 - [ ] 04-secrets-safe-configuration/04-03-PLAN.md - Enforce plaintext leak guardrails in pre-commit and CI while documenting canonical 1Password-centered secret workflows and mock-safe checks.
 
 ### Phase 5: Validation and Change Gates
@@ -95,6 +95,6 @@ Plans:
 | 1. Flake Control Plane | 0/2 | Complete    | 2026-02-24 |
 | 2. Modular Repository Architecture | 3/3 | Complete | 2026-02-24 |
 | 3. Cross-Host User Environment | 2/2 | Complete    | 2026-02-24 |
-| 4. Secrets-Safe Configuration | 1/3 | In Progress | - |
+| 4. Secrets-Safe Configuration | 2/3 | In Progress | - |
 | 5. Validation and Change Gates | 0/TBD | Not started | - |
 | 6. Repeatable Deployment Lifecycle | 0/TBD | Not started | - |

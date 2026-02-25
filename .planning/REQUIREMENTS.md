@@ -26,7 +26,7 @@ Requirements for initial release. Each maps to roadmap phases.
 ### Secrets and Security
 
 - [x] **SECR-01**: User can store only encrypted secrets in git and decrypt them at activation/deploy time
-- [ ] **SECR-02**: User can apply configurations without exposing plaintext secrets in Nix evaluation paths or store artifacts
+- [x] **SECR-02**: User can apply configurations without exposing plaintext secrets in Nix evaluation paths or store artifacts
 
 ### Validation and Quality Gates
 
@@ -86,7 +86,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | STRU-03 | Phase 2 | Complete |
 | HOME-01 | Phase 3 | Complete |
 | SECR-01 | Phase 4 | Complete |
-| SECR-02 | Phase 4 | Pending |
+| SECR-02 | Phase 4 | Complete |
 | VALD-01 | Phase 5 | Pending |
 | VALD-02 | Phase 5 | Pending |
 | VALD-03 | Phase 5 | Pending |
