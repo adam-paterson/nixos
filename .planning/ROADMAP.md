@@ -9,7 +9,7 @@ This roadmap delivers a single deterministic control plane for one MacBook and o
 - [x] **Phase 1: Flake Control Plane** - Establish deterministic dual-target outputs and pinned dependency behavior. (completed 2026-02-24)
 - [x] **Phase 2: Modular Repository Architecture** - Enforce shared/platform module boundaries and thin host composition. (completed 2026-02-24)
 - [x] **Phase 3: Cross-Host User Environment** - Apply a unified Home Manager user layer on both targets. (completed 2026-02-24)
-- [ ] **Phase 4: Secrets-Safe Configuration** - Ensure encrypted-only secret handling with runtime decryption.
+- [x] **Phase 4: Secrets-Safe Configuration** - Ensure encrypted-only secret handling with runtime decryption. (completed 2026-02-25)
 - [ ] **Phase 5: Validation and Change Gates** - Add pre-apply validation, CI quality gates, and controlled input updates.
 - [ ] **Phase 6: Repeatable Deployment Lifecycle** - Deliver rollback-capable VPS operations and repeatable workstation applies.
 
@@ -66,7 +66,7 @@ Plans:
 Plans:
 - [x] 04-secrets-safe-configuration/04-01-PLAN.md - Add encrypted secret artifact foundations with `sops-nix` input wiring, SOPS policy rules, and shared plus host-scoped secret files. (completed 2026-02-25)
 - [x] 04-secrets-safe-configuration/04-02-PLAN.md - Wire runtime-only decryption and secret path consumption across NixOS, darwin, and Home Manager with host-scoped hard-fail behavior. (completed 2026-02-25)
-- [ ] 04-secrets-safe-configuration/04-03-PLAN.md - Enforce plaintext leak guardrails in pre-commit and CI while documenting canonical 1Password-centered secret workflows and mock-safe checks.
+- [x] 04-secrets-safe-configuration/04-03-PLAN.md - Enforce plaintext leak guardrails in pre-commit and CI while documenting canonical 1Password-centered secret workflows and mock-safe checks. (completed 2026-02-25)
 
 ### Phase 5: Validation and Change Gates
 **Goal**: Users can verify safety and determinism before activation or deployment.
@@ -95,6 +95,6 @@ Plans:
 | 1. Flake Control Plane | 0/2 | Complete    | 2026-02-24 |
 | 2. Modular Repository Architecture | 3/3 | Complete | 2026-02-24 |
 | 3. Cross-Host User Environment | 2/2 | Complete    | 2026-02-24 |
-| 4. Secrets-Safe Configuration | 2/3 | In Progress | - |
+| 4. Secrets-Safe Configuration | 3/3 | Complete | 2026-02-25 |
 | 5. Validation and Change Gates | 0/TBD | Not started | - |
 | 6. Repeatable Deployment Lifecycle | 0/TBD | Not started | - |
