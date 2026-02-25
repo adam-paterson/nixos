@@ -1,4 +1,8 @@
-{inputs, ...}: {
+{
+  config,
+  inputs,
+  ...
+}: {
   imports = [
     inputs.vscode-server.nixosModules.default
     ./hardware
@@ -24,7 +28,7 @@
     cloudflared = {
       enable = true;
       tunnelId = "01c993a2-1474-4c30-b93b-ca3958cf0728";
-      credentialsFile = "/var/lib/cloudflared/01c993a2-1474-4c30-b93b-ca3958cf0728.json";
+      credentialsFile = config.sops.secrets."hosts/aurora/cloudflared/credentials_json".path;
       ingress = {
         "app.example.com" = "http://127.0.0.1:3000";
       };
