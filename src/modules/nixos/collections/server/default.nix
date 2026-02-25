@@ -8,8 +8,11 @@ in {
   options.cosmos.collections.nixos.server.enable = lib.mkEnableOption "server NixOS collection";
 
   config = lib.mkIf cfg.enable {
-    cosmos.collections.nixos.base.enable = lib.mkDefault true;
-    cosmos.overrides.nixos.aurora.enable = lib.mkDefault false;
+    cosmos = {
+      collections.nixos.base.enable = lib.mkDefault true;
+      overrides.nixos.aurora.enable = lib.mkDefault false;
+      security.secrets.nixos.enable = lib.mkDefault true;
+    };
 
     services.fail2ban.enable = true;
 

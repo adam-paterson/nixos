@@ -9,7 +9,10 @@ in {
     lib.mkEnableOption "workstation Darwin collection";
 
   config = lib.mkIf cfg.enable {
-    cosmos.collections.darwin.base.enable = lib.mkDefault true;
-    cosmos.overrides.darwin.macbook.enable = lib.mkDefault true;
+    cosmos = {
+      collections.darwin.base.enable = lib.mkDefault true;
+      overrides.darwin.macbook.enable = lib.mkDefault true;
+      security.secrets.darwin.enable = lib.mkDefault true;
+    };
   };
 }

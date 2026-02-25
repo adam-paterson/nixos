@@ -11,6 +11,7 @@ in {
     programs.home-manager.enable = true;
 
     cosmos = {
+      security.secrets.home.enable = lib.mkDefault true;
       git.enable = lib.mkDefault true;
       shell.enable = lib.mkDefault true;
       onePasswordCLI = {
