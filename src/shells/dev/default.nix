@@ -38,6 +38,18 @@ inputs.devenv.lib.mkShell {
             files = "\\.nix$";
             pass_filenames = false;
           };
+
+          secrets-scan = {
+            enable = true;
+            name = "secrets-scan";
+            entry = "${pkgs.writeShellScript "secrets-scan" ''
+              set -euo pipefail
+              nix develop "path:''$PWD#ci" -c secrets-scan
+            ''}";
+            language = "system";
+            files = ".*";
+            pass_filenames = false;
+          };
         };
       }
     )

@@ -13,6 +13,73 @@
       ${pkgs.statix}/bin/statix check .
     '';
 
+    secrets-scan.exec = ''
+      set -euo pipefail
+
+      scan_scope="''${SECRETS_SCAN_SCOPE:-staged}"
+      base_ref="''${SECRETS_SCAN_BASE:-}"
+
+      case "$scan_scope" in
+        staged)
+          mapfile -t candidate_files < <(git diff --cached --name-only --diff-filter=ACMR)
+          ;;
+        diff-base)
+          if [ -z "$base_ref" ]; then
+            printf '%s\n' "SECRETS_SCAN_BASE is required when SECRETS_SCAN_SCOPE=diff-base."
+            exit 1
+          fi
+          mapfile -t candidate_files < <(git diff --name-only --diff-filter=ACMR "$base_ref...HEAD")
+          ;;
+        working-tree)
+          mapfile -t candidate_files < <(git diff --name-only --diff-filter=ACMR)
+          ;;
+        *)
+          printf 'Unsupported SECRETS_SCAN_SCOPE: %s\n' "$scan_scope"
+          exit 1
+          ;;
+      esac
+
+      if [ "''${#candidate_files[@]}" -eq 0 ]; then
+        printf 'No files to scan for scope %s.\n' "$scan_scope"
+        exit 0
+      fi
+
+      tmp_config=$(mktemp)
+      scan_root=$(mktemp -d)
+      trap 'rm -f "$tmp_config"; rm -rf "$scan_root"' EXIT
+
+      for file in "''${candidate_files[@]}"; do
+        [ -f "$file" ] || continue
+        mkdir -p "$scan_root/$(dirname "$file")"
+        cp "$file" "$scan_root/$file"
+      done
+
+      cat >"$tmp_config" <<'EOF'
+      title = "nixos-config gitleaks overrides"
+
+      [extend]
+      useDefault = true
+
+      [[allowlists]]
+      description = "Allow encrypted sops payload markers and documented mock placeholders"
+      regexes = [
+        "DUMMY_NOT_A_SECRET_[A-Z0-9_]+",
+        "ENC\\[AES256_GCM,[^\\n]+",
+        "-----BEGIN AGE ENCRYPTED FILE-----",
+        "-----END AGE ENCRYPTED FILE-----"
+      ]
+      EOF
+
+      scanned_count=$(find "$scan_root" -type f | wc -l | tr -d ' ')
+      printf 'Running secrets scan (%s) on %s file(s).\n' "$scan_scope" "$scanned_count"
+
+      if ! ${pkgs.gitleaks}/bin/gitleaks detect --source "$scan_root" --no-git --config "$tmp_config" --redact --exit-code 1; then
+        printf '%s\n' "Secret scan failed. Remove plaintext credentials or move values into encrypted SOPS files."
+        printf '%s\n' "Allowed patterns: encrypted SOPS payload markers and DUMMY_NOT_A_SECRET placeholders."
+        exit 1
+      fi
+    '';
+
     check.exec = ''
       set -euo pipefail
       nix flake check "path:$PWD" --show-trace
@@ -85,6 +152,7 @@
       lint
       check
       eval
+      secrets-scan
     '';
 
     cache-targets-linux.exec = ''
