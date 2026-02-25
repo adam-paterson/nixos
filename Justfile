@@ -24,6 +24,50 @@ fix:
 ci:
   @just _run ci
 
+secrets-scan:
+  @just _run secrets-scan
+
+secrets-auth-preflight:
+  @if ! command -v op >/dev/null 2>&1; then \
+    echo "1Password CLI (op) is required. Install it and retry."; \
+    exit 1; \
+  fi
+  @if ! op whoami >/dev/null 2>&1; then \
+    echo "1Password authentication missing. Run 'op signin' or export OP_SERVICE_ACCOUNT_TOKEN, then retry."; \
+    exit 1; \
+  fi
+
+secrets-edit-shared:
+  @just secrets-auth-preflight
+  @sops secrets/shared/common.yaml
+
+secrets-edit-aurora:
+  @just secrets-auth-preflight
+  @sops secrets/hosts/aurora.yaml
+
+secrets-edit-macbook:
+  @just secrets-auth-preflight
+  @sops secrets/hosts/macbook.yaml
+
+secrets-updatekeys:
+  @sops updatekeys --yes secrets/shared/common.yaml
+  @sops updatekeys --yes secrets/hosts/aurora.yaml
+  @sops updatekeys --yes secrets/hosts/macbook.yaml
+
+secrets-mock-check:
+  @SECRETS_SCAN_SCOPE=working-tree just secrets-scan
+  @just eval
+  @nix build --dry-run .#darwinConfigurations.macbook.system
+  @nix build --dry-run .#nixosConfigurations.aurora.config.system.build.toplevel
+
+secrets-apply-macbook:
+  @just secrets-auth-preflight
+  @nix run nix-darwin -- switch --flake .#macbook
+
+secrets-deploy-aurora:
+  @just secrets-auth-preflight
+  @sudo nixos-rebuild switch --flake .#aurora
+
 home-build-macbook:
   @nix build .#homeConfigurations."adampaterson@macbook".activationPackage
 
