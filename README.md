@@ -181,6 +181,33 @@ just lock-sync
 just lock-update nixpkgs
 ```
 
+### Secrets Workflow (1Password + SOPS)
+
+1Password is the source of truth for all real secret values. This repository only stores encrypted SOPS artifacts and dummy placeholders.
+
+- Setup and operations guide: `docs/secrets-workflow.md`
+- Local/CI plaintext guardrail command: `just secrets-scan`
+- Mock-safe validation path (no real credentials): `just secrets-mock-check`
+
+Runtime decryption is allowed only during apply/deploy flows:
+
+```bash
+# macOS apply (requires successful 1Password auth preflight)
+just secrets-apply-macbook
+
+# Aurora deploy (requires successful 1Password auth preflight)
+just secrets-deploy-aurora
+```
+
+Encrypted file maintenance wrappers:
+
+```bash
+just secrets-edit-shared
+just secrets-edit-aurora
+just secrets-edit-macbook
+just secrets-updatekeys
+```
+
 ### Direnv + nixd (VS Code)
 
 This repo provides a flake dev shell named `dev` with `nixd` and common Nix tooling.
