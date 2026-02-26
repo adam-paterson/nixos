@@ -187,20 +187,26 @@ Authoritative enforcement runbook:
 
 ### Lockfile Workflow
 
-Use `flake.lock` verify mode during normal work and explicit update commands for
-intentional dependency changes. Policy and review checklist:
+Use `flake.lock` verification as the default workflow during normal feature
+work. Run updates only as explicit maintenance with a scoped target input.
+All lock diffs must be reviewed and validated before merge. Full policy and
+review checklist:
 
 - `docs/flake-lock-workflow.md`
 
 ```bash
-# Verify lock integrity without updating flake.lock
+# Normal path: verify lock integrity without updating flake.lock
 just lock-verify
 
-# Sync lock entries when flake input declarations changed
+# Maintenance path: sync lock entries when flake input declarations changed
 just lock-sync
 
-# Scoped input update (replace input name)
+# Maintenance path: scoped single-input update (replace input name)
 just lock-update nixpkgs
+
+# Required after intentional lock updates
+just ci
+just lock-verify
 ```
 
 ### Secrets Workflow (1Password + SOPS)
