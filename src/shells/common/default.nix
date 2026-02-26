@@ -33,6 +33,9 @@
         working-tree)
           mapfile -t candidate_files < <(git diff --name-only --diff-filter=ACMR)
           ;;
+        full)
+          mapfile -t candidate_files < <(git ls-files)
+          ;;
         *)
           printf 'Unsupported SECRETS_SCAN_SCOPE: %s\n' "$scan_scope"
           exit 1
