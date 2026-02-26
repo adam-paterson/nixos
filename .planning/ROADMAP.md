@@ -68,7 +68,7 @@ Plans:
 - [x] 04-secrets-safe-configuration/04-01-PLAN.md - Add encrypted secret artifact foundations with `sops-nix` input wiring, SOPS policy rules, and shared plus host-scoped secret files. (completed 2026-02-25)
 - [x] 04-secrets-safe-configuration/04-02-PLAN.md - Wire runtime-only decryption and secret path consumption across NixOS, darwin, and Home Manager with host-scoped hard-fail behavior. (completed 2026-02-25)
 - [x] 04-secrets-safe-configuration/04-03-PLAN.md - Enforce plaintext leak guardrails in pre-commit and CI while documenting canonical 1Password-centered secret workflows and mock-safe checks. (completed 2026-02-25)
-- [ ] 04-secrets-safe-configuration/04-04-PLAN.md - Close verification gaps by removing OpenClaw plaintext token usage and adding a full-repo secret scan sign-off path.
+- [x] 04-secrets-safe-configuration/04-04-PLAN.md - Superseded and closed by Phase 7 Plans 07-01 and 07-02; no separate execution track remains. (closed 2026-02-26)
 
 ### Phase 5: Validation and Change Gates
 **Goal**: Users can verify safety and determinism before activation or deployment.
@@ -99,16 +99,20 @@ Plans:
   1. User can remove plaintext OpenClaw token literals from tracked Nix configuration and consume runtime secret paths instead.
   2. User can verify `SECR-01` and `SECR-02` as satisfied in re-verification evidence.
   3. User can run a full-repo secret-scan signoff path for milestone closure in addition to changed-file guardrails.
-**Plans**: TBD
+**Plans**: 3 plans
+Plans:
+- [ ] 07-secrets-gap-closure/07-01-PLAN.md - Implement runtime-only OpenClaw token wiring and capture raw implementation evidence without authoritative verification updates.
+- [ ] 07-secrets-gap-closure/07-02-PLAN.md - Implement full-repo secret-scan signoff path with explicit CI triggers (`push` to `main` and `workflow_dispatch`) invoking `SECRETS_SCAN_SCOPE=full`.
+- [ ] 07-secrets-gap-closure/07-03-PLAN.md - Perform authoritative verification and milestone audit reconciliation, including explicit `04-04` superseded disposition and traceability synchronization.
 
 ## Progress
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Flake Control Plane | 0/2 | Complete    | 2026-02-24 |
+| 1. Flake Control Plane | 2/2 | Complete    | 2026-02-24 |
 | 2. Modular Repository Architecture | 3/3 | Complete | 2026-02-24 |
 | 3. Cross-Host User Environment | 2/2 | Complete    | 2026-02-24 |
-| 4. Secrets-Safe Configuration | 3/3 | Complete | 2026-02-25 |
+| 4. Secrets-Safe Configuration | 4/4 | Complete (04-04 superseded by Phase 7 closure path) | 2026-02-26 |
 | 5. Validation and Change Gates | 0/TBD | Not started | - |
 | 6. Repeatable Deployment Lifecycle | 0/TBD | Not started | - |
-| 7. Secrets Gap Closure | 0/TBD | Not started | - |
+| 7. Secrets Gap Closure | 0/3 | Planned | - |
