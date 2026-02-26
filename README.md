@@ -175,6 +175,16 @@ command path explicitly includes:
 - `flake-contract` -> host dry-build coverage (`nix build --dry-run`) for the same targets
 - `fmt-check`, `lint`, and `secrets-scan` -> style, static analysis, and plaintext secret guardrails
 
+### CI Merge Gate Policy
+
+`Nix Checks` is the required merge-blocking CI gate for protected merges to
+`main`. Branch protection and/or rulesets must require the workflow status
+context (typically `Nix Checks / Lint And Eval`) so failed runs cannot merge.
+
+Authoritative enforcement runbook:
+
+- `docs/validation-gates.md`
+
 ### Lockfile Workflow
 
 Use `flake.lock` verify mode during normal work and explicit update commands for
