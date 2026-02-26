@@ -30,9 +30,9 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Validation and Quality Gates
 
-- [ ] **VALD-01**: User can run `nix flake check` to validate repository integrity before apply/deploy
-- [ ] **VALD-02**: User can run CI checks (format/lint/check/build) that block unsafe changes from merging
-- [ ] **VALD-03**: User can update flake inputs through a controlled workflow with reviewable lockfile diffs
+- [x] **VALD-01**: User can run `nix flake check` to validate repository integrity before apply/deploy
+- [x] **VALD-02**: User can run CI checks (format/lint/check/build) that block unsafe changes from merging
+- [x] **VALD-03**: User can update flake inputs through a controlled workflow with reviewable lockfile diffs
 
 ### Deployment and Lifecycle
 
@@ -87,9 +87,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | HOME-01 | Phase 3 | Complete |
 | SECR-01 | Phase 7 | Complete |
 | SECR-02 | Phase 7 | Complete |
-| VALD-01 | Phase 5 | Pending |
-| VALD-02 | Phase 5 | Pending |
-| VALD-03 | Phase 5 | Pending |
+| VALD-01 | Phase 5 | Complete |
+| VALD-02 | Phase 5 | Complete |
+| VALD-03 | Phase 5 | Complete |
 | DEPL-01 | Phase 6 | Pending |
 | DEPL-02 | Phase 6 | Pending |
 | DEPL-03 | Phase 6 | Pending |
@@ -101,4 +101,4 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 ---
 *Requirements defined: 2026-02-24*
-*Last updated: 2026-02-26 after Phase 7 secrets gap-closure audit reconciliation*
+*Last updated: 2026-02-26 after Phase 5 validation gate closure and verification sign-off*
