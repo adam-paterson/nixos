@@ -27,6 +27,9 @@ ci:
 secrets-scan:
   @just _run secrets-scan
 
+secrets-scan-full:
+  @SECRETS_SCAN_SCOPE=full just secrets-scan
+
 secrets-auth-preflight:
   @if ! command -v op >/dev/null 2>&1; then \
     echo "1Password CLI (op) is required. Install it and retry."; \

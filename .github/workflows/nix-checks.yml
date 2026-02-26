@@ -58,6 +58,6 @@ jobs:
 
       - name: Secrets Scan
         env:
-          SECRETS_SCAN_SCOPE: diff-base
+          SECRETS_SCAN_SCOPE: ${{ github.event_name == 'pull_request' && 'diff-base' || 'full' }}
           SECRETS_SCAN_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
         run: nix develop .#ci -c secrets-scan
