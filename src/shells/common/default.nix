@@ -122,24 +122,43 @@
         nix eval --raw --apply 'hosts: builtins.concatStringsSep "\n" (builtins.attrNames hosts)' "path:$PWD#''${attr}"
       }
 
-      eval_and_dry_build() {
+      eval_hosts() {
         local attr=$1
         local eval_suffix=$2
-        local build_suffix=$3
-        local hosts=$4
+        local hosts=$3
 
         while IFS= read -r host; do
           [ -n "$host" ] || continue
+          printf 'flake-contract: evaluating %s.%s\n' "$attr" "$host"
           nix eval "path:$PWD#''${attr}.''${host}.''${eval_suffix}" >/dev/null
+        done <<< "$hosts"
+      }
+
+      dry_build_hosts() {
+        local attr=$1
+        local build_suffix=$2
+        local hosts=$3
+
+        while IFS= read -r host; do
+          [ -n "$host" ] || continue
+          printf 'flake-contract: dry-building %s.%s\n' "$attr" "$host"
           nix build --dry-run "path:$PWD#''${attr}.''${host}.''${build_suffix}" >/dev/null
         done <<< "$hosts"
       }
 
+      printf '%s\n' "flake-contract: this command validates host-level eval + dry-build coverage."
+      printf '%s\n' "flake-contract: run this after the required integrity gate: check (nix flake check)."
+
       darwin_hosts=$(list_hosts darwinConfigurations)
       nixos_hosts=$(list_hosts nixosConfigurations)
 
-      eval_and_dry_build darwinConfigurations system.drvPath system "$darwin_hosts"
-      eval_and_dry_build nixosConfigurations config.system.build.toplevel.drvPath config.system.build.toplevel "$nixos_hosts"
+      printf '%s\n' "flake-contract: phase 1/2 evaluate all configured hosts"
+      eval_hosts darwinConfigurations system.drvPath "$darwin_hosts"
+      eval_hosts nixosConfigurations config.system.build.toplevel.drvPath "$nixos_hosts"
+
+      printf '%s\n' "flake-contract: phase 2/2 dry-build all configured hosts"
+      dry_build_hosts darwinConfigurations system "$darwin_hosts"
+      dry_build_hosts nixosConfigurations config.system.build.toplevel "$nixos_hosts"
     '';
 
     fix.exec = ''
