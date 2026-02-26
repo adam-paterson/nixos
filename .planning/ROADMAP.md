@@ -92,7 +92,11 @@ Plans:
   1. User can bootstrap or reprovision the Hetzner VPS from repository-defined configuration.
   2. User can deploy VPS updates with a rollback-capable workflow.
   3. User can apply workstation updates using repository-defined commands with repeatable results.
-**Plans**: TBD
+**Plans**: 3 plans
+Plans:
+- [ ] 06-repeatable-deployment-lifecycle/06-01-PLAN.md - Establish deterministic aurora bootstrap/reprovision contract with explicit hardware assumptions, bootstrap wrappers, and rehearsal evidence capture.
+- [ ] 06-repeatable-deployment-lifecycle/06-02-PLAN.md - Harden aurora deploy workflow and codify rollback-capable deploy procedures with verification evidence.
+- [ ] 06-repeatable-deployment-lifecycle/06-03-PLAN.md - Define authoritative macbook apply/recovery lifecycle using repository-defined commands and documented rollback paths.
 
 ### Phase 7: Secrets Gap Closure
 **Goal**: Users can close Phase 4 audit blockers so secrets are runtime-only and milestone security guarantees are restored.
@@ -118,5 +122,5 @@ Plans:
 | 3. Cross-Host User Environment | 2/2 | Complete    | 2026-02-24 |
 | 4. Secrets-Safe Configuration | 4/4 | Complete (04-04 superseded by Phase 7 closure path) | 2026-02-26 |
 | 5. Validation and Change Gates | 3/3 | Complete    | 2026-02-26 |
-| 6. Repeatable Deployment Lifecycle | 0/TBD | Not started | - |
+| 6. Repeatable Deployment Lifecycle | 0/3 | Not started | - |
 | 7. Secrets Gap Closure | 3/3 | Complete | 2026-02-26 |
