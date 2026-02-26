@@ -161,7 +161,19 @@ just eval
 
 # Full local CI pass
 just ci
+
+# Required before any apply/deploy action
+just pre-apply-check
 ```
+
+`just pre-apply-check` is the canonical local safety gate and must pass before
+running `nix-darwin switch`, `nixos-rebuild switch`, or deploy workflows. The
+command path explicitly includes:
+
+- `check` -> mandatory `nix flake check`
+- `eval` -> host-level evaluation for configured Darwin and NixOS targets
+- `flake-contract` -> host dry-build coverage (`nix build --dry-run`) for the same targets
+- `fmt-check`, `lint`, and `secrets-scan` -> style, static analysis, and plaintext secret guardrails
 
 ### Lockfile Workflow
 
