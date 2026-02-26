@@ -80,7 +80,7 @@ Plans:
   3. User can update flake inputs through a controlled process that produces reviewable `flake.lock` diffs.
 **Plans**: 3 plans
 Plans:
-- [ ] 05-validation-and-change-gates/05-01-PLAN.md - Establish one canonical local pre-apply validation contract that includes `nix flake check`, host eval, and host dry-build checks.
+- [x] 05-validation-and-change-gates/05-01-PLAN.md - Establish one canonical local pre-apply validation contract that includes `nix flake check`, host eval, and host dry-build checks. (completed 2026-02-26)
 - [ ] 05-validation-and-change-gates/05-02-PLAN.md - Harden `Nix Checks` into an explicit merge-blocking CI gate with documented enforcement verification and build-depth coverage.
 - [ ] 05-validation-and-change-gates/05-03-PLAN.md - Enforce controlled lockfile update governance with scoped intent, review checklist, and PR-level lock diff accountability.
 
@@ -117,6 +117,6 @@ Plans:
 | 2. Modular Repository Architecture | 3/3 | Complete | 2026-02-24 |
 | 3. Cross-Host User Environment | 2/2 | Complete    | 2026-02-24 |
 | 4. Secrets-Safe Configuration | 4/4 | Complete (04-04 superseded by Phase 7 closure path) | 2026-02-26 |
-| 5. Validation and Change Gates | 0/3 | Not started | - |
+| 5. Validation and Change Gates | 1/3 | In Progress | - |
 | 6. Repeatable Deployment Lifecycle | 0/TBD | Not started | - |
 | 7. Secrets Gap Closure | 3/3 | Complete | 2026-02-26 |
