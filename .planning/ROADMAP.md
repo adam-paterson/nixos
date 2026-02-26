@@ -12,7 +12,7 @@ This roadmap delivers a single deterministic control plane for one MacBook and o
 - [x] **Phase 4: Secrets-Safe Configuration** - Ensure encrypted-only secret handling with runtime decryption. (completed 2026-02-25)
 - [ ] **Phase 5: Validation and Change Gates** - Add pre-apply validation, CI quality gates, and controlled input updates.
 - [ ] **Phase 6: Repeatable Deployment Lifecycle** - Deliver rollback-capable VPS operations and repeatable workstation applies.
-- [ ] **Phase 7: Secrets Gap Closure** - Close audit-identified secrets blockers and re-establish milestone security guarantees.
+- [x] **Phase 7: Secrets Gap Closure** - Close audit-identified secrets blockers and re-establish milestone security guarantees. (completed 2026-02-26)
 
 ## Phase Details
 
@@ -101,9 +101,9 @@ Plans:
   3. User can run a full-repo secret-scan signoff path for milestone closure in addition to changed-file guardrails.
 **Plans**: 3 plans
 Plans:
-- [ ] 07-secrets-gap-closure/07-01-PLAN.md - Implement runtime-only OpenClaw token wiring and capture raw implementation evidence without authoritative verification updates.
-- [ ] 07-secrets-gap-closure/07-02-PLAN.md - Implement full-repo secret-scan signoff path with explicit CI triggers (`push` to `main` and `workflow_dispatch`) invoking `SECRETS_SCAN_SCOPE=full`.
-- [ ] 07-secrets-gap-closure/07-03-PLAN.md - Perform authoritative verification and milestone audit reconciliation, including explicit `04-04` superseded disposition and traceability synchronization.
+- [x] 07-secrets-gap-closure/07-01-PLAN.md - Implement runtime-only OpenClaw token wiring and capture raw implementation evidence without authoritative verification updates. (completed 2026-02-26)
+- [x] 07-secrets-gap-closure/07-02-PLAN.md - Implement full-repo secret-scan signoff path with explicit CI triggers (`push` to `main` and `workflow_dispatch`) invoking `SECRETS_SCAN_SCOPE=full`. (completed 2026-02-26)
+- [x] 07-secrets-gap-closure/07-03-PLAN.md - Perform authoritative verification and milestone audit reconciliation, including explicit `04-04` superseded disposition and traceability synchronization. (completed 2026-02-26)
 
 ## Progress
 
@@ -115,4 +115,4 @@ Plans:
 | 4. Secrets-Safe Configuration | 4/4 | Complete (04-04 superseded by Phase 7 closure path) | 2026-02-26 |
 | 5. Validation and Change Gates | 0/TBD | Not started | - |
 | 6. Repeatable Deployment Lifecycle | 0/TBD | Not started | - |
-| 7. Secrets Gap Closure | 0/3 | Planned | - |
+| 7. Secrets Gap Closure | 3/3 | Complete | 2026-02-26 |
