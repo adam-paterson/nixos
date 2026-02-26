@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: in_progress
-last_updated: "2026-02-26T22:04:00Z"
+last_updated: "2026-02-26T22:09:31Z"
 progress:
   total_phases: 7
-  completed_phases: 5
+  completed_phases: 6
   total_plans: 17
-  completed_plans: 16
+  completed_plans: 17
 ---
 
 # Project State
@@ -18,23 +18,23 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-02-24)
 
 **Core value:** One repository can reliably produce, test, and deploy deterministic system states for both the MacBook and the Hetzner NixOS VPS.
-**Current focus:** Phase 5 - Validation and Change Gates
+**Current focus:** Phase 6 - Repeatable Deployment Lifecycle
 
 ## Current Position
 
-Phase: 5 of 7 (Validation and Change Gates)
-Plan: 2 of 3 in current phase (completed)
+Phase: 6 of 7 (Repeatable Deployment Lifecycle)
+Plan: 0 of TBD in current phase (planning pending)
 Status: In Progress
-Last activity: 2026-02-26 - Completed 05-02 merge-gate CI hardening with enforcement runbook and top-level policy linkage
+Last activity: 2026-02-26 - Completed 05-03 lockfile governance execution with policy hardening, PR checklist enforcement, and README alignment
 
-Progress: [█████████▓] 94%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 16
+- Total plans completed: 17
 - Average duration: 7 min
-- Total execution time: 1.9 hours
+- Total execution time: 2.0 hours
 
 **By Phase:**
 
@@ -44,10 +44,11 @@ Progress: [█████████▓] 94%
 | 2 | 3 | 27 min | 9 min |
 | 3 | 2 | 8 min | 4 min |
 | 4 | 4 | 23 min | 6 min |
-| 5 | 2 | 6 min | 3 min |
+| 5 | 3 | 9 min | 3 min |
 | 7 | 3 | 13 min | 4 min |
 | Phase 05 P01 | 1 min | 3 tasks | 4 files |
 | Phase 05 P02 | 5 min | 3 tasks | 3 files |
+| Phase 05 P03 | 3 min | 3 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -62,6 +63,7 @@ Recent decisions affecting current work:
 - [Phase 7] Keep PR scans diff-based and elevate `push main` plus `workflow_dispatch` to full-repo signoff scans.
 - [Phase 5] Keep `Nix Checks` as the single required merge gate and add explicit `Host Contract Dry Build` coverage in the same workflow.
 - [Phase 5] Standardize merge-gate policy verification on GitHub API checks for both branch protection and rulesets.
+- [Phase 5] Enforce `flake.lock` governance as verify-by-default and scoped-update-by-intent, with mandatory PR diff review and validation evidence.
 
 ### Pending Todos
 
@@ -74,6 +76,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-02-26 22:04
-Stopped at: Completed 05-02 execution with per-task commits, roadmap update, and state refresh
-Resume file: .planning/phases/05-validation-and-change-gates/05-02-SUMMARY.md
+Last session: 2026-02-26 22:09
+Stopped at: Completed 05-03 execution with per-task commits, summary creation, and planning artifact refresh
+Resume file: .planning/phases/05-validation-and-change-gates/05-03-SUMMARY.md

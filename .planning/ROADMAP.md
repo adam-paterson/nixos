@@ -10,7 +10,7 @@ This roadmap delivers a single deterministic control plane for one MacBook and o
 - [x] **Phase 2: Modular Repository Architecture** - Enforce shared/platform module boundaries and thin host composition. (completed 2026-02-24)
 - [x] **Phase 3: Cross-Host User Environment** - Apply a unified Home Manager user layer on both targets. (completed 2026-02-24)
 - [x] **Phase 4: Secrets-Safe Configuration** - Ensure encrypted-only secret handling with runtime decryption. (completed 2026-02-25)
-- [ ] **Phase 5: Validation and Change Gates** - Add pre-apply validation, CI quality gates, and controlled input updates.
+- [x] **Phase 5: Validation and Change Gates** - Add pre-apply validation, CI quality gates, and controlled input updates. (completed 2026-02-26)
 - [ ] **Phase 6: Repeatable Deployment Lifecycle** - Deliver rollback-capable VPS operations and repeatable workstation applies.
 - [x] **Phase 7: Secrets Gap Closure** - Close audit-identified secrets blockers and re-establish milestone security guarantees. (completed 2026-02-26)
 
@@ -82,7 +82,7 @@ Plans:
 Plans:
 - [x] 05-validation-and-change-gates/05-01-PLAN.md - Establish one canonical local pre-apply validation contract that includes `nix flake check`, host eval, and host dry-build checks. (completed 2026-02-26)
 - [x] 05-validation-and-change-gates/05-02-PLAN.md - Harden `Nix Checks` into an explicit merge-blocking CI gate with documented enforcement verification and build-depth coverage. (completed 2026-02-26)
-- [ ] 05-validation-and-change-gates/05-03-PLAN.md - Enforce controlled lockfile update governance with scoped intent, review checklist, and PR-level lock diff accountability.
+- [x] 05-validation-and-change-gates/05-03-PLAN.md - Enforce controlled lockfile update governance with scoped intent, review checklist, and PR-level lock diff accountability. (completed 2026-02-26)
 
 ### Phase 6: Repeatable Deployment Lifecycle
 **Goal**: Users can bootstrap, update, and recover both managed targets through repeatable repository-defined workflows.
@@ -117,6 +117,6 @@ Plans:
 | 2. Modular Repository Architecture | 3/3 | Complete | 2026-02-24 |
 | 3. Cross-Host User Environment | 2/2 | Complete    | 2026-02-24 |
 | 4. Secrets-Safe Configuration | 4/4 | Complete (04-04 superseded by Phase 7 closure path) | 2026-02-26 |
-| 5. Validation and Change Gates | 2/3 | In Progress | - |
+| 5. Validation and Change Gates | 3/3 | Complete | 2026-02-26 |
 | 6. Repeatable Deployment Lifecycle | 0/TBD | Not started | - |
 | 7. Secrets Gap Closure | 3/3 | Complete | 2026-02-26 |
