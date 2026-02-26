@@ -68,7 +68,7 @@ Plans:
 - [x] 04-secrets-safe-configuration/04-01-PLAN.md - Add encrypted secret artifact foundations with `sops-nix` input wiring, SOPS policy rules, and shared plus host-scoped secret files. (completed 2026-02-25)
 - [x] 04-secrets-safe-configuration/04-02-PLAN.md - Wire runtime-only decryption and secret path consumption across NixOS, darwin, and Home Manager with host-scoped hard-fail behavior. (completed 2026-02-25)
 - [x] 04-secrets-safe-configuration/04-03-PLAN.md - Enforce plaintext leak guardrails in pre-commit and CI while documenting canonical 1Password-centered secret workflows and mock-safe checks. (completed 2026-02-25)
-- [x] 04-secrets-safe-configuration/04-04-PLAN.md - Superseded and closed by Phase 7 Plans 07-01 and 07-02; no separate execution track remains. (closed 2026-02-26)
+- [x] 04-secrets-safe-configuration/04-04-PLAN.md - Superseded and closed by Phase 7 Plans 07-01 and 07-02; reconciliation evidence captured in `04-04-SUMMARY.md`. (closed 2026-02-26)
 
 ### Phase 5: Validation and Change Gates
 **Goal**: Users can verify safety and determinism before activation or deployment.
