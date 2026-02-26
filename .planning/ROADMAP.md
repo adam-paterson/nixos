@@ -12,6 +12,7 @@ This roadmap delivers a single deterministic control plane for one MacBook and o
 - [x] **Phase 4: Secrets-Safe Configuration** - Ensure encrypted-only secret handling with runtime decryption. (completed 2026-02-25)
 - [ ] **Phase 5: Validation and Change Gates** - Add pre-apply validation, CI quality gates, and controlled input updates.
 - [ ] **Phase 6: Repeatable Deployment Lifecycle** - Deliver rollback-capable VPS operations and repeatable workstation applies.
+- [ ] **Phase 7: Secrets Gap Closure** - Close audit-identified secrets blockers and re-establish milestone security guarantees.
 
 ## Phase Details
 
@@ -62,11 +63,12 @@ Plans:
   1. User can store encrypted secrets in git while avoiding plaintext secret files in tracked configuration.
   2. User can apply or deploy configurations with secrets decrypted only at activation/deploy time.
   3. User can run evaluation and build workflows without plaintext secrets entering Nix evaluation paths or store artifacts.
-**Plans**: 3 plans
+**Plans**: 4 plans
 Plans:
 - [x] 04-secrets-safe-configuration/04-01-PLAN.md - Add encrypted secret artifact foundations with `sops-nix` input wiring, SOPS policy rules, and shared plus host-scoped secret files. (completed 2026-02-25)
 - [x] 04-secrets-safe-configuration/04-02-PLAN.md - Wire runtime-only decryption and secret path consumption across NixOS, darwin, and Home Manager with host-scoped hard-fail behavior. (completed 2026-02-25)
 - [x] 04-secrets-safe-configuration/04-03-PLAN.md - Enforce plaintext leak guardrails in pre-commit and CI while documenting canonical 1Password-centered secret workflows and mock-safe checks. (completed 2026-02-25)
+- [ ] 04-secrets-safe-configuration/04-04-PLAN.md - Close verification gaps by removing OpenClaw plaintext token usage and adding a full-repo secret scan sign-off path.
 
 ### Phase 5: Validation and Change Gates
 **Goal**: Users can verify safety and determinism before activation or deployment.
@@ -88,6 +90,17 @@ Plans:
   3. User can apply workstation updates using repository-defined commands with repeatable results.
 **Plans**: TBD
 
+### Phase 7: Secrets Gap Closure
+**Goal**: Users can close Phase 4 audit blockers so secrets are runtime-only and milestone security guarantees are restored.
+**Depends on**: Phase 4
+**Requirements**: SECR-01, SECR-02
+**Gap Closure:** Closes gaps from `.planning/v1.0-v1.0-MILESTONE-AUDIT.md` for unsatisfied requirements, cross-phase integration, and broken aurora apply flow.
+**Success Criteria** (what must be TRUE):
+  1. User can remove plaintext OpenClaw token literals from tracked Nix configuration and consume runtime secret paths instead.
+  2. User can verify `SECR-01` and `SECR-02` as satisfied in re-verification evidence.
+  3. User can run a full-repo secret-scan signoff path for milestone closure in addition to changed-file guardrails.
+**Plans**: TBD
+
 ## Progress
 
 | Phase | Plans Complete | Status | Completed |
@@ -98,3 +111,4 @@ Plans:
 | 4. Secrets-Safe Configuration | 3/3 | Complete | 2026-02-25 |
 | 5. Validation and Change Gates | 0/TBD | Not started | - |
 | 6. Repeatable Deployment Lifecycle | 0/TBD | Not started | - |
+| 7. Secrets Gap Closure | 0/TBD | Not started | - |
