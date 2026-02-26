@@ -1,4 +1,18 @@
-_: {
+{ config, ... }:
+let
+  tokenFilePath = config.home.sessionVariables.OPENCLAW_GATEWAY_AUTH_TOKEN_FILE;
+in
+{
+  assertions = [
+    {
+      assertion = tokenFilePath != null && tokenFilePath != "";
+      message = ''
+        OpenClaw gateway auth must consume a runtime secret token file path.
+        Ensure OPENCLAW_GATEWAY_AUTH_TOKEN_FILE is exported from Home Manager secrets wiring.
+      '';
+    }
+  ];
+
   programs.openclaw = {
     installApp = false;
     # ──[ Configuration ]───────────────────────────────────────────────────
@@ -27,7 +41,7 @@ _: {
         bind = "loopback";
         auth = {
           mode = "token";
-          token = "cbb2262dda7be3f1f76b1fe1b2b5fa1bb47ce1fc56df933daa7d0c0225d54afe";
+          tokenFile = tokenFilePath;
           allowTailscale = true;
         };
         tailscale = {
