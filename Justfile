@@ -18,6 +18,9 @@ check:
 eval:
   @just _run eval
 
+flake-contract:
+  @just _run flake-contract
+
 fix:
   @just _run fix
 
@@ -25,6 +28,14 @@ ci:
   @just _run ci
 
 secrets-scan:
+  @just _run secrets-scan
+
+pre-apply-check:
+  @just _run fmt-check
+  @just _run lint
+  @just _run check
+  @just _run eval
+  @just _run flake-contract
   @just _run secrets-scan
 
 secrets-scan-full:
