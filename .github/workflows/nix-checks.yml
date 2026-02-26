@@ -56,6 +56,9 @@ jobs:
       - name: Evaluate Configurations
         run: nix develop .#ci -c eval
 
+      - name: Host Contract Dry Build
+        run: nix develop .#ci -c flake-contract
+
       - name: Secrets Scan
         env:
           SECRETS_SCAN_SCOPE: ${{ github.event_name == 'pull_request' && 'diff-base' || 'full' }}
