@@ -94,9 +94,9 @@ Plans:
   3. User can apply workstation updates using repository-defined commands with repeatable results.
 **Plans**: 3 plans
 Plans:
-- [ ] 06-repeatable-deployment-lifecycle/06-01-PLAN.md - Establish deterministic aurora bootstrap/reprovision contract with explicit hardware assumptions, bootstrap wrappers, and rehearsal evidence capture.
-- [ ] 06-repeatable-deployment-lifecycle/06-02-PLAN.md - Harden aurora deploy workflow and codify rollback-capable deploy procedures with verification evidence.
-- [ ] 06-repeatable-deployment-lifecycle/06-03-PLAN.md - Define authoritative macbook apply/recovery lifecycle using repository-defined commands and documented rollback paths.
+- [ ] 06-repeatable-deployment-lifecycle/06-01-PLAN.md - Establish deterministic aurora bootstrap/reprovision contract with explicit hardware assumptions, bootstrap wrappers, and a shared Phase 6 evidence schema.
+- [ ] 06-repeatable-deployment-lifecycle/06-02-PLAN.md - Harden aurora deploy workflow and codify rollback-capable deploy procedures with schema-driven rehearsal evidence.
+- [ ] 06-repeatable-deployment-lifecycle/06-03-PLAN.md - Define authoritative macbook apply/recovery lifecycle using repository-defined commands with schema-driven rehearsal evidence and README routing.
 
 ### Phase 7: Secrets Gap Closure
 **Goal**: Users can close Phase 4 audit blockers so secrets are runtime-only and milestone security guarantees are restored.
