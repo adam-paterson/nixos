@@ -41,6 +41,7 @@ in
         bind = "loopback";
         auth = {
           mode = "token";
+          # Runtime-only secret handoff; never inline plaintext token literals here.
           tokenFile = tokenFilePath;
           allowTailscale = true;
         };
