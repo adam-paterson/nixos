@@ -43,9 +43,24 @@ Both wrappers run `just secrets-auth-preflight` first and fail hard when authent
 ### Guardrails and Mock-Safe Validation
 
 - Scan changed files for plaintext leaks: `just secrets-scan`
+- Run mandatory full-repository signoff scan: `just secrets-scan-full`
 - Run non-secret eval/dry-build checks without real credentials: `just secrets-mock-check`
 
 `just secrets-mock-check` validates non-secret evaluation and dry-build surfaces while keeping secret values out of evaluation inputs.
+
+## Scan Policy and Signoff Timing
+
+Use the secret scan modes intentionally:
+
+- `just secrets-scan` is the fast daily guardrail for local edits and pull request deltas.
+- `just secrets-scan-full` is the required signoff gate before milestone closure and release cutover.
+
+Required signoff timing:
+
+1. Run `just secrets-scan-full` after the final change set is staged for closure.
+2. If it fails, stop closure work immediately and treat findings as blockers.
+3. Move or rotate exposed values into encrypted SOPS files, then rerun `just secrets-scan-full`.
+4. Proceed with milestone/release closure only after the full scan passes.
 
 ## Troubleshooting
 
@@ -58,7 +73,7 @@ Both wrappers run `just secrets-auth-preflight` first and fail hard when authent
 
 - Move sensitive values into encrypted SOPS files.
 - Keep only encrypted payload markers or `DUMMY_NOT_A_SECRET_*` placeholders in tracked files.
-- Re-run `just secrets-scan`.
+- Re-run `just secrets-scan` for changed-file checks and `just secrets-scan-full` for closure signoff.
 
 ### Missing required runtime secret during apply/deploy
 
