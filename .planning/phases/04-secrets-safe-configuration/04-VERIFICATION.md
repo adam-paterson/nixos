@@ -1,6 +1,6 @@
 ---
 phase: 04-secrets-safe-configuration
-verified: 2026-02-26T20:55:37Z
+verified: 2026-02-26T21:27:24Z
 status: passed
 score: 3/3 must-haves verified
 re_verification:
@@ -17,7 +17,7 @@ gaps: []
 # Phase 4: Secrets-Safe Configuration Verification Report
 
 **Phase Goal:** Users can operate both targets without exposing plaintext secrets in repo or Nix store paths.
-**Verified:** 2026-02-26T20:55:37Z
+**Verified:** 2026-02-26T21:27:24Z
 **Status:** passed
 **Re-verification:** Yes - gap-closure reconciliation from Phase 7 Plans 07-01 and 07-02
 
@@ -78,6 +78,15 @@ Plan frontmatter requirement IDs found: `SECR-01`, `SECR-02`.
 REQUIREMENTS.md Phase 7 mapping includes: `SECR-01`, `SECR-02`.
 Orphaned requirement IDs for this scope: none.
 
+## 04-04 Reconciliation Context
+
+- `04-04-PLAN.md` remains part of Phase 4 accounting, but implementation is intentionally reconciled as **superseded** by Phase 7 (`07-01`, `07-02`, verified by `07-03`) rather than duplicated in Phase 4.
+- `04-04-SUMMARY.md` records the no-op closure path and maps each 04-04 must-have to shipped evidence:
+  - runtime-only OpenClaw token wiring (`src/modules/home/security/secrets/default.nix`, `src/homes/x86_64-linux/adam@aurora/programs/openclaw/default.nix`, `secrets/hosts/aurora.yaml`);
+  - full-repository secret-scan signoff path (`src/shells/common/default.nix`, `Justfile`, `.github/workflows/nix-checks.yml`);
+  - operator signoff documentation (`docs/secrets-workflow.md`).
+- Reconciliation outcome: 04-04 goals are treated as delivered through the Phase 7 closure path, and this verification marks `SECR-01` and `SECR-02` satisfied with that explicit supersession trace.
+
 ## Command Notes (2026-02-26)
 
 - `nix eval .#homeConfigurations."adam@aurora".config.sops.secrets."hosts/aurora/openclaw/gateway_auth_token".path` -> failed in sandbox with SQLite fetcher-cache access error (`/Users/adampaterson/.cache/nix/fetcher-cache-v4.sqlite`).
@@ -95,5 +104,5 @@ Phase 4 gap findings are closed: the previous plaintext OpenClaw token blocker i
 
 ---
 
-_Verified: 2026-02-26T20:55:37Z_
+_Verified: 2026-02-26T21:27:24Z_
 _Verifier: Claude (gsd-executor, Plan 07-03)_
