@@ -21,6 +21,8 @@ _: {
       cli = {
         codex.enable = true;
         opencode.installDesktop = true;
+        btop.enable = true;
+        delta.enable = true;
       };
 
       prompts = {
@@ -28,11 +30,16 @@ _: {
         spaceship.enable = false;
       };
 
+      theme = {
+        enable = true;
+        accent = "red";
+        flavor = "mocha";
+      };
+
       desktop.spotify.enable = true;
       terminals.wezterm = {
         enable = true;
         profile = "macbook";
-        theme.flavor = "mocha";
         keys.mode = "leader";
         font.family = "Monaspace Neon";
         font.size = 14.0;
@@ -45,4 +52,5 @@ _: {
       };
     };
   };
+  
 }

@@ -4,19 +4,21 @@ default_scope = "darwin-macbook"
 formatter_cmd = "nixfmt"
 
 [scopes.darwin-macbook]
-description = "nix-darwin macbook"
+description = "Macbook Nix-Darwin Configuration"
 options-list-cmd = """
 nix eval .#darwinConfigurations.macbook --json --apply 'input: let
   inherit (input) options pkgs;
   optionsList = builtins.filter
     (v: v.visible && !v.internal)
     (pkgs.lib.optionAttrSetToDocList options);
-in optionsList'
+in builtins.map
+  (v: builtins.removeAttrs v [ "default" "example" ])
+  optionsList'
 """
 evaluator = "nix eval --json '.#darwinConfigurations.macbook.config.{{ .Option }}'"
 
-[scopes.home-macbook]
-description = "home-manager adampaterson@macbook"
+[scopes.macbook-home]
+description = "Macbook Home Manager Configuration"
 options-list-cmd = """
 nix eval '.#homeConfigurations.\"adampaterson@macbook\"' --json --apply 'input: let
   inherit (input) options pkgs;
@@ -27,8 +29,8 @@ in optionsList'
 """
 evaluator = "nix eval --json '.#homeConfigurations.\"adampaterson@macbook\".config.{{ .Option }}'"
 
-[scopes.nixos-aurora]
-description = "nixos aurora"
+[scopes.aurora]
+description = "Aurora NixOS Configuration"
 options-list-cmd = """
 nix eval .#nixosConfigurations.aurora --json --apply 'input: let
   inherit (input) options pkgs;
@@ -38,3 +40,15 @@ nix eval .#nixosConfigurations.aurora --json --apply 'input: let
 in optionsList'
 """
 evaluator = "nix eval --json '.#nixosConfigurations.aurora.config.{{ .Option }}'"
+
+[scopes.aurora-home]
+description = "Aurora HM Configuration"
+options-list-cmd = """
+nix eval '.#homeConfigurations.\"adampaterson@aurora\"' --json --apply 'input: let
+  inherit (input) options pkgs;
+  optionsList = builtins.filter
+    (v: v.visible && !v.internal)
+    (pkgs.lib.optionAttrSetToDocList options);
+in optionsList'
+"""
+evaluator = "nix eval --json '.#homeConfigurations.\"adampaterson@aurora\".config.{{ .Option }}'"

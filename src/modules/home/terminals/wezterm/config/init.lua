@@ -15,8 +15,15 @@ local macbook = local_module("macbook")
 
 local M = {}
 
-function M.build()
-  local config = wezterm.config_builder()
+function M.build(base_config)
+  local config = type(base_config) == "table" and base_config or nil
+  if config == nil then
+    if wezterm.config_builder then
+      config = wezterm.config_builder()
+    else
+      config = {}
+    end
+  end
   local loaded_plugins = plugins.load(user)
 
   core.apply(config, user)

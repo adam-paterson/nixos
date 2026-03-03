@@ -94,6 +94,7 @@
     };
 
     spicetify-nix.url = "github:Gerg-L/spicetify-nix";
+    catppuccin.url = "github:catppuccin/nix";
   };
 
   outputs = inputs: let

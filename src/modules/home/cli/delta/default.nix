@@ -10,6 +10,8 @@ in {
   options.${namespace}.home.cli.delta.enable = lib.mkEnableOption "delta";
 
   config = lib.mkIf cfg.enable {
-    home.packages = [pkgs.delta];
+    programs.delta = {
+      enable = true;
+    };
   };
 }

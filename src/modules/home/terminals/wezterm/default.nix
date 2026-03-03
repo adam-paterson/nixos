@@ -167,6 +167,8 @@ in {
   };
 
   config = lib.mkIf cfg.enable {
+    programs.wezterm.extraConfig = builtins.readFile ./wezterm.lua;
+
     home.packages =
       [
         weztermPkg
@@ -177,8 +179,6 @@ in {
       ];
 
     xdg.configFile = {
-      "wezterm/wezterm.lua".source = ./wezterm.lua;
-
       "wezterm/config/init.lua".source = ./config/init.lua;
       "wezterm/config/core.lua".source = ./config/core.lua;
       "wezterm/config/fonts.lua".source = ./config/fonts.lua;
