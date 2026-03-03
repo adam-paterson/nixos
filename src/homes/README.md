@@ -4,13 +4,13 @@
 
 `src/homes/` defines thin Home Manager composition per user@host target.
 
-## What goes here
+## What Goes Here
 
 - Host-local user facts and small environment differences.
 - Imports and toggles that compose reusable modules from `src/modules/home/`.
 - User@host specific wiring that cannot be shared safely.
 
-## What does not
+## What Does Not
 
 - Reusable user policy that belongs in `src/modules/home/`.
 - System-level Darwin or NixOS behavior.
@@ -25,12 +25,12 @@
 ## Examples
 
 - Good:
-  - enabling shared collections (`cosmos.collections.home.dev.enable = true;`)
+  - enabling shared collections (`cosmos.home.collections.dev.enable = true;`)
   - setting host-local user path exceptions.
 - Not good:
   - implementing full app/tool policy directly in `src/homes/...`.
 
-## Exception process
+## Exception Process
 
 1. Put reusable behavior in `src/modules/home/` first.
 2. Keep `src/homes/...` files to host-local user data and toggle composition.

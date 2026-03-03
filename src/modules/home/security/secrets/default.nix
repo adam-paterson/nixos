@@ -2,10 +2,10 @@
   config,
   inputs,
   lib,
+  namespace,
   ...
-}:
-let
-  cfg = config.cosmos.security.secrets.home;
+}: let
+  cfg = config.${namespace}.home.security.secrets;
   sharedSecretsFile = inputs.self + "/secrets/shared/common.yaml";
   openclawGatewaySecretName = "hosts/aurora/openclaw/gateway_auth_token";
 
@@ -24,7 +24,6 @@ let
       hostSecretsFile = inputs.self + "/secrets/hosts/macbook.yaml";
       requiredSecretNames = [
         "shared/onepassword/service_account_token"
-        "hosts/macbook/local/ssh_private_key"
       ];
       exportMacbookSshPath = true;
       exportOpenclawGatewayAuthTokenPath = false;
@@ -34,17 +33,15 @@ let
   userProfile = userProfiles.${config.home.username} or null;
   declaredSecretNames = builtins.attrNames config.sops.secrets;
   missingRequiredSecretNames =
-    if userProfile == null then
-      [ ]
-    else
-      lib.filter (name: !(lib.elem name declaredSecretNames)) userProfile.requiredSecretNames;
-in
-{
+    if userProfile == null
+    then []
+    else lib.filter (name: !(lib.elem name declaredSecretNames)) userProfile.requiredSecretNames;
+in {
   imports = [
     inputs.sops-nix.homeManagerModules.sops
   ];
 
-  options.cosmos.security.secrets.home.enable =
+  options.${namespace}.home.security.secrets.enable =
     lib.mkEnableOption "runtime-only Home Manager secret wiring";
 
   config = lib.mkIf cfg.enable {
@@ -52,12 +49,12 @@ in
       {
         assertion = userProfile != null;
         message = ''
-          cosmos.security.secrets.home.enable is true, but no secret profile exists for home.username "${config.home.username}".
+          home.security.secrets.enable is true, but no secret profile exists for home.username "${config.home.username}".
           Add user secret mappings under src/modules/home/security/secrets/default.nix.
         '';
       }
       {
-        assertion = missingRequiredSecretNames == [ ];
+        assertion = missingRequiredSecretNames == [];
         message = ''
           Missing required Home Manager SOPS secret declarations for user "${config.home.username}":
           ${lib.concatStringsSep ", " missingRequiredSecretNames}
@@ -66,7 +63,8 @@ in
       }
       {
         assertion =
-          userProfile == null
+          userProfile
+          == null
           || (!userProfile.exportOpenclawGatewayAuthTokenPath)
           || lib.elem openclawGatewaySecretName userProfile.requiredSecretNames;
         message = ''
@@ -77,31 +75,24 @@ in
     ];
 
     sops = {
-      age.keyFile = lib.mkDefault "${config.home.homeDirectory}/.config/sops/age/keys.txt";
+      age = {
+        keyFile = lib.mkDefault "${config.home.homeDirectory}/.config/sops/age/keys.txt";
+      };
       defaultSopsFile = userProfile.hostSecretsFile;
+
+      gnupg = {
+        sshKeyPaths = [];
+      };
 
       secrets = {
         "shared/onepassword/service_account_token" = {
           sopsFile = sharedSecretsFile;
         };
-      }
-      // lib.optionalAttrs userProfile.exportOpenclawGatewayAuthTokenPath {
-        "${openclawGatewaySecretName}" = { };
-      }
-      // lib.optionalAttrs userProfile.exportMacbookSshPath {
-        "hosts/macbook/local/ssh_private_key" = { };
       };
     };
 
     home.sessionVariables = {
       OP_SERVICE_ACCOUNT_TOKEN_FILE = config.sops.secrets."shared/onepassword/service_account_token".path;
-    }
-    // lib.optionalAttrs userProfile.exportOpenclawGatewayAuthTokenPath {
-      OPENCLAW_GATEWAY_AUTH_TOKEN_FILE =
-        config.sops.secrets.${openclawGatewaySecretName}.path;
-    }
-    // lib.optionalAttrs userProfile.exportMacbookSshPath {
-      COSMOS_LOCAL_SSH_PRIVATE_KEY_FILE = config.sops.secrets."hosts/macbook/local/ssh_private_key".path;
     };
   };
 }

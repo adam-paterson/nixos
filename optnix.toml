@@ -1,0 +1,40 @@
+min_score = 1
+debounce_time = 25
+default_scope = "darwin-macbook"
+formatter_cmd = "nixfmt"
+
+[scopes.darwin-macbook]
+description = "nix-darwin macbook"
+options-list-cmd = """
+nix eval .#darwinConfigurations.macbook --json --apply 'input: let
+  inherit (input) options pkgs;
+  optionsList = builtins.filter
+    (v: v.visible && !v.internal)
+    (pkgs.lib.optionAttrSetToDocList options);
+in optionsList'
+"""
+evaluator = "nix eval --json '.#darwinConfigurations.macbook.config.{{ .Option }}'"
+
+[scopes.home-macbook]
+description = "home-manager adampaterson@macbook"
+options-list-cmd = """
+nix eval '.#homeConfigurations.\"adampaterson@macbook\"' --json --apply 'input: let
+  inherit (input) options pkgs;
+  optionsList = builtins.filter
+    (v: v.visible && !v.internal)
+    (pkgs.lib.optionAttrSetToDocList options);
+in optionsList'
+"""
+evaluator = "nix eval --json '.#homeConfigurations.\"adampaterson@macbook\".config.{{ .Option }}'"
+
+[scopes.nixos-aurora]
+description = "nixos aurora"
+options-list-cmd = """
+nix eval .#nixosConfigurations.aurora --json --apply 'input: let
+  inherit (input) options pkgs;
+  optionsList = builtins.filter
+    (v: v.visible && !v.internal)
+    (pkgs.lib.optionAttrSetToDocList options);
+in optionsList'
+"""
+evaluator = "nix eval --json '.#nixosConfigurations.aurora.config.{{ .Option }}'"

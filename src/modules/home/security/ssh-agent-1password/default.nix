@@ -2,9 +2,10 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }: let
-  cfg = config.cosmos.onePasswordSSH;
+  cfg = config.${namespace}.home.security.onePasswordSSH;
   defaultSocket =
     if pkgs.stdenv.isDarwin
     then "${config.home.homeDirectory}/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
@@ -91,7 +92,7 @@
     )
     cfg.hosts;
 in {
-  options.cosmos.onePasswordSSH = {
+  options.${namespace}.home.security.onePasswordSSH = {
     enable = lib.mkEnableOption "1Password SSH agent integration";
 
     socketPath = lib.mkOption {

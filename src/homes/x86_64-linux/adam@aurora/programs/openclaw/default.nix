@@ -1,8 +1,6 @@
-{ config, ... }:
-let
+{config, ...}: let
   tokenFilePath = config.home.sessionVariables.OPENCLAW_GATEWAY_AUTH_TOKEN_FILE;
-in
-{
+in {
   assertions = [
     {
       assertion = tokenFilePath != null && tokenFilePath != "";

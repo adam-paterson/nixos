@@ -13,7 +13,6 @@
       hostSecretsFile = inputs.self + "/secrets/hosts/macbook.yaml";
       requiredSecretNames = [
         "shared/onepassword/service_account_token"
-        "hosts/macbook/local/ssh_private_key"
       ];
     };
 
@@ -21,17 +20,11 @@
       hostSecretsFile = inputs.self + "/secrets/hosts/macbook.yaml";
       requiredSecretNames = [
         "shared/onepassword/service_account_token"
-        "hosts/macbook/local/ssh_private_key"
       ];
     };
   };
 
   hostProfile = hostProfiles.${normalizedHostName} or null;
-  declaredSecretNames = builtins.attrNames config.sops.secrets;
-  missingRequiredSecretNames =
-    if hostProfile == null
-    then []
-    else lib.filter (name: !(lib.elem name declaredSecretNames)) hostProfile.requiredSecretNames;
 in {
   imports = [
     inputs.sops-nix.darwinModules.sops
@@ -49,25 +42,20 @@ in {
           Add host secret mappings under src/modules/darwin/security/secrets/default.nix.
         '';
       }
-      {
-        assertion = missingRequiredSecretNames == [];
-        message = ''
-          Missing required SOPS secret declarations for host "${config.networking.hostName}":
-          ${lib.concatStringsSep ", " missingRequiredSecretNames}
-          Ensure the encrypted host/shared files include these keys and that this module declares them.
-        '';
-      }
     ];
 
     sops = {
+      age = {
+        keyFile = lib.mkDefault "/Users/adampaterson/.config/sops/age/keys.txt";
+        sshKeyPaths = [];
+      };
+
       defaultSopsFile = hostProfile.hostSecretsFile;
 
       secrets = {
         "shared/onepassword/service_account_token" = {
           sopsFile = sharedSecretsFile;
         };
-
-        "hosts/macbook/local/ssh_private_key" = {};
       };
     };
   };

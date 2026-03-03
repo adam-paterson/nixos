@@ -1,15 +1,24 @@
 {
   config,
   lib,
+  namespace,
   ...
 }: let
-  cfg = config.cosmos.collections.home.dev;
+  cfg = config.${namespace}.home.collections.dev;
 in {
-  options.cosmos.collections.home.dev.enable = lib.mkEnableOption "developer tooling home collection";
+  options.${namespace}.home.collections.dev.enable = lib.mkEnableOption "developer tooling home collection";
 
   config = lib.mkIf cfg.enable {
-    cosmos = {
-      neovim = {
+    ${namespace}.home = {
+      runtimes.bun = {
+        enable = lib.mkDefault true;
+        reconcile = lib.mkDefault "install-only";
+        globalPackages = lib.mkDefault {
+          beads = "github:steveyegge/beads";
+        };
+      };
+
+      editors.neovim = {
         enable = lib.mkDefault true;
         enableAI = lib.mkDefault true;
         enableDAP = lib.mkDefault false;
@@ -22,8 +31,9 @@ in {
           csharp = lib.mkDefault false;
         };
       };
-      tailwind.enable = lib.mkDefault true;
-      tmux.enable = lib.mkDefault true;
+
+      terminals.tmux.enable = lib.mkDefault true;
+      cli.tailspin.enable = lib.mkDefault true;
     };
   };
 }

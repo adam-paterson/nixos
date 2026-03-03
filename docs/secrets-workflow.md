@@ -38,7 +38,29 @@ Both wrappers run `just secrets-auth-preflight` first and fail hard when authent
 - Edit encrypted shared secrets: `just secrets-edit-shared`
 - Edit encrypted Aurora secrets: `just secrets-edit-aurora`
 - Edit encrypted MacBook secrets: `just secrets-edit-macbook`
+- Show current age recipient from a key file: `just secrets-age-public-key`
 - Re-encrypt to current recipients: `just secrets-updatekeys`
+
+### Key Recovery and Rotation
+
+If your previous secret store is gone, recover access from your current local `age` key, then rotate intentionally:
+
+1. Confirm you still have a decrypting key:
+   - `ls -l ~/.config/sops/age/keys.txt`
+   - `sops -d --extract '["shared"]["onepassword"]["service_account_token"]' secrets/shared/common.yaml >/dev/null`
+2. Back up your existing `age` key file offline before changing anything.
+3. Generate a new keypair:
+   - `age-keygen -o ~/.config/sops/age/keys-rotated.txt`
+   - Copy the new `# public key: age1...` value.
+4. Update `.sops.yaml` recipients to include the new public key (and keep any still-needed keys during transition).
+5. Re-encrypt all tracked secret files to the updated recipients:
+   - `just secrets-updatekeys`
+6. Validate decryption with the new key loaded:
+   - `SOPS_AGE_KEY_FILE=~/.config/sops/age/keys-rotated.txt sops -d secrets/hosts/macbook.yaml >/dev/null`
+7. Switch your runtime key file path to the rotated key file only after successful validation.
+8. Remove old recipients from `.sops.yaml`, run `just secrets-updatekeys` again, and commit both changes together.
+
+Note: this repository intentionally sets `sops.age.sshKeyPaths = []` for Home Manager and nix-darwin to avoid fallback reads of Linux host SSH keys like `/etc/ssh/ssh_host_*` on macOS.
 
 ### Guardrails and Mock-Safe Validation
 

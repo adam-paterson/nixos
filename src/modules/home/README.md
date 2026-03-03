@@ -4,33 +4,55 @@
 
 `src/modules/home/` contains reusable Home Manager modules for cross-host user environment composition.
 
-## What goes here
+## Taxonomy
 
-- User-layer capability modules (`apps`, `dev`, `prompts`, `security`).
-- Home collections that compose common user profiles (`base`, `cli`, `desktop`, `dev`).
-- Cross-host user policy that should apply consistently on macOS and Linux unless explicitly scoped.
+Use feature-first, tool-specific placement:
 
-## What does not
+- `shells/` for shell UX and shell-adjacent tools.
+- `prompts/` for prompt engines.
+- `terminals/` for terminal applications.
+- `editors/`, `runtimes/`, `vcs/`, `frontend/`, `cli/`, `desktop/`, `security/` for tool families.
+- `collections/` only for composition bundles (no direct tool config logic).
+
+Each tool module must live at:
+
+- `src/modules/home/<feature-area>/<tool>/default.nix`
+
+Examples:
+
+- `shells/nushell/default.nix`
+- `shells/completions/carapace/default.nix`
+- `cli/codex/default.nix`
+- `terminals/wezterm/default.nix`
+
+## Option Naming
+
+All Home options use hierarchical namespace paths:
+
+- `${namespace}.home.<feature-area>.<tool>...`
+
+Examples:
+
+- `${namespace}.home.shells.nushell.enable`
+- `${namespace}.home.cli.opencode.enable`
+- `${namespace}.home.security.onePasswordSSH.enable`
+- `${namespace}.home.collections.dev.enable`
+
+## What Goes Here
+
+- User-layer policy intended to be reusable across hosts.
+- One module per app/tool, including package installation and tool configuration.
+- Cross-host defaults wired through collection modules.
+
+## What Does Not
 
 - System-level Darwin or NixOS policy.
-- Host-only user facts (for example machine-local paths tied to one host).
-- Secret payloads.
-- Host composition wiring that belongs in `src/homes/...`.
+- Host-only user facts tied to one machine.
+- Secret payload values.
+- Mixed bundle modules for unrelated tools.
 
-## Naming
+## Migration Rules
 
-- Use tool or capability-specific names (`dev/neovim`, `security/onepassword-cli`).
-- Keep collection names outcome-oriented (`collections/dev`, `collections/desktop`).
-- Prefer explicit names over generic buckets.
-
-## Examples
-
-- `dev/git/default.nix` for shared git behavior.
-- `prompts/spaceship/default.nix` for shell prompt policy.
-- `collections/desktop/default.nix` for user desktop bundle composition.
-
-## Exception process
-
-1. Start with reusable Home Manager capability placement.
-2. If behavior is host-only, keep the exception in `src/homes/...` and keep it thin.
-3. If uncertainty remains, document the decision in the plan summary and update local docs if needed.
+- Use hard moves when reorganizing modules.
+- Update references in the same change.
+- Do not keep old path aliases or compatibility wrappers.

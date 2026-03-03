@@ -28,11 +28,17 @@ src/
 │   │   ├── services/tailscale/default.nix
 │   │   └── system/{core,input}/default.nix
 │   ├── home/
-│   │   ├── apps/{cli,desktop}/...
+│   │   ├── cli/{codex,opencode,...}/...
 │   │   ├── collections/{ai,base,cli,desktop,dev}/default.nix
-│   │   ├── dev/{git,languages,neovim,shell,tailwind,tmux}/...
+│   │   ├── desktop/spotify/...
+│   │   ├── editors/neovim/...
+│   │   ├── frontend/tailwind/...
 │   │   ├── prompts/{oh-my-posh,spaceship}/...
-│   │   └── security/{onepassword-cli,ssh-agent-1password}/...
+│   │   ├── runtimes/bun/...
+│   │   ├── security/{onepassword-cli,secrets,ssh-agent-1password}/...
+│   │   ├── shells/{bash,nushell,zsh,...}/...
+│   │   ├── terminals/{ghostty,tmux,wezterm}/...
+│   │   └── vcs/git/...
 │   └── nixos/
 │       ├── collections/{base,server,workstation}/default.nix
 │       └── services/{cloudflared,tailscale}/default.nix
@@ -74,7 +80,7 @@ SSH keys stay in 1Password. Nix only points SSH to the 1Password agent socket.
 Enable per-home with:
 
 ```nix
-local.onePasswordSSH.enable = true;
+cosmos.home.security.onePasswordSSH.enable = true;
 ```
 
 ## Spaceship Prompt
@@ -84,7 +90,7 @@ local.onePasswordSSH.enable = true;
 Optional per-home overrides:
 
 ```nix
-local.prompts.spaceship = {
+cosmos.home.prompts.spaceship = {
   enable = true;
   addNewline = false;
   separateLine = false;
@@ -93,12 +99,12 @@ local.prompts.spaceship = {
 
 ## OpenCode
 
-`src/modules/home/apps/cli/opencode/default.nix` manages OpenCode CLI on both hosts and can manage `~/.config/opencode/opencode.json`.
+`src/modules/home/cli/opencode/default.nix` manages OpenCode CLI on both hosts and can manage `~/.config/opencode/opencode.json`.
 
 Per-home options:
 
 ```nix
-local.opencode = {
+cosmos.home.cli.opencode = {
   enable = true;
   manageConfig = true;
   settings = { ... };      # rendered to JSON
@@ -281,6 +287,12 @@ just home-build-macbook
 just home-build-aurora
 just home-check
 ```
+
+### Nushell Startup and PATH
+
+- Nushell config is managed at `~/.config/nushell`, with a macOS compatibility link at `~/Library/Application Support/nushell` so GUI-launched terminals and login shells load the same config.
+- Nushell PATH is normalized with Nix-first precedence: system and profile Nix paths, then Bun/Homebrew entries, then inherited entries (deduplicated and filtered to existing paths).
+- For future path exceptions, update the `preferred_paths` block in `src/modules/home/shells/nushell/default.nix`.
 
 ### Activation Decision Tree
 

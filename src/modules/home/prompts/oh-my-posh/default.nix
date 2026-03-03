@@ -4,13 +4,14 @@
 {
   config,
   lib,
+  namespace,
   ...
 }: {
-  options.cosmos.oh-my-posh = {
+  options.${namespace}.home.prompts.ohMyPosh = {
     enable = lib.mkEnableOption "Oh-My-Posh prompt";
   };
 
-  config = lib.mkIf config.cosmos.oh-my-posh.enable {
+  config = lib.mkIf config.${namespace}.home.prompts.ohMyPosh.enable {
     programs.oh-my-posh = {
       enable = true;
       enableBashIntegration = true;

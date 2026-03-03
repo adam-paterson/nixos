@@ -68,6 +68,13 @@ secrets-updatekeys:
   @sops updatekeys --yes secrets/hosts/aurora.yaml
   @sops updatekeys --yes secrets/hosts/macbook.yaml
 
+secrets-age-public-key key_file="${HOME}/.config/sops/age/keys.txt":
+  @if [ ! -f "{{key_file}}" ]; then \
+    echo "Age key file not found: {{key_file}}"; \
+    exit 1; \
+  fi
+  @grep '^# public key: ' "{{key_file}}" | sed 's/^# public key: //'
+
 secrets-mock-check:
   @SECRETS_SCAN_SCOPE=working-tree just secrets-scan
   @just eval

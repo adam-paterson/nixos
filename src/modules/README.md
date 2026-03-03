@@ -34,7 +34,7 @@ Organize modules by capability first, then by platform boundary where needed.
 - Good:
   - `src/modules/darwin/services/tailscale/default.nix`
   - `src/modules/nixos/collections/server/default.nix`
-  - `src/modules/home/dev/git/default.nix`
+  - `src/modules/home/vcs/git/default.nix`
 - Good shared conditional use:
   - A small platform conditional in a shared module is allowed when it is obvious,
     documented, and clearly reduces duplication.

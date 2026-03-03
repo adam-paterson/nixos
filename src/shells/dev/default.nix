@@ -15,6 +15,11 @@ inputs.devenv.lib.mkShell {
       {pkgs, ...}: {
         packages = with pkgs; [
           nixd
+          nh
+          optnix
+          nix-tree
+          nvd
+          nix-output-monitor
           alejandra
           statix
           deadnix
