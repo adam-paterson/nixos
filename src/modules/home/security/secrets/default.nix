@@ -84,15 +84,23 @@ in {
         sshKeyPaths = [];
       };
 
-      secrets = {
-        "shared/onepassword/service_account_token" = {
-          sopsFile = sharedSecretsFile;
+      secrets =
+        {
+          "shared/onepassword/service_account_token" = {
+            sopsFile = sharedSecretsFile;
+          };
+        }
+        // lib.optionalAttrs (userProfile != null && userProfile.exportOpenclawGatewayAuthTokenPath) {
+          ${openclawGatewaySecretName} = {};
         };
-      };
     };
 
-    home.sessionVariables = {
-      OP_SERVICE_ACCOUNT_TOKEN_FILE = config.sops.secrets."shared/onepassword/service_account_token".path;
-    };
+    home.sessionVariables =
+      {
+        OP_SERVICE_ACCOUNT_TOKEN_FILE = config.sops.secrets."shared/onepassword/service_account_token".path;
+      }
+      // lib.optionalAttrs (userProfile != null && userProfile.exportOpenclawGatewayAuthTokenPath) {
+        OPENCLAW_GATEWAY_AUTH_TOKEN_FILE = config.sops.secrets.${openclawGatewaySecretName}.path;
+      };
   };
 }

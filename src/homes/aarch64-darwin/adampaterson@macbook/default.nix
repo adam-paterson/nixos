@@ -5,6 +5,8 @@ _: {
     stateVersion = "26.05";
   };
 
+  targets.darwin.copyApps.directory = "Applications";
+
   cosmos = {
     home = {
       collections = {
@@ -21,6 +23,7 @@ _: {
       planning = {
         beads.enable = true;
         beads.enableViewer = true;
+        gastown.enable = true;
       };
 
       cli = {
@@ -57,5 +60,4 @@ _: {
       };
     };
   };
-  
 }

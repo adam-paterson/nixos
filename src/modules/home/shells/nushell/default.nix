@@ -29,6 +29,21 @@ in {
       shellAliases = nushellAliases;
       settings = {
         show_banner = false;
+        keybindings = [
+          {
+            name = "insert_newline";
+            modifier = "control";
+            keycode = "char_j";
+            mode = [
+              "emacs"
+              "vi_normal"
+              "vi_insert"
+            ];
+            event = {
+              edit = "insertnewline";
+            };
+          }
+        ];
         completions = {
           case_sensitive = false;
           quick = true;

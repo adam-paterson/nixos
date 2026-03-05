@@ -52,3 +52,97 @@ nix eval '.#homeConfigurations.\"adampaterson@aurora\"' --json --apply 'input: l
 in optionsList'
 """
 evaluator = "nix eval --json '.#homeConfigurations.\"adampaterson@aurora\".config.{{ .Option }}'"
+
+# ── Packages Scopes ──────────────────────────────────────────────────────────
+
+[scopes.agents-packages]
+description = "LLM Agents Nix Packages (inputs.agents)"
+options-list-cmd = """
+AGENTS_REV=$(python3 -c "import json; l=json.load(open('flake.lock')); print(l['nodes']['agents']['locked']['rev'])") && \
+nix eval --json \
+  "github:numtide/llm-agents.nix/${AGENTS_REV}#packages.aarch64-darwin" \
+  --apply '
+    let
+      skip = [ "darwinOpenptyHook" "unpinGoModVersionHook" "versionCheckHomeHook"
+               "flake-inputs" "formatter" "default" ];
+      mkEntry = n: p: {
+        name = n;
+        description = (p.meta.description or "No description");
+        type = "package";
+        loc = [ "packages" "aarch64-darwin" n ];
+        readOnly = true;
+        declarations = [];
+      };
+    in pkgs:
+      builtins.filter (e: !(builtins.elem e.name skip))
+      (builtins.attrValues (builtins.mapAttrs mkEntry pkgs))
+  '
+"""
+evaluator = """AGENTS_REV=$(python3 -c "import json; l=json.load(open('flake.lock')); print(l['nodes']['agents']['locked']['rev'])") && nix eval --json "github:numtide/llm-agents.nix/${AGENTS_REV}#packages.aarch64-darwin.{{ .Option }}" --apply 'p: { version = p.version or "unknown"; description = p.meta.description or ""; homepage = p.meta.homepage or ""; }'"""
+
+# ── Module Options from Integrated Inputs ────────────────────────────────────
+
+[scopes.sops-options]
+description = "sops-nix Options (aurora NixOS)"
+options-list-cmd = """
+nix eval .#nixosConfigurations.aurora --json --apply 'c: let
+  lib = c.pkgs.lib;
+  opts = builtins.filter (v: v.visible && !v.internal)
+         (lib.optionAttrSetToDocList c.options);
+in builtins.filter (o: lib.hasPrefix "sops" o.name) opts'
+"""
+evaluator = "nix eval --json '.#nixosConfigurations.aurora.config.{{ .Option }}'"
+
+[scopes.spicetify-home-options]
+description = "Spicetify Home-Manager Options (macbook)"
+options-list-cmd = """
+nix eval '.#homeConfigurations."adampaterson@macbook"' --json --apply 'c: let
+  lib = c.pkgs.lib;
+  opts = builtins.filter (v: v.visible && !v.internal)
+         (lib.optionAttrSetToDocList c.options);
+in builtins.filter (o: lib.hasPrefix "programs.spicetify" o.name) opts'
+"""
+evaluator = "nix eval --json '.#homeConfigurations.\"adampaterson@macbook\".config.{{ .Option }}'"
+
+[scopes.catppuccin-home-options]
+description = "Catppuccin Home-Manager Options (macbook)"
+options-list-cmd = """
+nix eval '.#homeConfigurations."adampaterson@macbook"' --json --apply 'c: let
+  lib = c.pkgs.lib;
+  opts = builtins.filter (v: v.visible && !v.internal)
+         (lib.optionAttrSetToDocList c.options);
+in builtins.filter (o: lib.hasPrefix "catppuccin" o.name) opts'
+"""
+evaluator = "nix eval --json '.#homeConfigurations.\"adampaterson@macbook\".config.{{ .Option }}'"
+
+# ── Module Options from New/Unintegrated Inputs (requires --impure) ──────────
+# Template: adapt for any new flake input's HM module before integrating it.
+# Replace CAT_REV/catppuccin references with your new input's lock node name,
+# GitHub owner/repo, and module attribute name.
+
+[scopes.catppuccin-hm-standalone]
+description = "Catppuccin HM Options — standalone eval (template for new inputs)"
+options-list-cmd = """
+CAT_REV=$(python3 -c "import json; l=json.load(open('flake.lock')); print(l['nodes']['catppuccin']['locked']['rev'])") && \
+HM_REV=$(python3 -c "import json; l=json.load(open('flake.lock')); print(l['nodes']['home-manager']['locked']['rev'])") && \
+nix eval --impure --json --expr "
+  let
+    nixpkgs = builtins.getFlake \"github:nixos/nixpkgs/nixpkgs-unstable\";
+    pkgs = nixpkgs.legacyPackages.aarch64-darwin;
+    lib = nixpkgs.lib;
+    hm = builtins.getFlake \"github:nix-community/home-manager/${HM_REV}\";
+    catppuccin = builtins.getFlake \"github:catppuccin/nix/${CAT_REV}\";
+    hmCfg = hm.lib.homeManagerConfiguration {
+      inherit pkgs;
+      modules = [
+        (catppuccin.homeModules.catppuccin or catppuccin.homeManagerModules.catppuccin)
+        { home = { username = \"test\"; homeDirectory = \"/tmp/test\"; stateVersion = \"24.05\"; }; }
+      ];
+    };
+    opts = builtins.filter (v: v.visible && !v.internal)
+           (lib.optionAttrSetToDocList hmCfg.options);
+  in builtins.filter (o: lib.hasPrefix \"catppuccin\" o.name)
+     (builtins.map (v: builtins.removeAttrs v [\"default\" \"example\"]) opts)
+"
+"""
+evaluator = """CAT_REV=$(python3 -c "import json; l=json.load(open('flake.lock')); print(l['nodes']['catppuccin']['locked']['rev'])") && HM_REV=$(python3 -c "import json; l=json.load(open('flake.lock')); print(l['nodes']['home-manager']['locked']['rev'])") && nix eval --impure --json --expr "let nixpkgs = builtins.getFlake \"github:nixos/nixpkgs/nixpkgs-unstable\"; pkgs = nixpkgs.legacyPackages.aarch64-darwin; lib = nixpkgs.lib; hm = builtins.getFlake \"github:nix-community/home-manager/${HM_REV}\"; catppuccin = builtins.getFlake \"github:catppuccin/nix/${CAT_REV}\"; hmCfg = hm.lib.homeManagerConfiguration { inherit pkgs; modules = [ (catppuccin.homeModules.catppuccin or catppuccin.homeManagerModules.catppuccin) { home = { username = \"test\"; homeDirectory = \"/tmp/test\"; stateVersion = \"24.05\"; }; } ]; }; in lib.getAttrFromPath (lib.splitString \".\" \"{{ .Option }}\") hmCfg.config" """

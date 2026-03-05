@@ -17,5 +17,11 @@ in {
     home.packages = [
       inputs.agents.packages.${system}.codex
     ];
+
+    programs.codex.settings = {
+      project_doc_fallback_filenames = [
+        "CLAUDE.md"
+      ];
+    };
   };
 }

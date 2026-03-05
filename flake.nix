@@ -53,6 +53,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Gastown - multi-agent workspace manager - https://github.com/steveyegge/gastown
+    gastown = {
+      url = "github:steveyegge/gastown";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # ──[ Snowfall Lib Inputs ]────────────────────────────────────────────
     snowfall-lib = {
       url = "github:snowfallorg/lib";

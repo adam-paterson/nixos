@@ -167,7 +167,10 @@ in {
   };
 
   config = lib.mkIf cfg.enable {
-    programs.wezterm.extraConfig = builtins.readFile ./wezterm.lua;
+    programs.wezterm = {
+      enable = true;
+      extraConfig = builtins.readFile ./wezterm.lua;
+    };
 
     home.packages =
       [
