@@ -30,6 +30,9 @@ in {
           edit = "allow";
           webfetch = "allow";
         };
+        plugin = [
+          "opencode-beads"
+        ];
       };
       description = "OpenCode JSON settings rendered to ~/.config/opencode/opencode.json.";
     };
