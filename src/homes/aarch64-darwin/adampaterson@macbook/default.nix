@@ -18,6 +18,11 @@ _: {
         nushell.enable = true;
       };
 
+      planning = {
+        beads.enable = true;
+        beads.enableViewer = true;
+      };
+
       cli = {
         codex.enable = true;
         opencode.installDesktop = true;

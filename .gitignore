@@ -11,3 +11,7 @@ devenv.local.yaml
 
 .planning/*
 .opencode/plans
+
+# Dolt database files (added by bd init)
+.dolt/
+*.db
