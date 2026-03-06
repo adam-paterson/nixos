@@ -23,7 +23,6 @@
     ".." = "cd ..";
     "..." = "cd ../..";
     cat = "bat";
-    ls = "eza";
     ll = "eza -la";
     la = "eza -a";
     lt = "eza --tree";

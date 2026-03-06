@@ -18,6 +18,10 @@ _: {
 
       shells = {
         nushell.enable = true;
+
+        listing = {
+          eza.enable = false;
+        };
       };
 
       planning = {

@@ -39,8 +39,21 @@ in {
       (inputs.gastown.packages.${system}.gt.overrideAttrs (_: {
         vendorHash = "sha256-/+ODyndArUF0nJY9r8G5JKhzQckBHFb48A7EBZmoIr0=";
       }))
-      pkgs.dolt
+      # dolt 1.82.4+ required by gt doctor; nixpkgs only has 1.81.2 as of 2026-03
+      (pkgs.dolt.overrideAttrs (_: {
+        version = "1.83.2";
+        src = pkgs.fetchFromGitHub {
+          owner = "dolthub";
+          repo = "dolt";
+          tag = "v1.83.2";
+          hash = "sha256-WKsvKZVn4o870w5sv0owmtm/Od2nhzvZOW/aV1jLysM=";
+        };
+        # icu4c-dev required by CGO go-icu-regex (unicode/uregex.h).
+        buildInputs = [pkgs.icu76.dev];
+        vendorHash = "sha256-v3WAiQjYxkzfgoC29M+4U4eG/HNqjdhPkqRGB3ESEgM=";
+      }))
       pkgs.go
+      pkgs.nodejs # required by codex (node shebang) and general JS tooling
     ];
 
     # Shell completions via carapace bridge (mirrors beads pattern for bd).

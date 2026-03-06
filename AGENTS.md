@@ -148,3 +148,44 @@ For more details, see README.md and docs/QUICKSTART.md.
 - If push fails, resolve and retry until it succeeds
 
 <!-- END BEADS INTEGRATION -->
+
+## Gas Town Workflow
+
+This rig is managed by Gas Town. When working as a crew worker:
+
+### Planning new work
+
+**NEVER create beads directly from a description.** Always use the `mol-idea-to-plan`
+formula, which runs PRD review, parallel design, and plan review before creating beads.
+
+When the human describes a feature, idea, or problem:
+```bash
+gt sling mol-idea-to-plan crew --var problem="<their description>"
+```
+
+This pipeline will:
+1. Structure the idea into a PRD
+2. Run 6-way parallel PRD review
+3. Ask the human clarifying questions (human gate — wait for response)
+4. Run 6-way parallel implementation design
+5. Ask the human to approve the plan (human gate — wait for response)
+6. Create beads with proper descriptions, priorities, and dependencies
+
+Do not shortcut this. Beads created without the pipeline will lack acceptance
+criteria, dependencies, and the detail polecats need to do good work.
+
+### Dispatching work
+
+Once beads exist and are approved, sling them to the rig:
+```bash
+gt sling <bead-id> nix_config   # spawns a polecat per bead
+```
+
+### Build and validation commands
+
+```bash
+just check        # run nix flake check
+just fmt-check    # check formatting
+just lint         # run linters
+just ci           # full local CI pass
+```

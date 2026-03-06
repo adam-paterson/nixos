@@ -1,10 +1,9 @@
 {
   config,
   lib,
-  pkgs,
   namespace,
   ...
-}: let 
+}: let
   cfg = config.${namespace}.home.cli.btop;
 in {
   options.${namespace}.home.cli.btop.enable = lib.mkEnableOption "btop";

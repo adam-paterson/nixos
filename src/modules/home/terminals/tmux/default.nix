@@ -15,6 +15,7 @@
   config = lib.mkIf config.${namespace}.home.terminals.tmux.enable {
     programs.tmux = {
       enable = true;
+      sensibleOnTop = true;
 
       # Prefix key: Ctrl+a (like screen)
       prefix = lib.mkDefault "C-a";
@@ -23,6 +24,7 @@
       terminal = lib.mkDefault "tmux-256color";
       escapeTime = lib.mkDefault 10;
       historyLimit = lib.mkDefault 50000;
+      focusEvents = lib.mkDefault true;
 
       # Mouse support
       mouse = lib.mkDefault true;
@@ -30,8 +32,8 @@
       # Base index
       baseIndex = lib.mkDefault 1;
 
-      # Use Nushell as default shell
-      shell = lib.mkDefault "${pkgs.nushell}/bin/nu";
+      # Use zsh as default shell (compatible with bash-syntax commands from gt/agents)
+      shell = lib.mkDefault "${pkgs.zsh}/bin/zsh";
 
       # Extra configuration
       extraConfig = ''

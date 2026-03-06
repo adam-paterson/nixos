@@ -9,7 +9,6 @@
     ".." = "cd ..";
     "..." = "cd ../..";
     cat = "bat";
-    ls = "eza";
     ll = "eza -gl";
     la = "eza -gla";
     lt = "eza -T";
