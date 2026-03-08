@@ -1,16 +1,17 @@
 {
   config,
   lib,
+  namespace,
   ...
 }: let
-  cfg = config.cosmos.collections.home.ai;
+  cfg = config.${namespace}.home.collections.ai;
 in {
-  options.cosmos.collections.home.ai.enable = lib.mkEnableOption "AI tooling home collection";
+  options.${namespace}.home.collections.ai.enable = lib.mkEnableOption "AI tooling home collection";
 
   config = lib.mkIf cfg.enable {
-    cosmos = {
-      opencode.enable = lib.mkDefault true;
-      neovim.enableAI = lib.mkDefault true;
+    ${namespace}.home = {
+      cli.opencode.enable = lib.mkDefault true;
+      editors.neovim.enableAI = lib.mkDefault true;
     };
   };
 }

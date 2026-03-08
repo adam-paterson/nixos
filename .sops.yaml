@@ -1,0 +1,10 @@
+creation_rules:
+  - path_regex: ^secrets/shared/.*\.ya?ml$
+    age:
+      - age1em5ex0q49yly2ymp03sa3vr76u6es89789ucph0vflk7dn4ted5suf79gl
+  - path_regex: ^secrets/hosts/aurora\.ya?ml$
+    age:
+      - age1em5ex0q49yly2ymp03sa3vr76u6es89789ucph0vflk7dn4ted5suf79gl
+  - path_regex: ^secrets/hosts/macbook\.ya?ml$
+    age:
+      - age1em5ex0q49yly2ymp03sa3vr76u6es89789ucph0vflk7dn4ted5suf79gl

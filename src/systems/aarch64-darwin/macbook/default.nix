@@ -10,28 +10,7 @@
 
   cosmos = {
     collections.darwin.workstation.enable = true;
-
-    darwin.input = {
-      enable = true;
-      remapCapsLockToControl = true;
-      keyRepeat = 2;
-      initialKeyRepeat = 15;
-    };
-
-    tailscale = {
-      enable = true;
-      installApp = true;
-    };
-  };
-
-  homebrew = {
-    casks = [
-      "ghostty"
-      "obsidian"
-      "aerospace"
-    ];
-
-    taps = ["nikitabobko/tap"];
+    overrides.darwin.macbook.enable = true;
   };
 
   system.stateVersion = 6;

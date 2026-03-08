@@ -8,3 +8,22 @@ devenv.local.yaml
 
 # pre-commit
 .pre-commit-config.yaml
+
+.planning/*
+.opencode/plans
+
+# Dolt database files (added by bd init)
+.dolt/
+*.db
+
+# bv (beads viewer) local config and caches
+.bv/
+
+# Gas Town (added by gt)
+.runtime/
+.claude/commands/
+.logs/
+
+# OpenClaw runtime config (managed by openclaw itself, contains secrets)
+openclaw.json
+

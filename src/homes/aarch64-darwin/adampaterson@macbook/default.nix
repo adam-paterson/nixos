@@ -5,38 +5,62 @@ _: {
     stateVersion = "26.05";
   };
 
+  targets.darwin.copyApps.directory = "Applications";
+
   cosmos = {
-    collections.home = {
-      base.enable = true;
-      dev.enable = true;
-      cli.enable = true;
-      ai.enable = true;
-    };
-
-    codex.enable = true;
-
-    onePasswordSSH = {
-      enable = true;
-      includeBookmarkConfig = true;
-      hosts."aurora aurora-1.taileb2c54.ts.net 100.77.42.103 46.225.111.125" = {
-        hostName = "46.225.111.125";
-        user = "adam";
-        identitiesOnly = false;
+    home = {
+      collections = {
+        base.enable = true;
+        dev.enable = true;
+        cli.enable = true;
+        ai.enable = true;
       };
-      hosts."ssh.dev.azure.com" = {
-        hostName = "ssh.dev.azure.com";
-        user = "git";
-        identitiesOnly = true;
-        identityFile = "~/.ssh/id_rsa_azure";
+
+      shells = {
+        nushell.enable = true;
+
+        listing = {
+          eza.enable = false;
+        };
       };
-    };
 
-    opencode.installDesktop = true;
+      planning = {
+        beads.enable = true;
+        beads.enableViewer = true;
+        gastown.enable = true;
+      };
 
-    neovim = {
-      enableDAP = false;
-      languages = {
-        csharp = true;
+      cli = {
+        codex.enable = true;
+        opencode.installDesktop = true;
+        btop.enable = true;
+        delta.enable = true;
+      };
+
+      prompts = {
+        ohMyPosh.enable = true;
+        spaceship.enable = false;
+      };
+
+      theme = {
+        enable = true;
+        accent = "red";
+        flavor = "mocha";
+      };
+
+      desktop.spotify.enable = true;
+      terminals.wezterm = {
+        enable = true;
+        profile = "macbook";
+        keys.mode = "leader";
+        font.family = "Monaspace Neon";
+        font.size = 14.0;
+      };
+
+      editors.neovim = {
+        languages = {
+          csharp = true;
+        };
       };
     };
   };

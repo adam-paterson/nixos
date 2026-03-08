@@ -1,16 +1,18 @@
 {
   config,
   lib,
+  namespace,
   ...
 }: let
-  cfg = config.cosmos.collections.home.desktop;
+  cfg = config.${namespace}.home.collections.desktop;
 in {
-  options.cosmos.collections.home.desktop.enable = lib.mkEnableOption "desktop apps home collection";
+  options.${namespace}.home.collections.desktop.enable = lib.mkEnableOption "desktop apps home collection";
 
   config = lib.mkIf cfg.enable {
-    cosmos = {
-      ghostty.enable = lib.mkDefault true;
-      oh-my-posh.enable = lib.mkDefault true;
+    ${namespace}.home = {
+      terminals.ghostty.enable = lib.mkDefault true;
+      desktop.spotify.enable = lib.mkDefault true;
+      prompts.ohMyPosh.enable = lib.mkDefault true;
     };
   };
 }

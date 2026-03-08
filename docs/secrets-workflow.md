@@ -1,0 +1,104 @@
+# Secrets Workflow
+
+This repository treats 1Password as the master source for secret values.
+Git stores only encrypted SOPS files and explicit non-secret placeholders.
+
+## Setup Checklist
+
+1. Install required CLIs: `op`, `sops`, `age`, `just`.
+2. Authenticate 1Password for your current shell:
+   - interactive: run `op signin`
+   - automation/headless: export `OP_SERVICE_ACCOUNT_TOKEN`
+3. Verify auth is available: `just secrets-auth-preflight`
+4. Confirm placeholder-only templates are intact: `secrets/templates/env.example`
+5. Run safety checks before editing or committing: `just secrets-scan`
+
+## Secret Boundaries
+
+- Shared keys: `secrets/shared/common.yaml`
+- Aurora-only keys: `secrets/hosts/aurora.yaml`
+- MacBook-only keys: `secrets/hosts/macbook.yaml`
+- Dummy onboarding placeholders only: `secrets/templates/env.example`
+
+Keep values encrypted in these SOPS files. Do not commit plaintext `.env` files, API tokens, private keys, or credential JSON blobs.
+
+## Runtime-Only Decryption Contract
+
+Decryption is allowed only in apply/deploy flows:
+
+- `just secrets-apply-macbook`
+- `just secrets-deploy-aurora`
+
+Both wrappers run `just secrets-auth-preflight` first and fail hard when authentication is unavailable. There are no fallback defaults for required secrets.
+
+## Canonical Commands
+
+### Secret Maintenance
+
+- Edit encrypted shared secrets: `just secrets-edit-shared`
+- Edit encrypted Aurora secrets: `just secrets-edit-aurora`
+- Edit encrypted MacBook secrets: `just secrets-edit-macbook`
+- Show current age recipient from a key file: `just secrets-age-public-key`
+- Re-encrypt to current recipients: `just secrets-updatekeys`
+
+### Key Recovery and Rotation
+
+If your previous secret store is gone, recover access from your current local `age` key, then rotate intentionally:
+
+1. Confirm you still have a decrypting key:
+   - `ls -l ~/.config/sops/age/keys.txt`
+   - `sops -d --extract '["shared"]["onepassword"]["service_account_token"]' secrets/shared/common.yaml >/dev/null`
+2. Back up your existing `age` key file offline before changing anything.
+3. Generate a new keypair:
+   - `age-keygen -o ~/.config/sops/age/keys-rotated.txt`
+   - Copy the new `# public key: age1...` value.
+4. Update `.sops.yaml` recipients to include the new public key (and keep any still-needed keys during transition).
+5. Re-encrypt all tracked secret files to the updated recipients:
+   - `just secrets-updatekeys`
+6. Validate decryption with the new key loaded:
+   - `SOPS_AGE_KEY_FILE=~/.config/sops/age/keys-rotated.txt sops -d secrets/hosts/macbook.yaml >/dev/null`
+7. Switch your runtime key file path to the rotated key file only after successful validation.
+8. Remove old recipients from `.sops.yaml`, run `just secrets-updatekeys` again, and commit both changes together.
+
+Note: this repository intentionally sets `sops.age.sshKeyPaths = []` for Home Manager and nix-darwin to avoid fallback reads of Linux host SSH keys like `/etc/ssh/ssh_host_*` on macOS.
+
+### Guardrails and Mock-Safe Validation
+
+- Scan changed files for plaintext leaks: `just secrets-scan`
+- Run mandatory full-repository signoff scan: `just secrets-scan-full`
+- Run non-secret eval/dry-build checks without real credentials: `just secrets-mock-check`
+
+`just secrets-mock-check` validates non-secret evaluation and dry-build surfaces while keeping secret values out of evaluation inputs.
+
+## Scan Policy and Signoff Timing
+
+Use the secret scan modes intentionally:
+
+- `just secrets-scan` is the fast daily guardrail for local edits and pull request deltas.
+- `just secrets-scan-full` is the required signoff gate before milestone closure and release cutover.
+
+Required signoff timing:
+
+1. Run `just secrets-scan-full` after the final change set is staged for closure.
+2. If it fails, stop closure work immediately and treat findings as blockers.
+3. Move or rotate exposed values into encrypted SOPS files, then rerun `just secrets-scan-full`.
+4. Proceed with milestone/release closure only after the full scan passes.
+
+## Troubleshooting
+
+### `1Password authentication missing...`
+
+- Run `op signin` for local interactive use, or export `OP_SERVICE_ACCOUNT_TOKEN` for headless sessions.
+- Re-run `just secrets-auth-preflight`.
+
+### `Secret scan failed...`
+
+- Move sensitive values into encrypted SOPS files.
+- Keep only encrypted payload markers or `DUMMY_NOT_A_SECRET_*` placeholders in tracked files.
+- Re-run `just secrets-scan` for changed-file checks and `just secrets-scan-full` for closure signoff.
+
+### Missing required runtime secret during apply/deploy
+
+- Confirm the required key exists in the correct encrypted file (shared vs host-specific).
+- Update encrypted file via the `just secrets-edit-*` wrappers.
+- Retry apply/deploy explicitly after fixing the encrypted source file.

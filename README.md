@@ -1,4 +1,4 @@
-![Banner image](./assets/banner.png)
+![Banner image](./assets/nix.gif)
 
 [![Nix Checks](https://img.shields.io/github/actions/workflow/status/adam-paterson/nixos/nix-checks.yml?label=Nix%20Checks&style=for-the-badge&logo=githubactions&logoColor=white)](https://github.com/adam-paterson/nixos/actions/workflows/nix-checks.yml)
 [![Nix Cache Build](https://img.shields.io/github/actions/workflow/status/adam-paterson/nixos/nix-cache.yml?label=Nix%20Cache%20Build&style=for-the-badge&logo=cachix&logoColor=white)](https://github.com/adam-paterson/nixos/actions/workflows/nix-cache.yml)
@@ -28,11 +28,17 @@ src/
 │   │   ├── services/tailscale/default.nix
 │   │   └── system/{core,input}/default.nix
 │   ├── home/
-│   │   ├── apps/{cli,desktop}/...
+│   │   ├── cli/{codex,opencode,...}/...
 │   │   ├── collections/{ai,base,cli,desktop,dev}/default.nix
-│   │   ├── dev/{git,languages,neovim,shell,tailwind,tmux}/...
+│   │   ├── desktop/spotify/...
+│   │   ├── editors/neovim/...
+│   │   ├── frontend/tailwind/...
 │   │   ├── prompts/{oh-my-posh,spaceship}/...
-│   │   └── security/{onepassword-cli,ssh-agent-1password}/...
+│   │   ├── runtimes/bun/...
+│   │   ├── security/{onepassword-cli,secrets,ssh-agent-1password}/...
+│   │   ├── shells/{bash,nushell,zsh,...}/...
+│   │   ├── terminals/{ghostty,tmux,wezterm}/...
+│   │   └── vcs/git/...
 │   └── nixos/
 │       ├── collections/{base,server,workstation}/default.nix
 │       └── services/{cloudflared,tailscale}/default.nix
@@ -42,6 +48,19 @@ src/
         ├── default.nix
         └── hardware/default.nix
 ```
+
+## Architecture Contracts
+
+The following local READMEs are authoritative for placement, naming, and migration decisions:
+
+- `src/modules/README.md` - top-level module placement contract (capability-first + platform boundaries)
+- `src/modules/darwin/README.md` - Darwin module boundaries and override guidance
+- `src/modules/nixos/README.md` - NixOS module boundaries and server/workstation composition guidance
+- `src/modules/home/README.md` - Home Manager module placement and cross-host user-layer conventions
+- `src/systems/README.md` - thin-host system composition contract (facts and toggles only)
+- `src/homes/README.md` - thin-home user composition contract (host-local user data and toggles)
+
+When moving modules, follow the hard-move policy in `src/modules/README.md` (no alias layer).
 
 ## How Modules Are Applied
 
@@ -61,7 +80,7 @@ SSH keys stay in 1Password. Nix only points SSH to the 1Password agent socket.
 Enable per-home with:
 
 ```nix
-local.onePasswordSSH.enable = true;
+cosmos.home.security.onePasswordSSH.enable = true;
 ```
 
 ## Spaceship Prompt
@@ -71,7 +90,7 @@ local.onePasswordSSH.enable = true;
 Optional per-home overrides:
 
 ```nix
-local.prompts.spaceship = {
+cosmos.home.prompts.spaceship = {
   enable = true;
   addNewline = false;
   separateLine = false;
@@ -80,12 +99,12 @@ local.prompts.spaceship = {
 
 ## OpenCode
 
-`src/modules/home/apps/cli/opencode/default.nix` manages OpenCode CLI on both hosts and can manage `~/.config/opencode/opencode.json`.
+`src/modules/home/cli/opencode/default.nix` manages OpenCode CLI on both hosts and can manage `~/.config/opencode/opencode.json`.
 
 Per-home options:
 
 ```nix
-local.opencode = {
+cosmos.home.cli.opencode = {
   enable = true;
   manageConfig = true;
   settings = { ... };      # rendered to JSON
@@ -148,6 +167,79 @@ just eval
 
 # Full local CI pass
 just ci
+
+# Required before any apply/deploy action
+just pre-apply-check
+```
+
+`just pre-apply-check` is the canonical local safety gate and must pass before
+running `nix-darwin switch`, `nixos-rebuild switch`, or deploy workflows. The
+command path explicitly includes:
+
+- `check` -> mandatory `nix flake check`
+- `eval` -> host-level evaluation for configured Darwin and NixOS targets
+- `flake-contract` -> host dry-build coverage (`nix build --dry-run`) for the same targets
+- `fmt-check`, `lint`, and `secrets-scan` -> style, static analysis, and plaintext secret guardrails
+
+### CI Merge Gate Policy
+
+`Nix Checks` is the required merge-blocking CI gate for protected merges to
+`main`. Branch protection and/or rulesets must require the workflow status
+context (typically `Nix Checks / Lint And Eval`) so failed runs cannot merge.
+
+Authoritative enforcement runbook:
+
+- `docs/validation-gates.md`
+
+### Lockfile Workflow
+
+Use `flake.lock` verification as the default workflow during normal feature
+work. Run updates only as explicit maintenance with a scoped target input.
+All lock diffs must be reviewed and validated before merge. Full policy and
+review checklist:
+
+- `docs/flake-lock-workflow.md`
+
+```bash
+# Normal path: verify lock integrity without updating flake.lock
+just lock-verify
+
+# Maintenance path: sync lock entries when flake input declarations changed
+just lock-sync
+
+# Maintenance path: scoped single-input update (replace input name)
+just lock-update nixpkgs
+
+# Required after intentional lock updates
+just ci
+just lock-verify
+```
+
+### Secrets Workflow (1Password + SOPS)
+
+1Password is the source of truth for all real secret values. This repository only stores encrypted SOPS artifacts and dummy placeholders.
+
+- Setup and operations guide: `docs/secrets-workflow.md`
+- Local/CI plaintext guardrail command: `just secrets-scan`
+- Mock-safe validation path (no real credentials): `just secrets-mock-check`
+
+Runtime decryption is allowed only during apply/deploy flows:
+
+```bash
+# macOS apply (requires successful 1Password auth preflight)
+just secrets-apply-macbook
+
+# Aurora deploy (requires successful 1Password auth preflight)
+just secrets-deploy-aurora
+```
+
+Encrypted file maintenance wrappers:
+
+```bash
+just secrets-edit-shared
+just secrets-edit-aurora
+just secrets-edit-macbook
+just secrets-updatekeys
 ```
 
 ### Direnv + nixd (VS Code)
@@ -184,8 +276,45 @@ sudo nixos-rebuild switch --flake .#aurora
 ### Home Manager
 
 ```bash
-home-manager switch --flake .#adampaterson@macbook
-home-manager switch --flake .#adam@aurora
+just home-switch-macbook
+just home-switch-aurora
+```
+
+Optional pre-apply checks:
+
+```bash
+just home-build-macbook
+just home-build-aurora
+just home-check
+```
+
+### Nushell Startup and PATH
+
+- Nushell config is managed at `~/.config/nushell`, with a macOS compatibility link at `~/Library/Application Support/nushell` so GUI-launched terminals and login shells load the same config.
+- Nushell PATH is normalized with Nix-first precedence: system and profile Nix paths, then Bun/Homebrew entries, then inherited entries (deduplicated and filtered to existing paths).
+- For future path exceptions, update the `preferred_paths` block in `src/modules/home/shells/nushell/default.nix`.
+
+### Activation Decision Tree
+
+Use this quick rule to choose the right command path:
+
+- **Only user-level tools, shell, dotfiles, or editor settings changed?** Use standalone Home Manager apply commands.
+- **System services, host networking, launchd/systemd, or machine-level modules changed?** Use full host rebuild commands.
+
+Examples:
+
+```bash
+# User-layer only changes on macbook
+just home-switch-macbook
+
+# User-layer only changes on aurora
+just home-switch-aurora
+
+# Machine-level changes on macbook
+nix run nix-darwin -- switch --flake .#macbook
+
+# Machine-level changes on aurora
+sudo nixos-rebuild switch --flake .#aurora
 ```
 
 ## Automation

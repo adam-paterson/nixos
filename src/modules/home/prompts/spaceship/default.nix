@@ -2,11 +2,12 @@
   config,
   lib,
   pkgs,
+  namespace,
   ...
 }: let
-  cfg = config.cosmos.prompts.spaceship;
+  cfg = config.${namespace}.home.prompts.spaceship;
 in {
-  options.cosmos.prompts.spaceship = {
+  options.${namespace}.home.prompts.spaceship = {
     enable = lib.mkOption {
       type = lib.types.bool;
       default = true;

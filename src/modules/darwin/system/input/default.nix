@@ -32,6 +32,22 @@ in {
   };
 
   config = lib.mkIf cfg.enable {
+    # hidutil remappings are session-only and reset on reboot.
+    # This Launch Agent re-applies them at every login.
+    launchd.user.agents.key-remapping = {
+      serviceConfig = {
+        Label = "com.local.key-remapping";
+        ProgramArguments = [
+          "/usr/bin/hidutil"
+          "property"
+          "--set"
+          # ISO Section key (§/±) -> Grave Accent/Tilde (`/~)
+          "{\"UserKeyMapping\":[{\"HIDKeyboardModifierMappingSrc\":30064771172,\"HIDKeyboardModifierMappingDst\":30064771125}]}"
+        ];
+        RunAtLoad = true;
+      };
+    };
+
     system = {
       keyboard = {
         enableKeyMapping = lib.mkDefault cfg.remapCapsLockToControl;

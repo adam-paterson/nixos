@@ -17,6 +17,7 @@ inputs.devenv.lib.mkShell {
           alejandra
           statix
           deadnix
+          gitleaks
           just
           git
         ];
