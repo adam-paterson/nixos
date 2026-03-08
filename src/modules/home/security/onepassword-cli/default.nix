@@ -24,11 +24,11 @@
   linuxSources = {
     "x86_64-linux" = {
       arch = "amd64";
-      hash = "sha256-Gw1FuSaHj/s/NZxVwOmn+inakRGNfhwTwL3bbwpSkks=";
+      hash = "sha256-UH4s7nBDj5E7SkO35Uj3XyfXUnfuK6rJOC2sHDflZJI=";
     };
     "aarch64-linux" = {
       arch = "arm64";
-      hash = "sha256-Dwlyx1xeXhfpyx9FwKj/9HZTUm6whW8Ph/3HxkA0+O0=";
+      hash = "sha256-R4uWNU7DO6My3q8qFhSRjQza8UVdzYsDy/sKMnuAhSE=";
     };
   };
 
