@@ -46,27 +46,27 @@ secrets-auth-preflight:
     echo "1Password CLI (op) is required. Install it and retry."; \
     exit 1; \
   fi
-  @if ! op whoami >/dev/null 2>&1; then \
+  @if ! op whoami >/dev/null 2>&1 && [ -z "$$OP_SERVICE_ACCOUNT_TOKEN" ]; then \
     echo "1Password authentication missing. Run 'op signin' or export OP_SERVICE_ACCOUNT_TOKEN, then retry."; \
     exit 1; \
   fi
 
 secrets-edit-shared:
   @just secrets-auth-preflight
-  @sops secrets/shared/common.yaml
+  @nix run nixpkgs#sops -- secrets/shared/common.yaml
 
 secrets-edit-aurora:
   @just secrets-auth-preflight
-  @sops secrets/hosts/aurora.yaml
+  @nix run nixpkgs#sops -- secrets/hosts/aurora.yaml
 
 secrets-edit-macbook:
   @just secrets-auth-preflight
-  @sops secrets/hosts/macbook.yaml
+  @nix run nixpkgs#sops -- secrets/hosts/macbook.yaml
 
 secrets-updatekeys:
-  @sops updatekeys --yes secrets/shared/common.yaml
-  @sops updatekeys --yes secrets/hosts/aurora.yaml
-  @sops updatekeys --yes secrets/hosts/macbook.yaml
+  @nix run nixpkgs#sops -- updatekeys --yes secrets/shared/common.yaml
+  @nix run nixpkgs#sops -- updatekeys --yes secrets/hosts/aurora.yaml
+  @nix run nixpkgs#sops -- updatekeys --yes secrets/hosts/macbook.yaml
 
 secrets-age-public-key key_file="${HOME}/.config/sops/age/keys.txt":
   @if [ ! -f "{{key_file}}" ]; then \
