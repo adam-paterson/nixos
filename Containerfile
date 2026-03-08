@@ -11,7 +11,8 @@ RUN apt-get update \
     xz-utils \
   && rm -rf /var/lib/apt/lists/*
 
-RUN useradd --create-home --uid 1000 nix \
+RUN userdel --remove ubuntu 2>/dev/null || true \
+  && useradd --create-home --uid 1000 nix \
   && mkdir -p /nix \
   && chown nix:nix /nix
 
