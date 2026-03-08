@@ -12,6 +12,46 @@
     lib.mapAttrsToList (name: path: ''${name}="${path}"'') cfg.environmentSecrets
   );
 
+  # When environmentId is set we need op environment read, which requires >= 2.33.0-beta.02.
+  # Upgrade the package inline if the current nixpkgs version is older and we're on Linux.
+  beta02Version = "2.33.0-beta.02";
+  needsUpgrade =
+    cfg.environmentId
+    != null
+    && pkgs.stdenv.hostPlatform.isLinux
+    && (builtins.compareVersions pkgs._1password-cli.version beta02Version) < 0;
+
+  linuxSources = {
+    "x86_64-linux" = {
+      arch = "amd64";
+      hash = "sha256-Gw1FuSaHj/s/NZxVwOmn+inakRGNfhwTwL3bbwpSkks=";
+    };
+    "aarch64-linux" = {
+      arch = "arm64";
+      hash = "sha256-Dwlyx1xeXhfpyx9FwKj/9HZTUm6whW8Ph/3HxkA0+O0=";
+    };
+  };
+
+  opCli =
+    if needsUpgrade
+    then let
+      src = linuxSources.${pkgs.stdenv.hostPlatform.system};
+    in
+      pkgs._1password-cli.overrideAttrs (_old: {
+        version = beta02Version;
+        src = pkgs.fetchzip {
+          url = "https://cache.agilebits.com/dist/1P/op2/pkg/v${beta02Version}/op_linux_${src.arch}_v${beta02Version}.zip";
+          inherit (src) hash;
+          stripRoot = false;
+        };
+        installPhase = ''
+          runHook preInstall
+          install -Dm755 op $out/bin/op
+          runHook postInstall
+        '';
+      })
+    else pkgs._1password-cli;
+
   # Script to load env vars — uses op environment read if environmentId is set,
   # otherwise falls back to individual op:// references from envFilePath.
   loadEnvScript = pkgs.writeShellScriptBin "op-env" ''
@@ -25,14 +65,14 @@
       if cfg.environmentId != null
       then ''
         # 1Password Environments: load all vars from the named environment at once
-        eval "$(${pkgs._1password-cli}/bin/op environment read ${cfg.environmentId})"
+        eval "$(${opCli}/bin/op environment read ${cfg.environmentId})"
         echo "1Password environment variables loaded from Environment ${cfg.environmentId}!"
       ''
       else ''
         # Fallback: individual op:// references via generated env-vars file
-        if ! ${pkgs._1password-cli}/bin/op account list >/dev/null 2>&1; then
+        if ! ${opCli}/bin/op account list >/dev/null 2>&1; then
           echo "Not signed in to 1Password. Running 'op signin'..."
-          eval "$(${pkgs._1password-cli}/bin/op signin)"
+          eval "$(${opCli}/bin/op signin)"
         fi
 
         while IFS='=' read -r key value; do
@@ -101,7 +141,7 @@ in {
 
   config = lib.mkIf cfg.enable {
     home.packages = [
-      pkgs._1password-cli
+      opCli
       loadEnvScript
     ];
 
@@ -115,7 +155,7 @@ in {
     # Zsh integration
     programs.zsh.initContent = lib.mkIf cfg.enableZshIntegration ''
       # 1Password CLI completions
-      eval "$(${pkgs._1password-cli}/bin/op completion zsh)"
+      eval "$(${opCli}/bin/op completion zsh)"
 
       # Alias to load 1Password environment variables
       alias op-env='eval $(op-env)'
@@ -123,7 +163,7 @@ in {
 
     # Bash integration
     programs.bash.initExtra = lib.mkIf cfg.enableBashIntegration ''
-      eval "$(${pkgs._1password-cli}/bin/op completion bash)"
+      eval "$(${opCli}/bin/op completion bash)"
       alias op-env='eval $(op-env)'
     '';
   };
