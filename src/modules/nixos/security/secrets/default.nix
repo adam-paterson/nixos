@@ -54,7 +54,11 @@ in {
 
     sops = {
       age = {
+        # Derive the age key from the host's SSH ed25519 key so sops-nix can
+        # bootstrap on first switch (before /run/booted-system/secrets/ exists).
+        sshKeyPaths = ["/etc/ssh/ssh_host_ed25519_key"];
         keyFile = lib.mkDefault "/run/booted-system/secrets/age-keys.txt";
+        generateKey = false;
       };
 
       defaultSopsFile = hostProfile.hostSecretsFile;
