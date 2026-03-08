@@ -1,10 +1,10 @@
 creation_rules:
   - path_regex: ^secrets/shared/.*\.ya?ml$
     age:
-      - age1f4kmz9q52kdz4p5nr573c0406y8y5uwpyr0fe9txaz04gvhf94us24tued
+      - age1em5ex0q49yly2ymp03sa3vr76u6es89789ucph0vflk7dn4ted5suf79gl
   - path_regex: ^secrets/hosts/aurora\.ya?ml$
     age:
-      - age1f4kmz9q52kdz4p5nr573c0406y8y5uwpyr0fe9txaz04gvhf94us24tued
+      - age1em5ex0q49yly2ymp03sa3vr76u6es89789ucph0vflk7dn4ted5suf79gl
   - path_regex: ^secrets/hosts/macbook\.ya?ml$
     age:
-      - age1f4kmz9q52kdz4p5nr573c0406y8y5uwpyr0fe9txaz04gvhf94us24tued
+      - age1em5ex0q49yly2ymp03sa3vr76u6es89789ucph0vflk7dn4ted5suf79gl

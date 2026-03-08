@@ -53,6 +53,10 @@ in {
     ];
 
     sops = {
+      age = {
+        keyFile = lib.mkDefault "/run/booted-system/secrets/age-keys.txt";
+      };
+
       defaultSopsFile = hostProfile.hostSecretsFile;
 
       secrets = {
