@@ -19,5 +19,14 @@ in {
       enable = true;
       package = pkgs.openclaw;
     };
+
+    xdg.configFile."carapace/specs/openclaw.yaml".text = ''
+      # yaml-language-server: $schema=https://carapace.sh/schemas/command.json
+      name: openclaw
+      description: Openclaw cli
+      parsing: disabled
+      completion:
+        positionalany: ["$carapace.bridge.Cobra([openclaw])]"]
+    '';
   };
 }

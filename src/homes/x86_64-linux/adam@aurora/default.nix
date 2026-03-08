@@ -20,9 +20,9 @@
 
       cli = {
         codex.enable = true;
-
-        # OpenClaw is a host-local gaming utility not shared across hosts.
         openclaw.enable = true;
+        btop.enable = true;
+        delta.enable = true;
       };
 
       prompts = {

@@ -26,8 +26,8 @@
       historyLimit = lib.mkDefault 50000;
       focusEvents = lib.mkDefault true;
 
-      # Mouse support
-      mouse = lib.mkDefault true;
+      # Keep native terminal selection and avoid leaking mouse reporting to shells.
+      mouse = lib.mkDefault false;
 
       # Base index
       baseIndex = lib.mkDefault 1;

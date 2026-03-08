@@ -23,3 +23,7 @@ devenv.local.yaml
 .runtime/
 .claude/commands/
 .logs/
+
+# OpenClaw runtime config (managed by openclaw itself, contains secrets)
+openclaw.json
+
