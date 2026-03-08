@@ -53,7 +53,6 @@ in {
         vendorHash = "sha256-v3WAiQjYxkzfgoC29M+4U4eG/HNqjdhPkqRGB3ESEgM=";
       }))
       pkgs.go
-      pkgs.nodejs # required by codex (node shebang) and general JS tooling
     ];
 
     # Shell completions via carapace bridge (mirrors beads pattern for bd).

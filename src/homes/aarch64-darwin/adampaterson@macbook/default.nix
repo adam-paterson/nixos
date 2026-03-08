@@ -62,6 +62,8 @@ _: {
           csharp = true;
         };
       };
+
+      utilities.qmd.enable = true;
     };
   };
 }
