@@ -18,9 +18,20 @@
         ai.enable = true;
       };
 
+      shells = {
+        nushell.enable = true;
+
+        listing = {
+          eza.enable = false;
+        };
+      };
+
+      planning = {
+        beads.enable = true;
+        gastown.enable = true;
+      };
+
       security.onePasswordCLI = {
-        # Load all aurora environment variables from the named 1Password Environment.
-        # Requires op environment read (CLI >= 2.33.0-beta.02) and OP_SERVICE_ACCOUNT_TOKEN.
         environmentId = "unortf7rfmkyyjbmoufzjx2kr4";
       };
 
