@@ -18,6 +18,12 @@
         ai.enable = true;
       };
 
+      security.onePasswordCLI = {
+        # Load all aurora environment variables from the named 1Password Environment.
+        # Requires op environment read (CLI >= 2.33.0-beta.02) and OP_SERVICE_ACCOUNT_TOKEN.
+        environmentId = "unortf7rfmkyyjbmoufzjx2kr4";
+      };
+
       cli = {
         codex.enable = true;
         openclaw.enable = true;
