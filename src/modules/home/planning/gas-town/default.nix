@@ -7,7 +7,18 @@
   ...
 }: let
   cfg = config.${namespace}.home.planning.gastown;
-  inherit (pkgs.stdenv.hostPlatform) system;
+
+  gtFixed = pkgs.buildGoModule {
+    pname = "gt";
+    version = "0.8.0";
+    src = inputs.gastown;
+    vendorHash = "sha256-fZucwy6omCXV5/ebOzcqOgJ4SfouCHasmstEX2na5SQ=";
+    ldflags = [
+      "-X github.com/steveyegge/gastown/internal/cmd.Build=nix"
+      "-X github.com/steveyegge/gastown/internal/cmd.BuiltProperly=1"
+    ];
+    subPackages = ["cmd/gt"];
+  };
 in {
   options.${namespace}.home.planning.gastown = {
     enable = lib.mkEnableOption "Gastown multi-agent workspace manager";
@@ -34,12 +45,7 @@ in {
 
   config = lib.mkIf cfg.enable {
     home.packages = [
-      # Override vendorHash: gastown's flake.nix pins v0.8.0 but the locked
-      # commit has updated Go modules, so the upstream hash is stale.
-      (inputs.gastown.packages.${system}.gt.overrideAttrs (_: {
-        vendorHash = "sha256-/+ODyndArUF0nJY9r8G5JKhzQckBHFb48A7EBZmoIr0=";
-        proxyVendor = true;
-      }))
+      gtFixed
       # dolt 1.82.4+ required by gt doctor; nixpkgs only has 1.81.2 as of 2026-03
       (pkgs.dolt.overrideAttrs (_: {
         version = "1.83.2";
