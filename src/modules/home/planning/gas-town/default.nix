@@ -38,6 +38,7 @@ in {
       # commit has updated Go modules, so the upstream hash is stale.
       (inputs.gastown.packages.${system}.gt.overrideAttrs (_: {
         vendorHash = "sha256-/+ODyndArUF0nJY9r8G5JKhzQckBHFb48A7EBZmoIr0=";
+        proxyVendor = true;
       }))
       # dolt 1.82.4+ required by gt doctor; nixpkgs only has 1.81.2 as of 2026-03
       (pkgs.dolt.overrideAttrs (_: {
