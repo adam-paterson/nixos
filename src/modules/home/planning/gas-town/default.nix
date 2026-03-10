@@ -5,7 +5,8 @@
   namespace,
   inputs,
   ...
-}: let
+}:
+let
   cfg = config.${namespace}.home.planning.gastown;
 
   gtFixed = pkgs.buildGoModule {
@@ -17,9 +18,10 @@
       "-X github.com/steveyegge/gastown/internal/cmd.Build=nix"
       "-X github.com/steveyegge/gastown/internal/cmd.BuiltProperly=1"
     ];
-    subPackages = ["cmd/gt"];
+    subPackages = [ "cmd/gt" ];
   };
-in {
+in
+{
   options.${namespace}.home.planning.gastown = {
     enable = lib.mkEnableOption "Gastown multi-agent workspace manager";
 
@@ -56,14 +58,23 @@ in {
           hash = "sha256-WKsvKZVn4o870w5sv0owmtm/Od2nhzvZOW/aV1jLysM=";
         };
         # icu4c-dev required by CGO go-icu-regex (unicode/uregex.h).
-        buildInputs = [pkgs.icu76.dev];
+        buildInputs = [ pkgs.icu76.dev ];
         vendorHash = "sha256-v3WAiQjYxkzfgoC29M+4U4eG/HNqjdhPkqRGB3ESEgM=";
       }))
       pkgs.go
     ];
 
-    # Shell completions via carapace bridge (mirrors beads pattern for bd).
+    # Native zsh completion via Cobra's built-in generator.
+    # This gives full flag+subcommand completion in zsh without the carapace
+    # spec limitation where flags only appear after typing "-".
+    programs.zsh.initContent = lib.mkAfter ''
+      source <(gt completion zsh)
+    '';
+
+    # Carapace bridge spec for nushell (and any other carapace-integrated shell).
     # gt uses Cobra under the hood so the Cobra bridge works directly.
+    # Limitation: flags appear only after typing "-"; subcommand listing works
+    # at any position.
     xdg.configFile."carapace/specs/gt.yaml".text = ''
       # yaml-language-server: $schema=https://carapace.sh/schemas/command.json
       name: gt

@@ -189,3 +189,68 @@ just fmt-check    # check formatting
 just lint         # run linters
 just ci           # full local CI pass
 ```
+
+## Adding Shell Completions for New Tools
+
+This config uses a **dual-layer approach**: native shell completion for zsh (full flag support), and a carapace bridge spec for nushell.
+
+### Pattern by CLI framework
+
+#### Cobra (Go) — e.g. bd, gt
+
+```nix
+# Native zsh: full flag+subcommand completion at any position
+programs.zsh.initContent = lib.mkAfter ''
+  source <(mytool completion zsh)
+'';
+
+# Nushell via carapace Cobra bridge
+xdg.configFile."carapace/specs/mytool.yaml".text = ''
+  # yaml-language-server: $schema=https://carapace.sh/schemas/command.json
+  name: mytool
+  description: My tool description
+  parsing: disabled
+  completion:
+    positionalany: ["$carapace.bridge.Cobra([mytool])"]
+'';
+```
+
+> **Nushell limitation with Cobra bridge**: flags only appear after typing `-`.
+> Subcommand listing works at any position.
+
+#### Commander.js (Node.js) — e.g. openclaw
+
+```nix
+# Native zsh completion
+programs.zsh.initContent = lib.mkAfter ''
+  source <(mytool completion -s zsh)
+'';
+
+# Nushell via carapace Zsh bridge (no Commander.js bridge exists in carapace)
+xdg.configFile."carapace/specs/mytool.yaml".text = ''
+  # yaml-language-server: $schema=https://carapace.sh/schemas/command.json
+  name: mytool
+  description: My tool description
+  parsing: disabled
+  completion:
+    positionalany: ["$carapace.bridge.Zsh([mytool])"]
+'';
+```
+
+#### Other frameworks
+
+Check `carapace-sh.github.io/carapace-bin/spec/bridge.html` for available bridges:
+Argcomplete, Clap, Click, Complete, Inshellisense, Kingpin, Urfavecli, Yargs, and shell bridges (Bash, Fish, Zsh).
+
+If no carapace bridge exists, use the tool's native completion for zsh only and skip the carapace spec.
+
+### How to identify a CLI's framework
+
+```bash
+mytool completion --help   # Cobra: lists bash/fish/powershell/zsh subcommands
+mytool completion -h       # Commander.js: shows -s/--shell option
+mytool --help | grep complet  # generic check
+```
+
+Cobra outputs look like `#compdef mytool` and use `_arguments`.
+Commander.js outputs also use `_arguments` but via a different generator.
