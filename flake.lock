@@ -446,11 +446,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1773018554,
-        "narHash": "sha256-JBH9Trq9UAbOnuOmdQCIf7e/R29ZbNXyLJ/aTXiHSDQ=",
+        "lastModified": 1773256076,
+        "narHash": "sha256-9MjCSf4H3MTW5B1uQFS9i4DMVI1qoUtj/LHECudSo9o=",
         "owner": "steveyegge",
         "repo": "gastown",
-        "rev": "e3a5f80a35b35a75db0d64252b7821a1b1dbd15d",
+        "rev": "d06966a301eef4e0ff9e8f6feb6940f04ba95015",
         "type": "github"
       },
       "original": {

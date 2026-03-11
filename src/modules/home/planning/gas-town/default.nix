@@ -12,6 +12,8 @@
     pname = "gt";
     version = "0.8.0";
     src = inputs.gastown;
+    # Upstream occasionally ships a stale vendor tree; rebuild it from go.mod.
+    deleteVendor = true;
     vendorHash = "sha256-fZucwy6omCXV5/ebOzcqOgJ4SfouCHasmstEX2na5SQ=";
     ldflags = [
       "-X github.com/steveyegge/gastown/internal/cmd.Build=nix"
