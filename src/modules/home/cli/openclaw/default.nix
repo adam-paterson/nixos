@@ -5,11 +5,9 @@
   pkgs,
   namespace,
   ...
-}:
-let
+}: let
   cfg = config.${namespace}.home.cli.openclaw;
-in
-{
+in {
   options.${namespace}.home.cli.openclaw.enable = lib.mkEnableOption "OpenClaw Home Manager module";
 
   imports = [

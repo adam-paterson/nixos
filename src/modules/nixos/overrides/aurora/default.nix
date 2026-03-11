@@ -14,8 +14,10 @@ in {
       vscode-server.enable = true;
     };
 
-    # Let Home Manager move aside pre-existing dotfiles instead of failing activation.
+    # Let Home Manager move aside pre-existing dotfiles instead of failing activation,
+    # and replace stale backups from previous activations.
     home-manager.backupFileExtension = "hm-backup";
+    home-manager.overwriteBackup = true;
 
     users.users.adam = {
       isNormalUser = true;

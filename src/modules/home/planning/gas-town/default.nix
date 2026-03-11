@@ -5,8 +5,7 @@
   namespace,
   inputs,
   ...
-}:
-let
+}: let
   cfg = config.${namespace}.home.planning.gastown;
 
   gtFixed = pkgs.buildGoModule {
@@ -18,10 +17,9 @@ let
       "-X github.com/steveyegge/gastown/internal/cmd.Build=nix"
       "-X github.com/steveyegge/gastown/internal/cmd.BuiltProperly=1"
     ];
-    subPackages = [ "cmd/gt" ];
+    subPackages = ["cmd/gt"];
   };
-in
-{
+in {
   options.${namespace}.home.planning.gastown = {
     enable = lib.mkEnableOption "Gastown multi-agent workspace manager";
 
@@ -58,7 +56,7 @@ in
           hash = "sha256-WKsvKZVn4o870w5sv0owmtm/Od2nhzvZOW/aV1jLysM=";
         };
         # icu4c-dev required by CGO go-icu-regex (unicode/uregex.h).
-        buildInputs = [ pkgs.icu76.dev ];
+        buildInputs = [pkgs.icu76.dev];
         vendorHash = "sha256-v3WAiQjYxkzfgoC29M+4U4eG/HNqjdhPkqRGB3ESEgM=";
       }))
       pkgs.go

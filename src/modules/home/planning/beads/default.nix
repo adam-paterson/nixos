@@ -5,24 +5,23 @@
   namespace,
   inputs,
   ...
-}:
-let
+}: let
   cfg = config.${namespace}.home.planning.beads;
   inherit (pkgs.stdenv.hostPlatform) system;
-in
-{
+in {
   options.${namespace}.home.planning.beads = {
     enable = lib.mkEnableOption "Beads integration";
     enableViewer = lib.mkEnableOption "Enable Beads viewer integration";
   };
 
   config = lib.mkIf cfg.enable {
-    home.packages = [
-      inputs.agents.packages.${system}.beads
-    ]
-    ++ lib.optionals cfg.enableViewer [
-      inputs.agents.packages.${system}.beads-viewer
-    ];
+    home.packages =
+      [
+        inputs.agents.packages.${system}.beads
+      ]
+      ++ lib.optionals cfg.enableViewer [
+        inputs.agents.packages.${system}.beads-viewer
+      ];
 
     # Native zsh completion via Cobra's built-in generator.
     # This gives full flag+subcommand completion in zsh without the carapace
