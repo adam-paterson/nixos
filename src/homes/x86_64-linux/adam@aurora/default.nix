@@ -28,7 +28,7 @@
 
       planning = {
         beads.enable = true;
-        gastown.enable = true;
+        gastown.enable = false;
       };
 
       security.onePasswordCLI = {

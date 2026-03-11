@@ -12,9 +12,10 @@
     pname = "gt";
     version = "0.8.0";
     src = inputs.gastown;
-    # Upstream occasionally ships a stale vendor tree; rebuild it from go.mod.
-    deleteVendor = true;
-    vendorHash = "sha256-fZucwy6omCXV5/ebOzcqOgJ4SfouCHasmstEX2na5SQ=";
+    # Upstream occasionally ships a stale vendor tree; use module proxy vendoring
+    # so the fixed-output hash is based on downloaded modules instead.
+    proxyVendor = true;
+    vendorHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
     ldflags = [
       "-X github.com/steveyegge/gastown/internal/cmd.Build=nix"
       "-X github.com/steveyegge/gastown/internal/cmd.BuiltProperly=1"
